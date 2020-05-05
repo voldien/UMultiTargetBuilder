@@ -1,11 +1,10 @@
 {
     "name": "com.linuxsenpai.builder.editor.test",
-    "references": [],
+    "references": [
+        "com.linuxsenpai.builder.editor"
+    ],
     "includePlatforms": [
         "Editor"
-    ],
-    "references": [
-        "com.linuxsenpai.builder.editor",
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
