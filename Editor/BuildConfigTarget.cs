@@ -11,6 +11,10 @@ public class BuildConfigTarget
 // 	public bool Foldout = true;
 // #endif
 	[Tooltip(""), SerializeField]
+	public String title;
+	[Tooltip(""), SerializeField]
+	public String Company;
+	[Tooltip(""), SerializeField]
 	public String outputDirectory;
 	[Tooltip("")]
 	public String name;
@@ -21,7 +25,7 @@ public class BuildConfigTarget
 	[SerializeField,Obsolete("")]
 	public BuildPlayerOptions buildPlayerOptions;
 	[SerializeField]
-	public EditorBuildSettingsScene[] scenes;
+	public GUID[] scenes;
 	[SerializeField, Tooltip("")]
 	public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
 	[SerializeField, Tooltip("")]

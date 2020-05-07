@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
@@ -22,7 +19,7 @@ public static class Builder
 
 		BuildConfigTarget defaultTarget = new BuildConfigTarget();
 		defaultTarget.name = "Default";
-		defaultTarget.scenes = getDefaultScenes();
+		//defaultTarget.scenes = getDefaultScenes();
 		defaultTarget.target = EditorUserBuildSettings.activeBuildTarget;
 		defaultTarget.targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 		defaultTarget.options = BuildOptions.None;
@@ -59,18 +56,58 @@ public static class Builder
 	public static string GetTargetLocationAbsolutePath(BuildConfigTarget target)
 	{
 		BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
-		if (target.outputDirectory.Length > 0)
-			return Path.GetFullPath(string.Format("{0}/{1}/{2}", settings.rootOutputDirectory, target.outputDirectory, PlayerSettings.productName));
+		string path = null;
+
+		/*	Determine the title.	*/
+		string titleName;
+		if(settings.title == 0)
+			string titleName = PlayerSettings.productName;
 		else
-			return Path.GetFullPath(string.Format("{0}/{1}", settings.rootOutputDirectory, PlayerSettings.productName));
+			titleName = settings.title;
+
+		/*	Compute the output filepath.	*/
+		if (target.outputDirectory.Length > 0)
+			path = Path.GetFullPath(string.Format("{0}/{1}/{2}", settings.rootOutputDirectory, target.outputDirectory, titleName));
+		else
+			path = Path.GetFullPath(string.Format("{0}/{1}", settings.rootOutputDirectory, titleName));
+
+		if(!Path.HasExtension(path)){
+			switch (target.target)
+			{
+				case UnityEditor.BuildTarget.StandaloneWindows:
+				case UnityEditor.BuildTarget.StandaloneWindows64:
+					path = string.Format("{0}{1}", path, ".exe");
+					break;
+				default:
+					break;
+			}
+		}
+
+		/*	Validate the path is an absolute path.	*/
+		if (Path.IsPathRooted(path))
+		{
+			return path;
+		}
+		else
+		{
+			return path;
+		}
 	}
 
 	public static void RunTarget(BuildConfigTarget target)
 	{
+		/*	*/
 		BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
 		System.Diagnostics.Process proc = new System.Diagnostics.Process();
 		proc.StartInfo.FileName = GetTargetLocationAbsolutePath(target);
 		proc.Start();
+	}
+
+	public static bool IsTargetRunable(BuildConfigTarget target){
+		/*	*/
+		string path = GetTargetLocationAbsolutePath(target);
+
+		return true;
 	}
 
 	public static void BuildTarget(BuildConfigTarget buildTarget)
@@ -94,7 +131,7 @@ public static class Builder
 			{
 				if (buildTarget.scenes.Length > 0)
 				{
-					targetScenes = buildTarget.scenes;
+					//targetScenes = buildTarget.scenes;
 				}
 			}
 			BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
@@ -153,7 +190,7 @@ public static class Builder
 		return false;
 	}
 
-	internal static EditorBuildSettingsScene[] getDefaultScenes()
+	static EditorBuildSettingsScene[] getDefaultScenes()
 	{
 
 		return EditorBuildSettings.scenes;

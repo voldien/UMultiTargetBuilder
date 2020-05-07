@@ -4,7 +4,7 @@ using UnityEditor;
 [CustomPropertyDrawer(typeof(BuildConfigTarget))]
 public class ConfigOptionItemPropertyDrawer: PropertyDrawer {
 
-	const int lineCount = 8;
+	const int lineCount = 9;
 	public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 	{
 		/*	Compute the height of all the fields.	*/
@@ -14,7 +14,9 @@ public class ConfigOptionItemPropertyDrawer: PropertyDrawer {
 		if (!useDefaultScenes.boolValue)
 		{
 			/*	Add additional height for the dynamic sized scene object.	*/
-			//height += EditorGUI.GetPropertyHeight(property.FindPropertyRelative("scenes"));
+			SerializedProperty scenes = property.FindPropertyRelative("scenes");
+			height += (scenes.arraySize + 1) * EditorGUIUtility.singleLineHeight;
+			EditorGUI.GetPropertyHeight(scenes);
 		}
 		return height;
 	}
@@ -28,10 +30,10 @@ public class ConfigOptionItemPropertyDrawer: PropertyDrawer {
 		var indent = EditorGUI.indentLevel;
 		EditorGUI.indentLevel++;
 
-
 		/*	Extract all properties.	*/
 		SerializedProperty enabled = property.FindPropertyRelative("enabled");
 		SerializedProperty name = property.FindPropertyRelative("name");
+		SerializedProperty title = property.FindPropertyRelative("title");
 		SerializedProperty outputDirectory = property.FindPropertyRelative("outputDirectory");
 		
 		SerializedProperty _target = property.FindPropertyRelative("target");
@@ -47,6 +49,7 @@ public class ConfigOptionItemPropertyDrawer: PropertyDrawer {
 		// Each property rectangle view bounds.
 		Rect nameRect = new Rect(position.x, position.y + defaultHeight * 0, position.width, defaultHeight);
 		Rect enabledRect = new Rect(position.x, position.y + defaultHeight * 1, position.width, defaultHeight);
+		Rect titleRect = new Rect(position.x, position.y + defaultHeight * 1, position.width, defaultHeight);
 		Rect outputRect = new Rect(position.x, position.y + defaultHeight * 2, position.width, defaultHeight);
 		Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * 3, position.width, defaultHeight);
 
@@ -56,6 +59,7 @@ public class ConfigOptionItemPropertyDrawer: PropertyDrawer {
 		Rect optionRect = new Rect(position.x, position.y + defaultHeight * 6, position.width, defaultHeight);
 		Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
 		Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * 8, position.width, defaultHeight);
+		Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * 9, position.width, defaultHeight);
 
 		//TODO compute the size of the scene.
 		//Rect scenes = new Rect(targetRect.x, targetRect.y + nameRect.height, position.width, propertyHeight);
@@ -63,8 +67,10 @@ public class ConfigOptionItemPropertyDrawer: PropertyDrawer {
 //		EditorGUI.BeginChangeCheck();
 
 		EditorGUI.PropertyField(nameRect, name, new GUIContent("Name"));
+		EditorGUILayout.Separator();
 		EditorGUI.PropertyField(enabledRect, enabled, new GUIContent("enabled"));
 		EditorGUI.PropertyField(outputRect, outputDirectory, new GUIContent("outputDirectory"));
+
 
 		EditorGUI.LabelField(settingLabelRect, new GUIContent("Build Settings"));
 
@@ -74,8 +80,10 @@ public class ConfigOptionItemPropertyDrawer: PropertyDrawer {
 
 		EditorGUI.LabelField(sceneLabelRect, new GUIContent("Scene Settings"));
 		EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, new GUIContent("Use Default Scenes"));
-		if(!useDefaultScenes.boolValue){
+		if(!useDefaultScenes.boolValue) {
 			/*	Draw each scenes property.	*/
+			SerializedProperty scenes = property.FindPropertyRelative("scenes");
+			EditorGUI.PropertyField(ScenesRect, scenes);
 		}
 
 //		if(EditorGUI.EndChangeCheck()){
