@@ -21,18 +21,19 @@ class BuilderSettingsProvider : SettingsProvider
 	[NonSerialized]
 	private int selectedConfigIndex = -1;
 
-	class Styles
+	public class Styles
 	{
 		public static GUIContent rootOutputDirectory = new GUIContent("Root output directory", "The root directory that all the target build will be stored.");
 		public static GUIContent buildConfigs = new GUIContent("Build Configuration Set", "Set of build configuration.");
 		public static GUIContent Verbose = new GUIContent("Verbose", "Output is verbosity.");
 		public static GUIContent choosePath = new GUIContent("Choose Path", "Choose the output directory for where all the target will be save to.");
 
-		public static GUIContent build = new GUIContent("Build", "Build target.");
-		public static GUIContent run = new GUIContent("Run", "");
+		public static GUIContent buildTargets = new GUIContent("Build Targets", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all Targets.");
+		public static GUIContent build = new GUIContent("Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target.");  //TODO add ICON EditorGUIUtility.IconContent("SettingsIcon")
+		public static GUIContent run = new GUIContent("Run", "Run the target.");
 		/*	*/
-		public static GUIContent export = new GUIContent("Export", "");
-		public static GUIContent import = new GUIContent("Import", "");
+		public static GUIContent export = new GUIContent("Export", "Export ");
+		public static GUIContent import = new GUIContent("Import", "Import ");
 		public static GUIContent add = new GUIContent("Add", "Add additional target.");
 		public static GUIContent addCopy = new GUIContent("Add Copy", "Add additional as a copy of the selected.");
 		public static GUIContent remove = new GUIContent("Remove", "Remove selected target.");
@@ -99,6 +100,7 @@ class BuilderSettingsProvider : SettingsProvider
 		EditorGUI.PropertyField(enabledRect, enabled, new GUIContent("", "Enable target for building."));
 		EditorGUI.LabelField(displayNameRect, displayName);
 		EditorGUI.PropertyField(nameRect, name, new GUIContent(""));
+		//TODO add build button.
 
 		/*	If item selected.	*/
 		if (isFocused && isActive)
@@ -107,7 +109,7 @@ class BuilderSettingsProvider : SettingsProvider
 
 	private void DrawListHeader(Rect rect)
 	{
-		GUI.Label(rect, "Build Targets");
+		GUI.Label(rect, "Build Targets",EditorStyles.boldLabel);
 	}
 
 	public override void OnDeactivate()
@@ -164,23 +166,33 @@ class BuilderSettingsProvider : SettingsProvider
 		EditorGUILayout.BeginVertical();
 
 		/*	Iterate through each item.	*/
-		foreach (SerializedProperty item in m_BuilderConfigSettings.FindProperty("options"))
+		BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
+		if (settings != null)
 		{
-			BUildConfigTarget target = (BUildConfigTarget)item.objectReferenceValue;
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField(target.title);
-			EditorGUI.BeginDisabledGroup(!Builder.IsTargetRunable(target));
-			if(GUILayout.Button(Styles.run)){
-				try{
-					Builder.RunTarget(item);
-				}catch(Exception ex){
-					EditorUtility.DisplayDialog(string.Format("Failed Running '{}'", target.name), "", "OK");
-				}
+			foreach (BuildConfigTarget target in settings.options)
+			{
 
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField(string.Format("{0}, ({1})",target.name, target.Title));
+
+				EditorGUI.BeginDisabledGroup(!Builder.IsTargetRunable(target));
+				if (GUILayout.Button(Styles.run))
+				{
+					try
+					{
+						Builder.RunTarget(target);
+					}
+					catch (Exception ex)
+					{
+						EditorUtility.DisplayDialog(string.Format("Failed Running '{}'", target.name), "", "OK");
+					}
+				}
+				EditorGUI.EndDisabledGroup();
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.Space();
 			}
-			EditorGUI.EndDisabledGroup();
-			EditorGUILayout.EndHorizontal();
 		}
+
 		EditorGUILayout.EndVertical();
 	}
 
@@ -252,7 +264,12 @@ class BuilderSettingsProvider : SettingsProvider
 
 		EditorGUILayout.EndHorizontal();
 
+		EditorGUILayout.Space();
+
 		DisplayRunList();
+
+
+		EditorGUILayout.Separator();
 
 		EditorGUILayout.EndScrollView();
 
@@ -261,6 +278,11 @@ class BuilderSettingsProvider : SettingsProvider
 
 		EditorGUILayout.BeginHorizontal();
 		string ext = ".bcn";    //TODO relocate.
+
+		if (GUILayout.Button(Styles.buildTargets))
+		{
+			Builder.BuildFromConfig((BuilderConfigSettings)configurations.objectReferenceValue);
+		}
 		if (GUILayout.Button(Styles.export))
 		{
 			/*	Export.	*/

@@ -5,31 +5,28 @@ using System;
 [Serializable]
 public class BuildConfigTarget
 {
-// #if UNITY_EDITOR
-// 	//Put gui elements for custom inspector here
-// 	[HideInInspector, NonSerialized]
-// 	public bool Foldout = true;
-// #endif
+	[Tooltip("The name of the executable."), SerializeField]
+	public string title;
 	[Tooltip(""), SerializeField]
-	public String title;
-	[Tooltip(""), SerializeField]
-	public String Company;
-	[Tooltip(""), SerializeField]
-	public String outputDirectory;
-	[Tooltip("")]
-	public String name;
-	[Tooltip(""), SerializeField]
+	public string Company;
+	[Tooltip("Relative output directory."), SerializeField]
+	public string outputDirectory;
+	[Tooltip("The name of the target. (Used in the editor only)")]
+	public string name;
+	[Tooltip("Enabled for building when invoking build all targets."), SerializeField]
 	public bool enabled = true;
-	[SerializeField, Tooltip("")] // Tooltip("Set of Build Options."), InspectorName("Build Configuration Options")
+	[SerializeField, Tooltip("Use the default scenes specified by the build setting.")] // Tooltip("Set of Build Options."), InspectorName("Build Configuration Options")
 	public bool useDefaultScenes = true;
 	[SerializeField,Obsolete("")]
-	public BuildPlayerOptions buildPlayerOptions;
-	[SerializeField]
+	public BuildPlayerOptions buildPlayerOptions;	// TODO remove.
+	[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
 	public GUID[] scenes;
-	[SerializeField, Tooltip("")]
+	[SerializeField, Tooltip("The target group.")]
 	public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
-	[SerializeField, Tooltip("")]
+	[SerializeField, Tooltip("Specified target.")]
 	public BuildTarget target = BuildTarget.StandaloneLinux64;
-	[SerializeField, Tooltip("")]
+	[SerializeField, Tooltip("Build options.")]
 	public BuildOptions options = BuildOptions.None;
+
+	public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }
 }

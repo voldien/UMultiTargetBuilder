@@ -60,10 +60,10 @@ public static class Builder
 
 		/*	Determine the title.	*/
 		string titleName;
-		if(settings.title == 0)
-			string titleName = PlayerSettings.productName;
+		if(target.title.Length == 0)
+			titleName = PlayerSettings.productName;
 		else
-			titleName = settings.title;
+			titleName = target.title;
 
 		/*	Compute the output filepath.	*/
 		if (target.outputDirectory.Length > 0)
@@ -77,6 +77,12 @@ public static class Builder
 				case UnityEditor.BuildTarget.StandaloneWindows:
 				case UnityEditor.BuildTarget.StandaloneWindows64:
 					path = string.Format("{0}{1}", path, ".exe");
+					break;
+				case UnityEditor.BuildTarget.StandaloneLinux64:
+					path = string.Format("{0}{1}", path, ".x86_64");
+					break;
+				case UnityEditor.BuildTarget.Android:
+					path = string.Format("{0}{1}", path, ".apk");
 					break;
 				default:
 					break;
@@ -106,8 +112,10 @@ public static class Builder
 	public static bool IsTargetRunable(BuildConfigTarget target){
 		/*	*/
 		string path = GetTargetLocationAbsolutePath(target);
-
-		return true;
+		if(File.Exists(path)){
+			return true;
+		}
+		return false;
 	}
 
 	public static void BuildTarget(BuildConfigTarget buildTarget)

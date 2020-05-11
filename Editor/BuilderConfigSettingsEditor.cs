@@ -20,7 +20,7 @@ public class BuilderConfigSettingsEditor : Editor
 
 	public override void OnInspectorGUI()
 	{
-		if (GUILayout.Button("Build Targets"))
+		if (GUILayout.Button(BuilderSettingsProvider.Styles.buildTargets))
 		{
 			try
 			{
@@ -40,14 +40,14 @@ public class BuilderConfigSettingsEditor : Editor
 		serializedObject.Update();
 
 		EditorGUILayout.BeginHorizontal();
-		if (GUILayout.Button("Add"))
+		if (GUILayout.Button(BuilderSettingsProvider.Styles.add))
 		{
 			configurations.InsertArrayElementAtIndex(configurations.arraySize);
 			serializedObject.ApplyModifiedProperties();
 			serializedObject.Update();
 
 		}
-		if (GUILayout.Button("Copy Current"))
+		if (GUILayout.Button(BuilderSettingsProvider.Styles.addCopy))
 		{
 			BuildTarget _target = EditorUserBuildSettings.activeBuildTarget;
 			BuildTargetGroup _targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
@@ -67,26 +67,14 @@ public class BuilderConfigSettingsEditor : Editor
 			{
 				SerializedProperty option = configurations.GetArrayElementAtIndex(i);
 
-				SerializedProperty buildOption = option.FindPropertyRelative("buildPlayerOptions");
-				SerializedProperty buildTarget = option.FindPropertyRelative("target");
+				// SerializedProperty buildOption = option.FindPropertyRelative("buildPlayerOptions");
+				// SerializedProperty buildTarget = option.FindPropertyRelative("target");
 				BuildConfigTarget optionItem = ((BuilderConfigSettings)serializedObject.targetObject).options[i];
 
-				option.GetHashCode();
-				bool enabled = option.FindPropertyRelative("enabled").boolValue;
-				bool Foldout = option.FindPropertyRelative("Foldout").boolValue;
-
-				Foldout = EditorGUILayout.BeginFoldoutHeaderGroup(Foldout, new GUIContent(optionItem.name));
-				option.FindPropertyRelative("Foldout").boolValue = Foldout;
-
-				EditorGUI.BeginDisabledGroup(!enabled);  //TODO negate
-
-				EditorGUILayout.BeginHorizontal();
 				/*	Draw build option configuration.	*/
-				EditorGUILayout.PropertyField(option, new GUIContent("Build Config Options")); // buildTarget.enumDisplayNames[buildTarget.enumValueIndex]
-				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.PropertyField(option, new GUIContent("")); // buildTarget.enumDisplayNames[buildTarget.enumValueIndex]
 
-				EditorGUI.EndDisabledGroup();
-				if (GUILayout.Button("Remove"))
+				if (GUILayout.Button(BuilderSettingsProvider.Styles.remove))
 				{ // TODO ADD icon
 					this.configurations.DeleteArrayElementAtIndex(i);
 					/*	Break out of the iteraton.	*/
@@ -95,19 +83,12 @@ public class BuilderConfigSettingsEditor : Editor
 
 				bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
 				EditorGUI.BeginDisabledGroup(!isTargetSupported);
-				if (GUILayout.Button("Build"))
-				{  //TODO add ICON
+				if (GUILayout.Button(BuilderSettingsProvider.Styles.build))
+				{
 					Builder.BuildTarget(optionItem);
-
-					EditorGUI.ProgressBar(Rect.zero, 0, "");
 				}
-				EditorGUI.EndDisabledGroup();
 
-
-				EditorGUILayout.EndFoldoutHeaderGroup();
-
-
-				EditorGUILayout.Space();
+				EditorGUILayout.Separator();
 				/*	*/
 				EditorGUILayout.BeginHorizontal();
 				if (Builder.isBuildTargetSupported(optionItem))
@@ -119,11 +100,7 @@ public class BuilderConfigSettingsEditor : Editor
 				else
 				{
 					GUIStyle TextFieldStyles = new GUIStyle(EditorStyles.textField);
-					//Value Color
-					//TextFieldStyles.normal.textColor = Color.red;
-
-					//Label Color 
-
+		
 					GUILayout.Label(EditorGUIUtility.IconContent("sv_icon_dot4_pix16_gizmo"), GUILayout.MinWidth(16), GUILayout.MaxWidth(32));
 					Color currentColor = EditorStyles.label.normal.textColor;
 					EditorStyles.label.normal.textColor = Color.red;
@@ -148,32 +125,4 @@ public class BuilderConfigSettingsEditor : Editor
 		Texture2D tex = EditorGUIUtility.IconContent("SettingsIcon").image as Texture2D;
 		return EditorGUIUtility.IconContent("SettingsIcon").image as Texture2D;
 	}
-
-	//EditorGUILayout.BeginBuildTargetSelectionGrouping
-
-	public static void CreateAsset<BuilderConfig>() where BuilderConfig : ScriptableObject
-	{
-		BuilderConfig asset = ScriptableObject.CreateInstance<BuilderConfig>();
-
-		string path = AssetDatabase.GetAssetPath(Selection.activeObject);
-
-		if (path == "")
-		{
-			path = "Assets";
-		}
-		else if (Path.GetExtension(path) != "")
-		{
-			path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
-		}
-
-		/**/
-		string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath(path + "/New " + typeof(BuilderConfig).ToString() + ".asset");
-
-		AssetDatabase.CreateAsset(asset, assetPathAndName);
-		AssetDatabase.SaveAssets();
-		AssetDatabase.Refresh();
-		EditorUtility.FocusProjectWindow();
-		Selection.activeObject = asset;
-	}
-
 }
