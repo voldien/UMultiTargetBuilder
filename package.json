@@ -11,8 +11,7 @@
     ],
     "author": {
         "name": "Valdemar Lindberg",
-        "email": "voldiekami@gmail.com",
-        "url": ""
+        "email": "voldiekami@gmail.com"
     },
     "testables": [
         "com.linuxsenpai.builder.editor.test"
