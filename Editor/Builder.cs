@@ -47,9 +47,16 @@ public static class Builder
 
 	public static void BuildFromConfig(BuilderConfigSettings config)
 	{
-		foreach (BuildConfigTarget buildConfigtarget in config.options)
-		{
-			BuildTarget(buildConfigtarget);
+		/*	*/
+		BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+		BuildGroupTarget currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+		try{
+			foreach (BuildConfigTarget buildConfigtarget in config.options)
+			{
+				InternalBuildTarget(buildConfigtarget);
+			}
+		}finally {
+			EditorUserBuildSettings.SwitchActiveBuildTargetAsync(currentGroup, currentTarget);
 		}
 	}
 
@@ -59,11 +66,11 @@ public static class Builder
 		string path = null;
 
 		/*	Determine the title.	*/
-		string titleName;
-		if(target.title.Length == 0)
-			titleName = PlayerSettings.productName;
-		else
-			titleName = target.title;
+		string titleName = target.Title;
+		// if(target.title.Length == 0)
+		// 	titleName = PlayerSettings.productName;
+		// else
+		// 	titleName = target.title;
 
 		/*	Compute the output filepath.	*/
 		if (target.outputDirectory.Length > 0)
@@ -118,8 +125,9 @@ public static class Builder
 		return false;
 	}
 
-	public static void BuildTarget(BuildConfigTarget buildTarget)
-	{
+
+	internal static void InternalBuildTarget(BuildConfigTarget buildTarget){
+
 		BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
 		if (buildTarget.enabled)
 		{
@@ -188,6 +196,18 @@ public static class Builder
 		}
 	}
 
+	//TODO relocate to the internal build and put the try finally in this code block.
+	public static void BuildTarget(BuildConfigTarget buildTarget)
+	{
+		BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+		BuildGroupTarget currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+		try{
+			InternalBuildTarget(buildTarget);
+		}finally{
+			EditorUserBuildSettings.SwitchActiveBuildTargetAsync(currentGroup, currentTarget);
+		}
+	}
+
 	public static bool isBuildTargetSupported(BuildConfigTarget configOptionItem)
 	{
 		if (BuildPipeline.IsBuildTargetSupported(configOptionItem.targetGroup, configOptionItem.target))
@@ -200,7 +220,6 @@ public static class Builder
 
 	static EditorBuildSettingsScene[] getDefaultScenes()
 	{
-
 		return EditorBuildSettings.scenes;
 	}
 }
