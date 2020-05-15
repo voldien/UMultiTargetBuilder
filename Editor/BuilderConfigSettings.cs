@@ -61,11 +61,6 @@ namespace BuildMultiPlatform
 			/*	Update the provider.	*/
 		}
 
-		public static BuilderConfigSettings loadFromPath(string path)
-		{
-			return null;
-		}
-
 		internal static SerializedObject GetSerializedSettings()
 		{
 			return new SerializedObject(GetOrCreateSettings());

@@ -8,25 +8,36 @@ namespace BuildMultiPlatform
 	public class ConfigOptionItemPropertyDrawer : PropertyDrawer
 	{
 
-		const int toggleOptionlineCount = 4;
+		const int toggleOptionlineCount = 5;
 		const int lineCount = 10 + toggleOptionlineCount;
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			/*	Compute the height of all the fields.	*/
 			float height = EditorGUIUtility.singleLineHeight * lineCount + EditorGUIUtility.standardVerticalSpacing * (lineCount - 1);
 
+			switch((BuildTargetGroup)property.FindPropertyRelative("targetGroup").enumValue){
+				case BuildTargetGroup.Standalone:
+				break;
+				case BuildTargetGroup.Android:
+				break;
+			}
+
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
 			if (!useDefaultScenes.boolValue)
 			{
 				/*	Add additional height for the dynamic sized scene object.	*/
 				SerializedProperty scenes = property.FindPropertyRelative("scenes");
+				//TODO determine the final height computation of the scene list.
 				height += (scenes.arraySize + 1) * EditorGUIUtility.singleLineHeight;
-				EditorGUI.GetPropertyHeight(scenes);
+				height += EditorGUI.GetPropertyHeight(scenes);
 			}
 			return height;
 		}
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
+			int nthRow = 0;
+			int nthCol = 0;
+			int nrCol = 2;
 
 			EditorGUI.BeginProperty(position, label, property);
 
@@ -40,29 +51,71 @@ namespace BuildMultiPlatform
 			SerializedProperty name = property.FindPropertyRelative("title");
 			SerializedProperty title = property.FindPropertyRelative("title");
 			SerializedProperty outputDirectory = property.FindPropertyRelative("outputDirectory");
-
+			/*	*/
 			SerializedProperty _target = property.FindPropertyRelative("target");
 			SerializedProperty targetGroup = property.FindPropertyRelative("targetGroup");
 			SerializedProperty flags = property.FindPropertyRelative("options");
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
 
-			float propertyHeight = position.height / (float)lineCount;
-
-			float textWidth = 80.0f;
-			float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+			/*	*/
+			const float propertyHeight = position.height / (float)lineCount;
+			const float textWidth = 80.0f;
+			const float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+			const float toggleTextWidth = 90.0f;
 
 			// Each property rectangle view bounds.
-			Rect metaRect = new Rect(position.x, position.y + defaultHeight * 0, position.width, defaultHeight);
-			Rect nameRect = new Rect(position.x, position.y + defaultHeight * 1, position.width, defaultHeight);
-			Rect enabledRect = new Rect(position.x, position.y + defaultHeight * 2, position.width, defaultHeight);
-			Rect titleRect = new Rect(position.x, position.y + defaultHeight * 1, position.width, defaultHeight);
-			Rect outputRect = new Rect(position.x, position.y + defaultHeight * 3, position.width, defaultHeight);
-			Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * 4, position.width, defaultHeight);
+			Rect metaRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect titleRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+//			Rect nameRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect enabledRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect outputRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
+			/*	*/
+			Rect targetRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect targetGroupRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect optionRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
-			Rect targetRect = new Rect(position.x, position.y + defaultHeight * 5, position.width, defaultHeight);
-			Rect targetGroupRect = new Rect(position.x, position.y + defaultHeight * 6, position.width, defaultHeight);
-			Rect optionRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			/*	Settings options.	*/
+			Rect optionDevelopmentRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+			Rect optionSrictRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+
+			Rect optionCRCRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+			Rect optionAllowDebuggingRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+
+			Rect optionUncompressedAssetBundleRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+			Rect optionEnableHeadlessModeRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+
+			Rect optionCompressWithLz4Rect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+			Rect optionCompressWithLz4HCRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+
+			Rect optionIncludeTestAssembliesRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+			Rect optionEnableCodeCoverageRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+
+			Rect optionEnableDeepProfilingSupportRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+			Rect optionWaitForPlayerConnectionRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			nthCol = (nthCol+ 1) % nrCol;
+
+			/*	TODO add additional options dependong on the target platform.	*/
+			switch((BuildTargetGroup)flags.enumValue){
+				case BuildTargetGroup.Standalone:
+				break;
+				case BuildTargetGroup.Android:
+				break;
+			}
+
+			/*	Scene options.	*/
 			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * 8, position.width, defaultHeight);
 			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * 9, position.width, defaultHeight);
 			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * 10, position.width, defaultHeight);
@@ -87,6 +140,7 @@ namespace BuildMultiPlatform
 			EditorGUI.PropertyField(targetRect, _target, new GUIContent("Target"));
 			EditorGUI.PropertyField(targetGroupRect, targetGroup, new GUIContent("Target Group"));
 			EditorGUI.PropertyField(optionRect, flags, new GUIContent("Option Flags"));
+
 			//EditorGUI.ToggleLeft(optionRect, "", flags.intValue & 0x1 );
 
 			EditorGUI.indentLevel--;
