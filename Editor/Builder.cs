@@ -43,6 +43,19 @@ namespace BuildMultiPlatform
 			BuildFromConfig(config);
 		}
 
+		[MenuItem("Build/Build Targets (Script only)", true, 1)]
+		public static void PerformBuildScriptOnlyContext(){
+			return BuilderConfigSettings.GetOrCreateSettings().options.Length > 0;
+		}
+
+		[MenuItem("Build/Build Targets (Script only)", false, 1)]
+		public static void PerformBuildScriptOnlyContext(){
+			//TODO make a copy and add the script only target -> Forcing the state.
+			BuilderConfigSettings config = BuilderConfigSettings.GetOrCreateSettings();
+			BuildFromConfig(config);
+			/*	*/
+		}
+
 		public static void PerformDefaultBuild()
 		{
 			/*	Find the default.	*/
@@ -50,7 +63,7 @@ namespace BuildMultiPlatform
 
 		public static void BuildFromConfig(BuilderConfigSettings config)
 		{
-			/*	*/
+			/*	Remeber the state of the current build target.	*/
 			BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
 			BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 			try
@@ -62,6 +75,7 @@ namespace BuildMultiPlatform
 			}
 			finally
 			{
+				/*	Reset the state.	*/
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(currentGroup, currentTarget);
 			}
 		}
@@ -206,9 +220,9 @@ namespace BuildMultiPlatform
 			}
 		}
 
-		//TODO relocate to the internal build and put the try finally in this code block.
 		public static void BuildTarget(BuildConfigTarget buildTarget)
 		{
+			/*	*/
 			BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
 			BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 			try
@@ -217,6 +231,7 @@ namespace BuildMultiPlatform
 			}
 			finally
 			{
+				/*	*/
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(currentGroup, currentTarget);
 			}
 		}
@@ -231,7 +246,7 @@ namespace BuildMultiPlatform
 			return false;
 		}
 
-		static EditorBuildSettingsScene[] getDefaultScenes()
+		internal static EditorBuildSettingsScene[] getDefaultScenes()
 		{
 			return EditorBuildSettings.scenes;
 		}
