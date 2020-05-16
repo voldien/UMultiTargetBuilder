@@ -20,7 +20,7 @@ namespace BuildMultiPlatform
         public static void PerformDefaultBuildContext()
         {
 
-            BuildConfigTarget defaultTarget = new BuildConfigTarget();
+            BuildTarget defaultTarget = new BuildTarget();
             defaultTarget.name = "Default";
             //defaultTarget.scenes = getDefaultScenes();
             defaultTarget.target = EditorUserBuildSettings.activeBuildTarget;
@@ -33,7 +33,7 @@ namespace BuildMultiPlatform
         [MenuItem("Build/Build Targets", true, 0)]
         public static bool ValidatePerformBuildContext()
         {
-            return BuilderConfigSettings.GetOrCreateSettings().options.Length > 0;
+            return BuilderConfigSettings.GetOrCreateSettings().targets.Length > 0;
         }
 
         [MenuItem("Build/Build Targets", false, 0)]
@@ -46,7 +46,7 @@ namespace BuildMultiPlatform
         [MenuItem("Build/Build Targets (Script only)", true, 1)]
         public static bool ValidatePerformBuildScriptOnlyContext()
         {
-            return BuilderConfigSettings.GetOrCreateSettings().options.Length > 0;
+            return BuilderConfigSettings.GetOrCreateSettings().targets.Length > 0;
         }
 
         [MenuItem("Build/Build Targets (Script only)", false, 1)]
@@ -70,7 +70,7 @@ namespace BuildMultiPlatform
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             try
             {
-                foreach (BuildConfigTarget buildConfigtarget in config.options)
+                foreach (BuildTarget buildConfigtarget in config.targets)
                 {
                     InternalBuildTarget(buildConfigtarget);
                 }
@@ -89,7 +89,7 @@ namespace BuildMultiPlatform
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             try
             {
-                foreach (BuildConfigTarget buildConfigtarget in config.options)
+                foreach (BuildTarget buildConfigtarget in config.options)
                 {
                     InternalBuildScriptOnly(buildConfigtarget);
                 }
@@ -102,7 +102,7 @@ namespace BuildMultiPlatform
 
         }
 
-        public static string GetTargetLocationAbsolutePath(BuildConfigTarget target)
+        public static string GetTargetLocationAbsolutePath(BuildTarget target)
         {
             BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
             string path = null;
@@ -146,7 +146,7 @@ namespace BuildMultiPlatform
             }
         }
 
-        public static void RunTarget(BuildConfigTarget target)
+        public static void RunTarget(BuildTarget target)
         {
             /*	*/
             BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
@@ -155,7 +155,7 @@ namespace BuildMultiPlatform
             proc.Start();
         }
 
-        public static bool IsTargetRunable(BuildConfigTarget target)
+        public static bool IsTargetRunable(BuildTarget target)
         {
             /*	*/
             string path = GetTargetLocationAbsolutePath(target);
@@ -167,14 +167,14 @@ namespace BuildMultiPlatform
             return false;
         }
 
-        internal static void InternalBuildScriptOnly(BuildConfigTarget buildTarget)
+        internal static void InternalBuildScriptOnly(BuildTarget buildTarget)
         {
             BuilderConfigTarget targetCopy = buildTarget.Copy();
             targetCopy.options |= BuildOptions.BuildScriptsOnly;
             InternalBuildTarget(targetCopy);
         }
 
-        internal static void InternalBuildTarget(BuildConfigTarget buildTarget)
+        internal static void InternalBuildTarget(BuildTarget buildTarget)
         {
 
             BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
@@ -245,7 +245,7 @@ namespace BuildMultiPlatform
             }
         }
 
-        public static void BuildTarget(BuildConfigTarget buildTarget)
+        public static void BuildTarget(BuildTarget buildTarget)
         {
             /*	*/
             BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -261,7 +261,7 @@ namespace BuildMultiPlatform
             }
         }
 
-        public static void BuildTargetScriptOnly(BuildConfigTarget buildTarget)
+        public static void BuildTargetScriptOnly(BuildTarget buildTarget)
         {
             /*	*/
             BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -279,7 +279,7 @@ namespace BuildMultiPlatform
             }
         }
 
-        public static bool isBuildTargetSupported(BuildConfigTarget configOptionItem)
+        public static bool isBuildTargetSupported(BuildTarget configOptionItem)
         {
             if (BuildPipeline.IsBuildTargetSupported(configOptionItem.targetGroup, configOptionItem.target))
             {

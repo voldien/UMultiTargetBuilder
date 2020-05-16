@@ -12,7 +12,7 @@ namespace BuildMultiPlatform
 		[Tooltip("Root Directory where all build will be located"), SerializeField]
 		public string rootOutputDirectory;
 		[SerializeField, HideInInspector, Tooltip("Root Directory where all build will be located")]
-		public BuildConfigTarget[] options;
+		public BuildTarget[] targets;
 
 		[SerializeField, Tooltip("Verbosity of the building process")]
 		public bool verbose;

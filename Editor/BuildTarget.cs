@@ -4,14 +4,13 @@ using System;
 
 namespace BuildMultiPlatform
 {
-	//TODO rename now that a namespace has been added.
 	[Serializable]
-	public class BuildConfigTarget
+	public class BuildTarget
 	{
 		[Tooltip("The name of the executable."), SerializeField]
 		public string title;
 		[Tooltip(""), SerializeField]
-		public string Company;
+		public string company;
 		[Tooltip("Relative output directory."), SerializeField]
 		public string outputDirectory;
 		[Tooltip("The name of the target. (Used in the editor only)")]
@@ -27,7 +26,7 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("The target group.")]
 		public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
 		[SerializeField, Tooltip("Specified target.")]
-		public BuildTarget target = BuildTarget.StandaloneLinux64;
+		public UnityEditor.BuildTarget target = UnityEditor.BuildTarget.StandaloneLinux64;
 		[SerializeField, Tooltip("Build options.")]
 		public BuildOptions options = BuildOptions.None;
 		public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }

@@ -73,7 +73,7 @@ namespace BuildMultiPlatform
             }
 
             /*	Autoselect the first if any build target exists.	*/
-            if (BuilderConfigSettings.GetOrCreateSettings().options.Length > 0)
+            if (BuilderConfigSettings.GetOrCreateSettings().targets.Length > 0)
                 this.selectedConfigIndex = 0;
         }
 
@@ -181,7 +181,7 @@ namespace BuildMultiPlatform
             BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
             if (settings != null)
             {
-                foreach (BuildConfigTarget target in settings.options)
+                foreach (BuildTarget target in settings.targets)
                 {
 
                     EditorGUILayout.BeginHorizontal();
@@ -255,13 +255,13 @@ namespace BuildMultiPlatform
             EditorGUILayout.BeginVertical("GroupBox", GUILayout.ExpandHeight(true));
             EditorGUILayout.LabelField("");
             /*	Displace the build target if selected and is a valid index.	*/
-            if (selectedConfigIndex >= 0 && selectedConfigIndex < settings.options.Length)
+            if (selectedConfigIndex >= 0 && selectedConfigIndex < settings.targets.Length)
             {
                 /*	*/
                 //configurations.GetArrayElementAtIndex(selectedConfigIndex);
                 EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true, GUILayout.ExpandHeight(true));
 
-                BuildConfigTarget optionItem = BuilderConfigSettings.GetOrCreateSettings().options[selectedConfigIndex];
+                BuildTarget optionItem = BuilderConfigSettings.GetOrCreateSettings().targets[selectedConfigIndex];
                 EditorGUILayout.BeginHorizontal();
                 bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
                 EditorGUI.BeginDisabledGroup(!isTargetSupported);
@@ -294,7 +294,7 @@ namespace BuildMultiPlatform
             EditorGUILayout.EndScrollView();
 
             /*	Summary information.	*/
-            EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.options.Length.ToString()));
+            EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.targets.Length.ToString()));
 
             EditorGUILayout.BeginHorizontal();
             string ext = "bcn";    //TODO relocate.
