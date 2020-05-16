@@ -83,8 +83,8 @@ namespace BuildMultiPlatform
         }
 
         public static void BuildFromConfigScriptOnly(BuilderConfigSettings settings)
-		{
-			/*	Remeber the state of the current build target.	*/
+        {
+            /*	Remeber the state of the current build target.	*/
             BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             try
@@ -113,7 +113,7 @@ namespace BuildMultiPlatform
             else
                 path = Path.GetFullPath(string.Format("{0}/{1}", settings.rootOutputDirectory, target.Title));
 
-			/*	Add extension in order to make the target work properly in its environment.	*/
+            /*	Add extension in order to make the target work properly in its environment.	*/
             if (!Path.HasExtension(path))
             {
                 switch (target.target)
@@ -128,7 +128,7 @@ namespace BuildMultiPlatform
                     case UnityEditor.BuildTarget.Android:
                         path = string.Format("{0}{1}", path, ".apk");
                         break;
-					//TODO add support for other platforms.
+                    //TODO add support for other platforms.
                     default:
                         break;
                 }
@@ -141,7 +141,7 @@ namespace BuildMultiPlatform
             }
             else
             {
-				//TODO add exception.
+                //TODO add exception.
                 return path;
             }
         }
@@ -161,7 +161,7 @@ namespace BuildMultiPlatform
             string path = GetTargetLocationAbsolutePath(target);
             if (File.Exists(path))
             {
-				/*	TODO add support if path is executable and what platform the target is in respect to current.	*/
+                /*	TODO add support if path is executable and what platform the target is in respect to current.	*/
                 return true;
             }
             return false;
@@ -170,7 +170,7 @@ namespace BuildMultiPlatform
         internal static void InternalBuildScriptOnly(BuildConfigTarget buildTarget)
         {
             BuilderConfigTarget targetCopy = buildTarget.Copy();
-			targetCopy.options |= BuildOptions.BuildScriptsOnly;
+            targetCopy.options |= BuildOptions.BuildScriptsOnly;
             InternalBuildTarget(targetCopy);
         }
 
@@ -261,22 +261,23 @@ namespace BuildMultiPlatform
             }
         }
 
-        public static void BuildTargetScriptOnly(BuildConfigTarget buildTarget){
-			            /*	*/
+        public static void BuildTargetScriptOnly(BuildConfigTarget buildTarget)
+        {
+            /*	*/
             BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
-			StackPushBuildConfiguration();
+            StackPushBuildConfiguration();
             try
             {
-			InternalBuildScriptOnly(buildTarget);
-			            }
+                InternalBuildScriptOnly(buildTarget);
+            }
             finally
             {
                 /*	*/
-				StackPopBuildConfiguration();s
+                StackPopBuildConfiguration();
                 EditorUserBuildSettings.SwitchActiveBuildTargetAsync(currentGroup, currentTarget);
             }
-		}
+        }
 
         public static bool isBuildTargetSupported(BuildConfigTarget configOptionItem)
         {
@@ -293,8 +294,8 @@ namespace BuildMultiPlatform
             return EditorBuildSettings.scenes;
         }
 
-		internal static void StackPushBuildConfiguration(){}
-		internal static void StackPopBuildConfiguration(){}
+        internal static void StackPushBuildConfiguration() { }
+        internal static void StackPopBuildConfiguration() { }
     }
 
 }

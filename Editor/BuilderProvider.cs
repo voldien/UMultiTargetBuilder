@@ -30,7 +30,7 @@ namespace BuildMultiPlatform
             public static GUIContent choosePath = new GUIContent("Choose Path", "Choose the output directory for where all the target will be save to.");
             /*  */
             public static GUIContent buildTargets = new GUIContent("Build Targets", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets.");
-			public static GUIContent buildTargetsScriptOnly = new GUIContent("Build Targets (Scripts", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets script only");
+            public static GUIContent buildTargetsScriptOnly = new GUIContent("Build Targets (Scripts", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets script only");
             public static GUIContent build = new GUIContent("Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target.");
             public static GUIContent buildScript = new GUIContent("Script Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target script only");
             public static GUIContent run = new GUIContent("Run", "Run the target.");
@@ -294,7 +294,7 @@ namespace BuildMultiPlatform
             EditorGUILayout.EndScrollView();
 
             /*	Summary information.	*/
-            EditorGUILayout.LabelField(string.Format("Number of targets: {0}",settings.options.Length.ToString()));
+            EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.options.Length.ToString()));
 
             EditorGUILayout.BeginHorizontal();
             string ext = "bcn";    //TODO relocate.
@@ -303,15 +303,15 @@ namespace BuildMultiPlatform
             {
                 Builder.BuildFromConfig((BuilderConfigSettings)m_configurations.objectReferenceValue);
             }
-			if (GUILayout.Button(Styles.buildTargetsScriptOnly))
+            if (GUILayout.Button(Styles.buildTargetsScriptOnly))
             {
-				/*	TODO change, refractor and reduce coupling.	*/
+                /*	TODO change, refractor and reduce coupling.	*/
                 Builder.Build((BuilderConfigSettings)m_configurations.objectReferenceValue);
             }
             if (GUILayout.Button(Styles.export))
             {
                 /*	Export.	*/
-                string path = EditorUtility.SaveFilePanel("Choose export file path", Directory.GetCurrentDirectory(), string.Format("{0}",Application.productName), ext);
+                string path = EditorUtility.SaveFilePanel("Choose export file path", Directory.GetCurrentDirectory(), string.Format("{0}", Application.productName), ext);
                 /*	*/
                 if (path.Length != 0)
                 {
@@ -321,8 +321,8 @@ namespace BuildMultiPlatform
                     }
                     catch (Exception ex)
                     {
-						Debug.LogError(ex.Message);
-					}
+                        Debug.LogError(ex.Message);
+                    }
                     finally
                     {
 
@@ -342,7 +342,7 @@ namespace BuildMultiPlatform
                     }
                     catch (Exception ex)
                     {
-						Debug.LogError(ex.Message);
+                        Debug.LogError(ex.Message);
                     }
                     finally
                     {
