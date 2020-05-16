@@ -7,7 +7,13 @@ namespace BuildMultiPlatform
 	[CustomPropertyDrawer(typeof(BuildConfigTarget))]
 	public class ConfigOptionItemPropertyDrawer : PropertyDrawer
 	{
-
+		public class Styles
+		{
+			GUIContent metaInformation = new GUIContent("Meta Information");
+			GUIContent title = new GUIContent("Title");
+			GUIContent t_itle = new GUIContent("Title");
+			GUIContent __title = new GUIContent("Title");
+		}
 		const int toggleOptionlineCount = 5;
 		const int lineCount = 10 + toggleOptionlineCount;
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -15,7 +21,7 @@ namespace BuildMultiPlatform
 			/*	Compute the height of all the fields.	*/
 			float height = EditorGUIUtility.singleLineHeight * lineCount + EditorGUIUtility.standardVerticalSpacing * (lineCount - 1);
 
-			switch((BuildTargetGroup)property.FindPropertyRelative("targetGroup").enumValue){
+			switch((BuildTargetGroup)property.FindPropertyRelative("targetGroup").intValue){
 				case BuildTargetGroup.Standalone:
 				break;
 				case BuildTargetGroup.Android:
@@ -27,8 +33,6 @@ namespace BuildMultiPlatform
 			{
 				/*	Add additional height for the dynamic sized scene object.	*/
 				SerializedProperty scenes = property.FindPropertyRelative("scenes");
-				//TODO determine the final height computation of the scene list.
-				height += (scenes.arraySize + 1) * EditorGUIUtility.singleLineHeight;
 				height += EditorGUI.GetPropertyHeight(scenes);
 			}
 			return height;
@@ -58,9 +62,9 @@ namespace BuildMultiPlatform
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
 
 			/*	*/
-			const float propertyHeight = position.height / (float)lineCount;
-			const float textWidth = 80.0f;
-			const float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+			float propertyHeight = position.height / (float)lineCount;
+			const float textWidth = 100.0f;
+			float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 			const float toggleTextWidth = 90.0f;
 
 			// Each property rectangle view bounds.
@@ -77,38 +81,44 @@ namespace BuildMultiPlatform
 			Rect optionRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
 			/*	Settings options.	*/
-			Rect optionDevelopmentRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionDevelopmentRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
-			Rect optionSrictRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionSrictRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
+			nthRow++;
 
-			Rect optionCRCRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionCRCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
-			Rect optionAllowDebuggingRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionAllowDebuggingRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
+			nthRow++;
 
-			Rect optionUncompressedAssetBundleRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionUncompressedAssetBundleRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
-			Rect optionEnableHeadlessModeRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionEnableHeadlessModeRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
+			nthRow++;
 
-			Rect optionCompressWithLz4Rect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionCompressWithLz4Rect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
-			Rect optionCompressWithLz4HCRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionCompressWithLz4HCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
+			nthRow++;
 
-			Rect optionIncludeTestAssembliesRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionIncludeTestAssembliesRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
-			Rect optionEnableCodeCoverageRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
+			Rect optionEnableCodeCoverageRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
 			nthCol = (nthCol+ 1) % nrCol;
+			nthRow++;
 
-			Rect optionEnableDeepProfilingSupportRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
-			nthCol = (nthCol+ 1) % nrCol;
-			Rect optionWaitForPlayerConnectionRect = new Rect(position.x, position.y + defaultHeight * 7, position.width, defaultHeight);
-			nthCol = (nthCol+ 1) % nrCol;
+			Rect optionEnableDeepProfilingSupportRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			Rect optionWaitForPlayerConnectionRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			nthRow++;
 
 			/*	TODO add additional options dependong on the target platform.	*/
-			switch((BuildTargetGroup)flags.enumValue){
+			switch((BuildTargetGroup)flags.intValue){
 				case BuildTargetGroup.Standalone:
 				break;
 				case BuildTargetGroup.Android:
@@ -116,13 +126,10 @@ namespace BuildMultiPlatform
 			}
 
 			/*	Scene options.	*/
-			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * 8, position.width, defaultHeight);
-			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * 9, position.width, defaultHeight);
-			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * 10, position.width, defaultHeight);
-
-			//TODO compute the size of the scene.
-			//Rect scenes = new Rect(targetRect.x, targetRect.y + nameRect.height, position.width, propertyHeight);
-
+			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			
 			//		EditorGUI.BeginChangeCheck();
 
 			EditorGUI.LabelField(metaRect, new GUIContent("Meta Information"), EditorStyles.boldLabel);
@@ -141,7 +148,25 @@ namespace BuildMultiPlatform
 			EditorGUI.PropertyField(targetGroupRect, targetGroup, new GUIContent("Target Group"));
 			EditorGUI.PropertyField(optionRect, flags, new GUIContent("Option Flags"));
 
-			//EditorGUI.ToggleLeft(optionRect, "", flags.intValue & 0x1 );
+			//EditorGUI.PrefixLabel()
+			
+			EditorGUI.ToggleLeft(optionDevelopmentRect, "Development", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.Development));
+			EditorGUI.ToggleLeft(optionSrictRect, "Strict Mode", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.StrictMode));
+
+			EditorGUI.ToggleLeft(optionCRCRect, "CRC", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.ComputeCRC));
+			EditorGUI.ToggleLeft(optionAllowDebuggingRect, "Allow Debugging", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.AllowDebugging));
+
+			EditorGUI.ToggleLeft(optionUncompressedAssetBundleRect, "CRC", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle));
+			EditorGUI.ToggleLeft(optionEnableHeadlessModeRect, "Allow Debugging", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode));
+
+			EditorGUI.ToggleLeft(optionCompressWithLz4Rect, "CRC", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle));
+			EditorGUI.ToggleLeft(optionCompressWithLz4HCRect, "Allow Debugging", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode));
+
+			EditorGUI.ToggleLeft(optionIncludeTestAssembliesRect, "CRC", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle));
+			EditorGUI.ToggleLeft(optionEnableCodeCoverageRect, "Allow Debugging", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode));
+
+			EditorGUI.ToggleLeft(optionEnableDeepProfilingSupportRect, "CRC", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle));
+			EditorGUI.ToggleLeft(optionWaitForPlayerConnectionRect, "Allow Debugging", ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode));
 
 			EditorGUI.indentLevel--;
 
@@ -153,10 +178,6 @@ namespace BuildMultiPlatform
 				/*	Draw each scenes property.	*/
 				SerializedProperty scenes = property.FindPropertyRelative("scenes");
 				EditorGUI.PropertyField(ScenesRect, scenes);
-
-				//TODO move the logic for the property class for the scene.
-				//TODO add button for copy the default.
-				//TODO add 
 			}
 
 			EditorGUI.indentLevel--;

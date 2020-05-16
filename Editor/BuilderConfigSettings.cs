@@ -9,8 +9,6 @@ namespace BuildMultiPlatform
 	[Serializable]
 	public class BuilderConfigSettings : ScriptableObject
 	{
-
-
 		[Tooltip("Root Directory where all build will be located"), SerializeField]
 		public string rootOutputDirectory;
 		[SerializeField, HideInInspector, Tooltip("Root Directory where all build will be located")]

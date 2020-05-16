@@ -4,7 +4,7 @@ using System;
 
 namespace BuildMultiPlatform
 {
-
+	//TODO rename now that a namespace has been added.
 	[Serializable]
 	public class BuildConfigTarget
 	{
@@ -30,7 +30,6 @@ namespace BuildMultiPlatform
 		public BuildTarget target = BuildTarget.StandaloneLinux64;
 		[SerializeField, Tooltip("Build options.")]
 		public BuildOptions options = BuildOptions.None;
-
 		public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }
 	}
 }

@@ -17,20 +17,19 @@ namespace BuildMultiPlatform
                 /*  */
                 FileStream stream = File.Open(path, FileMode.Open);
 
-                BuilderConfigSettings settings = binary.Deserialize(stream);
+                BuilderConfigSettings settings = (BuilderConfigSettings)binary.Deserialize(stream);
                 stream.Close();
 				
                 return settings;
             }
-        }
+			throw new ArgumentException("");
+		}
 
         public static void SaveConfigSetting(string path, BuilderConfigSettings settings)
         {
             BinaryFormatter binary = new BinaryFormatter();
 
-            FileStream stream = File.Open(path, FileMode.Create);
-
-            BuilderConfigSettings settings = new BuilderConfigSettings();
+            FileStream stream = File.Open(path, FileMode.OpenOrCreate);
 			/*	*/
             binary.Serialize(stream, settings);
             stream.Close();

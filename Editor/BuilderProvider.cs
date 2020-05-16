@@ -29,7 +29,8 @@ namespace BuildMultiPlatform
             public static GUIContent Verbose = new GUIContent("Verbose", "Output is verbosity.");
             public static GUIContent choosePath = new GUIContent("Choose Path", "Choose the output directory for where all the target will be save to.");
             /*  */
-            public static GUIContent buildTargets = new GUIContent("Build Targets", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all Targets.");
+            public static GUIContent buildTargets = new GUIContent("Build Targets", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets.");
+			public static GUIContent buildTargetsScriptOnly = new GUIContent("Build Targets (Scripts", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets script only");
             public static GUIContent build = new GUIContent("Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target.");
             public static GUIContent buildScript = new GUIContent("Script Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target script only");
             public static GUIContent run = new GUIContent("Run", "Run the target.");
@@ -115,7 +116,7 @@ namespace BuildMultiPlatform
 
         private void DrawListHeader(Rect rect)
         {
-            GUI.Label(rect, string.Format("Build Targets {0}", this.m_configurations.arraySize), EditorStyles.boldLabel);
+            GUI.Label(rect, string.Format("Build Targets: {0}", this.m_configurations.arraySize), EditorStyles.boldLabel);
         }
 
         public override void OnDeactivate()
@@ -195,8 +196,8 @@ namespace BuildMultiPlatform
                         }
                         catch (Exception ex)
                         {
-                            const string dialog_title = string.Format("Failed Running '{}'", target.name);
-                            const string dialog_message = string.Format("Failed running target {0} on the path {1} \n Error {2}", target.name, Builder.GetTargetLocationAbsolutePath(target), ex.Message);
+                            string dialog_title = string.Format("Failed Running '{}'", target.name);
+                            string dialog_message = string.Format("Failed running target {0} on the path {1} \n Error {2}", target.name, Builder.GetTargetLocationAbsolutePath(target), ex.Message);
                             EditorUtility.DisplayDialog(dialog_title, dialog_message, "OK");
                         }
                     }
@@ -268,10 +269,10 @@ namespace BuildMultiPlatform
                 {
                     Builder.BuildTarget(optionItem);
                 }
-                if (EditorGUI.Button(Styles.buildScript))
+                if (GUILayout.Button(Styles.buildScript))
                 {
                     /*	TODO make a copy so that the original is not affected.	*/
-                    optionItem.optionItem |= BuildOptions.BuildScriptsOnly;
+                    optionItem.options |= BuildOptions.BuildScriptsOnly;
                     Builder.BuildTarget(optionItem);
                 }
                 EditorGUILayout.LabelField(Builder.GetTargetLocationAbsolutePath(optionItem));
@@ -296,28 +297,32 @@ namespace BuildMultiPlatform
             EditorGUILayout.LabelField(string.Format("Number of targets: {0}",settings.options.Length.ToString()));
 
             EditorGUILayout.BeginHorizontal();
-            string ext = ".bcn";    //TODO relocate.
+            string ext = "bcn";    //TODO relocate.
 
             if (GUILayout.Button(Styles.buildTargets))
             {
                 Builder.BuildFromConfig((BuilderConfigSettings)m_configurations.objectReferenceValue);
             }
+			if (GUILayout.Button(Styles.buildTargetsScriptOnly))
+            {
+				/*	TODO change, refractor and reduce coupling.	*/
+                Builder.Build((BuilderConfigSettings)m_configurations.objectReferenceValue);
+            }
             if (GUILayout.Button(Styles.export))
             {
                 /*	Export.	*/
-                string path = EditorUtility.SaveFilePanel("Choose export file path", Directory.GetCurrentDirectory(), "Application.PruductName" + ext, ext);
-                //TODO handle error.
+                string path = EditorUtility.SaveFilePanel("Choose export file path", Directory.GetCurrentDirectory(), string.Format("{0}",Application.productName), ext);
                 /*	*/
                 if (path.Length != 0)
                 {
                     try
                     {
-                        BuilderConfigIO.SaveConfigSetting(path);
+                        BuilderConfigIO.SaveConfigSetting(path, settings);
                     }
                     catch (Exception ex)
                     {
-
-                    }
+						Debug.LogError(ex.Message);
+					}
                     finally
                     {
 
@@ -337,7 +342,7 @@ namespace BuildMultiPlatform
                     }
                     catch (Exception ex)
                     {
-
+						Debug.LogError(ex.Message);
                     }
                     finally
                     {
