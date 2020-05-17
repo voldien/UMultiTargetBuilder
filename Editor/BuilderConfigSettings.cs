@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace BuildMultiPlatform
 {
+	//TODO rename.
 	[Serializable]
 	public class BuilderConfigSettings : ScriptableObject
 	{

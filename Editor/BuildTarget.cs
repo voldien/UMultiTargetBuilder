@@ -22,7 +22,7 @@ namespace BuildMultiPlatform
 		[SerializeField, Obsolete("")]
 		public BuildPlayerOptions buildPlayerOptions;   // TODO remove.
 		[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
-		public GUID[] scenes;
+		public SceneTarget[] scenes;
 		[SerializeField, Tooltip("The target group.")]
 		public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
 		[SerializeField, Tooltip("Specified target.")]

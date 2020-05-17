@@ -197,7 +197,7 @@ namespace BuildMultiPlatform
             EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.useScene);
             if (!useDefaultScenes.boolValue)
             {
-                /*	Draw each scenes property.	*/
+                /*	Draw scene property only if .	*/
                 SerializedProperty scenes = property.FindPropertyRelative("scenes");
                 EditorGUI.PropertyField(ScenesRect, scenes);
             }
@@ -211,17 +211,18 @@ namespace BuildMultiPlatform
             EditorGUI.indentLevel = indent;
             EditorGUI.EndProperty();
         }
+		static internal void InternalToogle(BuildTarget target, BuildOptions flag, bool enabled)
+		{
+			if (enabled)
+			{
+				target.options = (BuildOptions)(target.options | flag);
+			}
+			else
+			{
+				target.options = (BuildOptions)(target.options & ~(flag));
+			}
+		}
     }
 
-    static internal void InternalToogle(BuildTarget target, BuildOptions flag, bool enabled)
-    {
-        if (enabled)
-        {
-            target.options = (BuildOptions)(target.options | flag);
-        }
-        else
-        {
-            target.options = (BuildOptions)(target.options & ~(flag));
-        }
-    }
+
 }

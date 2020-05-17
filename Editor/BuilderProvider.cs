@@ -256,7 +256,7 @@ namespace BuildMultiPlatform
 
             EditorGUILayout.Separator();
 
-            /**/
+            /*  */
             EditorGUILayout.BeginVertical("GroupBox", GUILayout.ExpandHeight(true));
             EditorGUILayout.LabelField("");
             /*	Displace the build target if selected and is a valid index.	*/
@@ -280,8 +280,8 @@ namespace BuildMultiPlatform
                     optionItem.options |= BuildOptions.BuildScriptsOnly;
                     Builder.BuildTarget(optionItem);
                 }
-                EditorGUILayout.LabelField(Builder.GetTargetLocationAbsolutePath(optionItem));
                 EditorGUI.EndDisabledGroup();
+				EditorGUILayout.LabelField(Builder.GetTargetLocationAbsolutePath(optionItem));
                 EditorGUILayout.EndHorizontal();
             }
 
@@ -291,8 +291,8 @@ namespace BuildMultiPlatform
 
             EditorGUILayout.Space();
 
+            /*  */
             DisplayRunList();
-
 
             EditorGUILayout.Separator();
 
