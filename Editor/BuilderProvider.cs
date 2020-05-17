@@ -55,7 +55,7 @@ namespace BuildMultiPlatform
             m_BuilderConfigSettings = BuilderConfigSettings.GetSerializedSettings();
 
             /*	*/
-            m_configurations = m_BuilderConfigSettings.FindProperty("options");
+            m_configurations = m_BuilderConfigSettings.FindProperty("targets");
             m_outpdirectory = m_BuilderConfigSettings.FindProperty("rootOutputDirectory");
             m_verbose = m_BuilderConfigSettings.FindProperty("verbose");
 
@@ -138,10 +138,15 @@ namespace BuildMultiPlatform
                 int index = m_configurations.arraySize;
                 m_configurations.InsertArrayElementAtIndex(m_configurations.arraySize);
 
-                /*	Reset the values.	*/    //TODO add support for reseting the value.
-                                              //SerializedProperty item = configurations.GetArrayElementAtIndex(index);
-                                              //BuildConfigTarget _target = (BuildConfigTarget)item.serializedObject.targetObject;
-            }
+
+				/*	Reset the values.	*/    //TODO add support for reseting the value.
+											  //SerializedProperty item = configurations.GetArrayElementAtIndex(index);
+											  //BuildConfigTarget _target = (BuildConfigTarget)item.serializedObject.targetObject;
+                //TODO improve the logic.
+				if (m_configurations.arraySize == 1)
+					selectedConfigIndex = 0;
+
+			}
 
             /*	Determine if any valid item is currently selected.	*/
             bool isItemSelected = selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize;
@@ -306,7 +311,7 @@ namespace BuildMultiPlatform
             if (GUILayout.Button(Styles.buildTargetsScriptOnly))
             {
                 /*	TODO change, refractor and reduce coupling.	*/
-                Builder.Build((BuilderConfigSettings)m_configurations.objectReferenceValue);
+                Builder.BuildFromConfigScriptOnly((BuilderConfigSettings)m_configurations.objectReferenceValue);
             }
             if (GUILayout.Button(Styles.export))
             {

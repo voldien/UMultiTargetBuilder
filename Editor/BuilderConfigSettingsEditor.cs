@@ -16,7 +16,7 @@ namespace BuildMultiPlatform
 
 		private void OnEnable()
 		{
-			configurations = serializedObject.FindProperty("options");
+			configurations = serializedObject.FindProperty("targets");
 			_verbose = serializedObject.FindProperty("verbose");
 			rootOutputDirectory = serializedObject.FindProperty("rootOutputDirectory");
 		}
@@ -52,7 +52,7 @@ namespace BuildMultiPlatform
 			}
 			if (GUILayout.Button(BuilderSettingsProvider.Styles.addCopy))
 			{
-				BuildTarget _target = EditorUserBuildSettings.activeBuildTarget;
+				UnityEditor.BuildTarget _target = EditorUserBuildSettings.activeBuildTarget;
 				BuildTargetGroup _targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 				configurations.InsertArrayElementAtIndex(configurations.arraySize);
 				SerializedProperty rsef = configurations.GetArrayElementAtIndex(configurations.arraySize);
@@ -72,7 +72,7 @@ namespace BuildMultiPlatform
 
 					// SerializedProperty buildOption = option.FindPropertyRelative("buildPlayerOptions");
 					// SerializedProperty buildTarget = option.FindPropertyRelative("target");
-					BuildConfigTarget optionItem = ((BuilderConfigSettings)serializedObject.targetObject).options[i];
+					BuildTarget optionItem = ((BuilderConfigSettings)serializedObject.targetObject).targets[i];
 
 					/*	Draw build option configuration.	*/
 					EditorGUILayout.PropertyField(option, new GUIContent("")); // buildTarget.enumDisplayNames[buildTarget.enumValueIndex]

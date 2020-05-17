@@ -66,7 +66,7 @@ namespace BuildMultiPlatform
         public static void BuildFromConfig(BuilderConfigSettings config)
         {
             /*	Remeber the state of the current build target.	*/
-            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             try
             {
@@ -84,12 +84,12 @@ namespace BuildMultiPlatform
 
         public static void BuildFromConfigScriptOnly(BuilderConfigSettings settings)
         {
-            /*	Remeber the state of the current build target.	*/
-            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+			/*	Remeber the state of the current build target.	*/
+			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             try
             {
-                foreach (BuildTarget buildConfigtarget in config.options)
+                foreach (BuildTarget buildConfigtarget in settings.targets)
                 {
                     InternalBuildScriptOnly(buildConfigtarget);
                 }
@@ -169,7 +169,7 @@ namespace BuildMultiPlatform
 
         internal static void InternalBuildScriptOnly(BuildTarget buildTarget)
         {
-            BuilderConfigTarget targetCopy = buildTarget.Copy();
+            BuildTarget targetCopy = null;//buildTarget.Copy();
             targetCopy.options |= BuildOptions.BuildScriptsOnly;
             InternalBuildTarget(targetCopy);
         }
@@ -248,7 +248,7 @@ namespace BuildMultiPlatform
         public static void BuildTarget(BuildTarget buildTarget)
         {
             /*	*/
-            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             try
             {
@@ -264,7 +264,7 @@ namespace BuildMultiPlatform
         public static void BuildTargetScriptOnly(BuildTarget buildTarget)
         {
             /*	*/
-            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             StackPushBuildConfiguration();
             try
@@ -294,8 +294,16 @@ namespace BuildMultiPlatform
             return EditorBuildSettings.scenes;
         }
 
-        internal static void StackPushBuildConfiguration() { }
-        internal static void StackPopBuildConfiguration() { }
+        internal static void StackPushBuildConfiguration() {
+			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+			BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+        }
+        internal static void StackPopBuildConfiguration() {
+			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+			BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+
+			EditorUserBuildSettings.SwitchActiveBuildTargetAsync(currentGroup, currentTarget);
+        }
     }
 
 }
