@@ -28,19 +28,41 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("Build options.")]
 		public BuildOptions options = BuildOptions.None;
 		public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }
-		public BuildTarget Clone(){
+		public object Clone(){
 			BuildTarget copy = new BuildTarget();
 			copy.title = this.title;
 			copy.company = this.company;
 			copy.enabled = this.enabled;
+			copy.outputDirectory = this.outputDirectory;
 			copy.name = this.name;	
 			copy.target = this.target;
 			copy.targetGroup = this.targetGroup;
 			copy.useDefaultScenes = this.useDefaultScenes;
 			copy.options = this.options;
-			copy.scenes = this.scenes.Clone();
-			return copy;
+			copy.scenes = (SceneTarget[])this.scenes.Clone();
+			return (object)copy;
 		}
+
+		object ICloneable.Clone()
+		{
+			BuildTarget copy = new BuildTarget();
+			copy.title = this.title;
+			copy.company = this.company;
+			copy.enabled = this.enabled;
+			copy.outputDirectory = this.outputDirectory;
+			copy.name = this.name;
+			copy.target = this.target;
+			copy.targetGroup = this.targetGroup;
+			copy.useDefaultScenes = this.useDefaultScenes;
+			copy.options = this.options;
+			copy.scenes = (SceneTarget[])this.scenes.Clone();
+			return (object)copy;
+		}
+
+		// object ICloneable.Clone()
+		// {
+		// 	throw new NotImplementedException();
+		// }
 	}
 
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
@@ -63,18 +64,17 @@ namespace BuildMultiPlatform
             /*	Find the default.	*/
         }
 
-        public static void BuildFromConfig(BuilderConfigSettings config)
+        public static void BuildFromConfig(BuilderConfigSettings settings)
         {
             /*	Remeber the state of the current build target.	*/
             UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             try
             {
-                foreach (BuildTarget buildConfigtarget in config.targets)
-                {
-                    InternalBuildTarget(buildConfigtarget);
+				for (int i = 0; i < settings.targets.Length; i++){
+					InternalBuildTarget(settings.targets[i]);
                 }
-            }
+			}
             finally
             {
                 /*	Reset the state.	*/
@@ -89,10 +89,10 @@ namespace BuildMultiPlatform
             BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             try
             {
-                foreach (BuildTarget buildConfigtarget in settings.targets)
-                {
-                    InternalBuildScriptOnly(buildConfigtarget);
-                }
+				for (int i = 0; i < settings.targets.Length; i++)
+				{
+					InternalBuildScriptOnly(settings.targets[i]);
+				}
             }
             finally
             {
@@ -108,7 +108,7 @@ namespace BuildMultiPlatform
             //TODO handle invalid path.
             string path = null;
             string root = settings.rootOutputDirectory;
-            if(Path.IsPathFullyQualified)
+            //if(Path.IsPathFullyQualified)
             if(root.Length == 0){
                 //TODO add default output directory if invalid.
             }
@@ -186,7 +186,7 @@ namespace BuildMultiPlatform
         internal static void InternalBuildScriptOnly(BuildTarget buildTarget)
         {
             /*  Create an copy with no reference to the original.   */
-            BuildTarget targetCopy = buildTarget.Clone();
+            BuildTarget targetCopy = (BuildTarget)buildTarget.Clone();
             targetCopy.options |= BuildOptions.BuildScriptsOnly;
             InternalBuildTarget(targetCopy);
         }

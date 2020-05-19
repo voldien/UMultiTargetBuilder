@@ -82,7 +82,7 @@ namespace BuildMultiPlatform
 			return (float)EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing * 1.5f; //TODO determine the size for fitting the icon.
 		}
 
-		private Texture GetPlatformGroupTexture(BuildTargetGroup targetGroup){
+		private Texture GetPlatformGroupTexture(SerializedProperty targetGroup){
 			string builtin_icon_name = "";
 			switch ((BuildTargetGroup)targetGroup.intValue)
 			{
@@ -97,31 +97,31 @@ namespace BuildMultiPlatform
 					builtin_icon_name = "BuildSettings.Web.Small";
 					break;
 				case BuildTargetGroup.iOS:
-					builtin_icon_name = "BuildSettings.Web.Small";
+					builtin_icon_name = "BuildSettings.iPhone.Small";
 					break;
 				case BuildTargetGroup.WSA:
 					builtin_icon_name = "BuildSettings.Web.Small";
 					break;
 				case BuildTargetGroup.XboxOne:
-					builtin_icon_name = "BuildSettings.Web.Small";
+					builtin_icon_name = "BuildSettings.XboxOne.Small";
 					break;					
 				case BuildTargetGroup.PS4:
-					builtin_icon_name = "BuildSettings.Web.Small";
+					builtin_icon_name = "BuildSettings.PS4.Small";
 					break;					
 				case BuildTargetGroup.tvOS:
-					builtin_icon_name = "BuildSettings.Web.Small";
+					builtin_icon_name = "BuildSettings.iPhone.Small";
 					break;					
 				case BuildTargetGroup.Switch:
-					builtin_icon_name = "BuildSettings.Web.Small";
+					builtin_icon_name = "BuildSettings.Switch.Small";
 					break;					
 				case BuildTargetGroup.Stadia:
-					builtin_icon_name = "BuildSettings.Web.Small";
+					builtin_icon_name = "BuildSettings.Standalone.Small";
 					break;
 				case BuildTargetGroup.Unknown:
 				default:
 					/*	Invalid state.	*/
-					break;
-			}			
+					return null;
+			}
 			return (Texture)EditorGUIUtility.IconContent(builtin_icon_name).image;
 		}
 		private void DrawListElement(Rect rect, int index, bool isActive, bool isFocused)
@@ -307,8 +307,8 @@ namespace BuildMultiPlatform
 
 			/*  */
 			EditorGUILayout.BeginVertical("GroupBox", GUILayout.ExpandHeight(true),
-				GUILayout.MinWidth(400.0f),GUILayout.ExpandWidth(false), GUILayout.MinHeight(500));	//TODO add height from property.	
-			EditorGUILayout.LabelField("", GUIContent.none);
+				GUILayout.MinWidth(600.0f),GUILayout.ExpandWidth(true), GUILayout.MinHeight(600));	//TODO add height from property.	
+			EditorGUILayout.LabelField("");
 			/*	Displace the build target if selected and is a valid index.	*/
 			if (m_configurations.arraySize > 0)
 			{
@@ -357,11 +357,11 @@ namespace BuildMultiPlatform
 			/*	Build all buttons.	*/
 			if (GUILayout.Button(Styles.buildTargets))
 			{
-				Builder.BuildFromConfig((BuilderConfigSettings)m_configurations.objectReferenceValue);
+				Builder.BuildFromConfig((BuilderConfigSettings)settings);
 			}
 			if (GUILayout.Button(Styles.buildTargetsScriptOnly))
 			{
-				Builder.BuildFromConfigScriptOnly((BuilderConfigSettings)m_configurations.objectReferenceValue);
+				Builder.BuildFromConfigScriptOnly((BuilderConfigSettings)settings);
 			}
 
 			/*	Export and import buttons.	*/
