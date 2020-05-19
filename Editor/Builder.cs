@@ -128,13 +128,27 @@ namespace BuildMultiPlatform
                     case UnityEditor.BuildTarget.StandaloneWindows64:
                         path = string.Format("{0}{1}", path, ".exe");
                         break;
+                    case UnityEditor.BuildTarget.StandaloneOSX:
+                        path = string.Format("{0}{1}", path, ".app");
+                        break;
                     case UnityEditor.BuildTarget.StandaloneLinux64:
                         path = string.Format("{0}{1}", path, ".x86_64");
                         break;
                     case UnityEditor.BuildTarget.Android:
                         path = string.Format("{0}{1}", path, ".apk");
                         break;
+                    case UnityEditor.BuildTarget.iOS:
+                        path = string.Format("{0}{1}", path, ".ipa");
+                        break;
+                    case UnityEditor.BuildTarget.WebGL:
+                        path = string.Format("{0}{1}", path, ".html");
+                        break;
                     //TODO add support for other platforms.
+                    case UnityEditor.BuildTarget.WSAPlayer:
+                    case UnityEditor.BuildTarget.PS4:
+                    case UnityEditor.BuildTarget.XboxOne:
+                    case UnityEditor.BuildTarget.tvOS:
+                    case UnityEditor.BuildTarget.Switch:
                     default:
                         break;
                 }
@@ -142,14 +156,10 @@ namespace BuildMultiPlatform
 
             /*	Validate the path is an absolute path.	*/
             if (Path.IsPathRooted(path))
-            {
                 return path;
-            }
             else
-            {
-                //TODO add exception.
-                return path;
-            }
+                throw new Exception("");
+            
         }
 
         public static void RunTarget(BuildTarget target)
@@ -175,7 +185,8 @@ namespace BuildMultiPlatform
 
         internal static void InternalBuildScriptOnly(BuildTarget buildTarget)
         {
-            BuildTarget targetCopy = null;//buildTarget.Copy();
+            /*  Create an copy with no reference to the original.   */
+            BuildTarget targetCopy = buildTarget.Clone();
             targetCopy.options |= BuildOptions.BuildScriptsOnly;
             InternalBuildTarget(targetCopy);
         }

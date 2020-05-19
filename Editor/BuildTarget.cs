@@ -5,7 +5,7 @@ using System;
 namespace BuildMultiPlatform
 {
 	[Serializable]
-	public class BuildTarget
+	public class BuildTarget : ICloneable
 	{
 		[Tooltip("The name of the executable."), SerializeField]
 		public string title;
@@ -28,5 +28,19 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("Build options.")]
 		public BuildOptions options = BuildOptions.None;
 		public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }
+		public BuildTarget Clone(){
+			BuildTarget copy = new BuildTarget();
+			copy.title = this.title;
+			copy.company = this.company;
+			copy.enabled = this.enabled;
+			copy.name = this.name;	
+			copy.target = this.target;
+			copy.targetGroup = this.targetGroup;
+			copy.useDefaultScenes = this.useDefaultScenes;
+			copy.options = this.options;
+			copy.scenes = this.scenes.Clone();
+			return copy;
+		}
 	}
+
 }

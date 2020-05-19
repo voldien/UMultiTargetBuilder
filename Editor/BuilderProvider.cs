@@ -124,7 +124,6 @@ namespace BuildMultiPlatform
 			}			
 			return (Texture)EditorGUIUtility.IconContent(builtin_icon_name).image;
 		}
-
 		private void DrawListElement(Rect rect, int index, bool isActive, bool isFocused)
 		{
 			var item = m_configurations.GetArrayElementAtIndex(index);
@@ -162,16 +161,15 @@ namespace BuildMultiPlatform
 			if (isFocused && isActive)
 				this.selectedConfigIndex = index;
 		}
-
 		private void DrawListHeader(Rect rect)
 		{
 			GUI.Label(rect, string.Format("Build Targets: {0}", this.m_configurations.arraySize), EditorStyles.boldLabel);
 		}
-
 		public override void OnDeactivate()
 		{
 
 		}
+		
 		private void DisplayLeftBuildTargets()
 		{
 			/*	Begin the vertical left view for adding, selecting and removing build targets.	*/
@@ -292,6 +290,7 @@ namespace BuildMultiPlatform
 			var indent = EditorGUI.indentLevel;
 			EditorGUI.indentLevel++;
 
+			/*	*/
 			this.scroll = EditorGUILayout.BeginScrollView(scroll, false, true);
 
 			/*	*/
@@ -307,17 +306,18 @@ namespace BuildMultiPlatform
 			EditorGUILayout.Separator();
 
 			/*  */
-			EditorGUILayout.BeginVertical("GroupBox", GUILayout.ExpandHeight(true));
-			EditorGUILayout.LabelField("");
+			EditorGUILayout.BeginVertical("GroupBox", GUILayout.ExpandHeight(true),
+				GUILayout.MinWidth(400.0f),GUILayout.ExpandWidth(false), GUILayout.MinHeight(500));	//TODO add height from property.	
+			EditorGUILayout.LabelField("", GUIContent.none);
 			/*	Displace the build target if selected and is a valid index.	*/
-			if (settings.targets.Length > 0)
+			if (m_configurations.arraySize > 0)
 			{
-				if (selectedConfigIndex >= 0 && selectedConfigIndex < settings.targets.Length)
+				if (selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize)
 				{
-					/*	*/
-					//configurations.GetArrayElementAtIndex(selectedConfigIndex);
+					/*	Draw main build target property.	*/
 					EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true, GUILayout.ExpandHeight(true));
 
+					/*	Draw build buttons.	*/
 					BuildTarget optionItem = BuilderConfigSettings.GetOrCreateSettings().targets[selectedConfigIndex];
 					EditorGUILayout.BeginHorizontal();
 					bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
@@ -328,9 +328,7 @@ namespace BuildMultiPlatform
 					}
 					if (GUILayout.Button(Styles.buildScript))
 					{
-						/*	TODO make a copy so that the original is not affected.	*/
-						optionItem.options |= BuildOptions.BuildScriptsOnly;
-						Builder.BuildTarget(optionItem);
+						Builder.BuildTargetScriptOnly(optionItem);
 					}
 					EditorGUI.EndDisabledGroup();
 					EditorGUILayout.LabelField(Builder.GetTargetLocationAbsolutePath(optionItem));
@@ -344,7 +342,7 @@ namespace BuildMultiPlatform
 
 			EditorGUILayout.Space();
 
-			/*  */
+			/*  Draw quick run UI.	*/
 			DisplayRunList();
 
 			EditorGUILayout.Separator();
@@ -355,17 +353,19 @@ namespace BuildMultiPlatform
 			EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.targets.Length.ToString()));
 
 			EditorGUILayout.BeginHorizontal();
-			string ext = "bcn";    //TODO relocate.
 
+			/*	Build all buttons.	*/
 			if (GUILayout.Button(Styles.buildTargets))
 			{
 				Builder.BuildFromConfig((BuilderConfigSettings)m_configurations.objectReferenceValue);
 			}
 			if (GUILayout.Button(Styles.buildTargetsScriptOnly))
 			{
-				/*	TODO change, refractor and reduce coupling.	*/
 				Builder.BuildFromConfigScriptOnly((BuilderConfigSettings)m_configurations.objectReferenceValue);
 			}
+
+			/*	Export and import buttons.	*/
+			string ext = "asset";
 			if (GUILayout.Button(Styles.export))
 			{
 				/*	Export.	*/
@@ -410,12 +410,7 @@ namespace BuildMultiPlatform
 				}
 			}
 			EditorGUILayout.EndHorizontal();
-			//TODO improve.
 
-			if (m_BuilderConfigSettings.hasModifiedProperties)
-			{
-
-			}
 			m_BuilderConfigSettings.ApplyModifiedProperties();
 
 

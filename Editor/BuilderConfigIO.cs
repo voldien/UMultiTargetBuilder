@@ -8,6 +8,8 @@ namespace BuildMultiPlatform
 {
     public static class BuilderConfigIO
     {
+        //TODO Change to use AssetDatabase, created copy, get the fully path and use system file move.
+        // For load, change the editor path of settings and invoke update asset.
         public static BuilderConfigSettings LoadConfigSetting(string path)
         {
             if (File.Exists(path))
