@@ -16,7 +16,7 @@ namespace BuildMultiPlatform
             Debug.Log(pathToBuiltProject);
         }
 
-        [MenuItem("Build/Default Build", false, 1)]
+        [MenuItem("Build/Builder/Default Build", false, 1)]
         public static void PerformDefaultBuildContext()
         {
 
@@ -30,26 +30,26 @@ namespace BuildMultiPlatform
         }
 
 
-        [MenuItem("Build/Build Targets", true, 0)]
+        [MenuItem("Build/Builder/Build Targets", true, 0)]
         public static bool ValidatePerformBuildContext()
         {
             return BuilderConfigSettings.GetOrCreateSettings().targets.Length > 0;
         }
 
-        [MenuItem("Build/Build Targets", false, 0)]
+        [MenuItem("Build/Builder/Build Targets", false, 0)]
         public static void PerformBuildContext()
         {
             BuilderConfigSettings config = BuilderConfigSettings.GetOrCreateSettings();
             BuildFromConfig(config);
         }
 
-        [MenuItem("Build/Build Targets (Script only)", true, 1)]
+        [MenuItem("Build/Builder/Build Targets (Script only)", true, 1)]
         public static bool ValidatePerformBuildScriptOnlyContext()
         {
             return BuilderConfigSettings.GetOrCreateSettings().targets.Length > 0;
         }
 
-        [MenuItem("Build/Build Targets (Script only)", false, 1)]
+        [MenuItem("Build/Builder/Build Targets (Script only)", false, 1)]
         public static void PerformBuildScriptOnlyContext()
         {
             //TODO make a copy and add the script only target -> Forcing the state.
@@ -105,7 +105,13 @@ namespace BuildMultiPlatform
         public static string GetTargetLocationAbsolutePath(BuildTarget target)
         {
             BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
+            //TODO handle invalid path.
             string path = null;
+            string root = settings.rootOutputDirectory;
+            if(Path.IsPathFullyQualified)
+            if(root.Length == 0){
+                //TODO add default output directory if invalid.
+            }
 
             /*	Compute the output filepath.	*/
             if (target.outputDirectory.Length > 0)

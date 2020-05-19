@@ -19,22 +19,22 @@ namespace BuildMultiPlatform
 
             /*	Options Flags.	*/
             public static GUIContent development = new GUIContent("Development", "");
-            public static GUIContent strict = new GUIContent("Development", "");
-            public static GUIContent CRC = new GUIContent("Development", "");
-            public static GUIContent AllowDebugging = new GUIContent("Development", "");
-            public static GUIContent UncompressedAssetBundle = new GUIContent("Development", "");
-            internal static GUIContent CompressWithLz4 = new GUIContent("Development", "");
-            internal static GUIContent EnabledHeadlessMode = new GUIContent("Development", "");
-            internal static readonly GUIContent CompressWithLz4HC = new GUIContent("Development", "");
-            internal static readonly GUIContent IncludeTestAssemblies = new GUIContent("Development", "");
-            internal static readonly GUIContent EnableCodeCoverage = new GUIContent("Development", "");
-            internal static readonly GUIContent WaitForPlayerConnection = new GUIContent("Development", "");
-            internal static readonly GUIContent EnableDeepProfilingSupport = new GUIContent("Development", "");
+            public static GUIContent strict = new GUIContent("Strict", "");
+            public static GUIContent CRC = new GUIContent("Compute CRC", "");
+            public static GUIContent AllowDebugging = new GUIContent("Allow Debugging", "");
+            public static GUIContent UncompressedAssetBundle = new GUIContent("UnCompress AssetBundle", "");
+            internal static GUIContent CompressWithLz4 = new GUIContent("Compress With Lz4", "");
+            internal static GUIContent EnabledHeadlessMode = new GUIContent("Headless Mode", "");
+            internal static readonly GUIContent CompressWithLz4HC = new GUIContent("Compress With Lz4HC", "");
+            internal static readonly GUIContent IncludeTestAssemblies = new GUIContent("Include Test Assemblies", "");
+            internal static readonly GUIContent EnableCodeCoverage = new GUIContent("Enable CodeCoverage", "");
+            internal static readonly GUIContent WaitForPlayerConnection = new GUIContent("Wait For Player Connection", "");
+            internal static readonly GUIContent EnableDeepProfilingSupport = new GUIContent("Enable Deep Profiling Support", "");
 			/*	Scene options.	*/
 			public static GUIContent SceneSettingsLabel = new GUIContent("Scene Settings");
             public static GUIContent useScene = new GUIContent("Use Default Scenes");
         }
-        const int toggleOptionlineCount = 5;
+        const int toggleOptionlineCount = 6;
         const int lineCount = 10 + toggleOptionlineCount;
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
@@ -82,11 +82,11 @@ namespace BuildMultiPlatform
             SerializedProperty flags = property.FindPropertyRelative("options");
             SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
 
-            /*	*/
-            float propertyHeight = position.height / (float)lineCount;
+			/*	*/
+			float propertyHeight = position.height / (float)lineCount;
             const float textWidth = 100.0f;
             float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            const float toggleTextWidth = 120.0f;
+            const float toggleTextWidth = 230.0f;
 
             // Each property rectangle view bounds.
             Rect metaRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
@@ -96,45 +96,45 @@ namespace BuildMultiPlatform
             Rect outputRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
             Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
-            /*	*/
+			/*	*/
+			Rect targetGroupRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
             Rect targetRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect targetGroupRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
             Rect optionRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
             /*	Settings options.	*/
-            Rect optionDevelopmentRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+            Rect optionDevelopmentRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
             nthCol = (nthCol + 1) % nrCol;
-            Rect optionSrictRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            nthRow++;
-
-            Rect optionCRCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            Rect optionAllowDebuggingRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+            Rect optionSrictRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
             nthCol = (nthCol + 1) % nrCol;
             nthRow++;
 
-            Rect optionUncompressedAssetBundleRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+            Rect optionCRCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
             nthCol = (nthCol + 1) % nrCol;
-            Rect optionEnableHeadlessModeRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            nthRow++;
-
-            Rect optionCompressWithLz4Rect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            Rect optionCompressWithLz4HCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+            Rect optionAllowDebuggingRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
             nthCol = (nthCol + 1) % nrCol;
             nthRow++;
 
-            Rect optionIncludeTestAssembliesRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+            Rect optionUncompressedAssetBundleRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
             nthCol = (nthCol + 1) % nrCol;
-            Rect optionEnableCodeCoverageRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+            Rect optionEnableHeadlessModeRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
             nthCol = (nthCol + 1) % nrCol;
             nthRow++;
 
-            Rect optionEnableDeepProfilingSupportRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+            Rect optionCompressWithLz4Rect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
             nthCol = (nthCol + 1) % nrCol;
-            Rect optionWaitForPlayerConnectionRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, position.width, defaultHeight);
+            Rect optionCompressWithLz4HCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+            nthCol = (nthCol + 1) % nrCol;
+            nthRow++;
+
+            Rect optionIncludeTestAssembliesRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+            nthCol = (nthCol + 1) % nrCol;
+            Rect optionEnableCodeCoverageRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow,toggleTextWidth, defaultHeight);
+            nthCol = (nthCol + 1) % nrCol;
+            nthRow++;
+
+            Rect optionEnableDeepProfilingSupportRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+            nthCol = (nthCol + 1) % nrCol;
+            Rect optionWaitForPlayerConnectionRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
             nthCol = (nthCol + 1) % nrCol;
             nthRow++;
 
@@ -152,8 +152,8 @@ namespace BuildMultiPlatform
             Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
             Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
-            //		EditorGUI.BeginChangeCheck();
-
+			//		EditorGUI.BeginChangeCheck();
+			//EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
             EditorGUI.LabelField(metaRect, Styles.metaInformation, EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             //TODO add label
@@ -170,25 +170,27 @@ namespace BuildMultiPlatform
             EditorGUI.PropertyField(targetGroupRect, targetGroup, Styles.targeGroup);
             EditorGUI.PropertyField(optionRect, flags, Styles.optionFlagsLabel);
 
-            //EditorGUI.PrefixLabel()
+			//EditorGUI.PrefixLabel()
 
-            EditorGUI.ToggleLeft(optionDevelopmentRect, Styles.development, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.Development));
-            EditorGUI.ToggleLeft(optionSrictRect, Styles.strict, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.StrictMode));
-            /*	*/
-            EditorGUI.ToggleLeft(optionCRCRect, Styles.CRC, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.ComputeCRC));
-            EditorGUI.ToggleLeft(optionAllowDebuggingRect, Styles.AllowDebugging, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.AllowDebugging));
-            /*	*/
-            EditorGUI.ToggleLeft(optionUncompressedAssetBundleRect, Styles.UncompressedAssetBundle, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle));
-            EditorGUI.ToggleLeft(optionEnableHeadlessModeRect, Styles.EnabledHeadlessMode, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode));
-            /*	*/
-            EditorGUI.ToggleLeft(optionCompressWithLz4Rect, Styles.CompressWithLz4, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle));
-            EditorGUI.ToggleLeft(optionCompressWithLz4HCRect, Styles.CompressWithLz4HC, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode));
-            /*	*/
-            EditorGUI.ToggleLeft(optionIncludeTestAssembliesRect, Styles.IncludeTestAssemblies, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle));
-            EditorGUI.ToggleLeft(optionEnableCodeCoverageRect, Styles.EnableCodeCoverage, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode));
-            /*	*/
-            EditorGUI.ToggleLeft(optionEnableDeepProfilingSupportRect, Styles.EnableDeepProfilingSupport, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle));
-            EditorGUI.ToggleLeft(optionWaitForPlayerConnectionRect, Styles.WaitForPlayerConnection, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode));
+			InternalToogle(flags, BuildOptions.Development, EditorGUI.ToggleLeft(optionDevelopmentRect, Styles.development, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.Development)));
+			InternalToogle(flags, BuildOptions.StrictMode, EditorGUI.ToggleLeft(optionSrictRect, Styles.strict, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.StrictMode)));
+			/*	*/
+			InternalToogle(flags, BuildOptions.ComputeCRC, EditorGUI.ToggleLeft(optionCRCRect, Styles.CRC, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.ComputeCRC)));
+			InternalToogle(flags, BuildOptions.AllowDebugging, EditorGUI.ToggleLeft(optionAllowDebuggingRect, Styles.AllowDebugging, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.AllowDebugging)));
+			/*	*/
+			InternalToogle(flags, BuildOptions.UncompressedAssetBundle, EditorGUI.ToggleLeft(optionUncompressedAssetBundleRect, Styles.UncompressedAssetBundle, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle)));
+			InternalToogle(flags, BuildOptions.EnableHeadlessMode, EditorGUI.ToggleLeft(optionEnableHeadlessModeRect, Styles.EnabledHeadlessMode, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode)));
+			/*	*/
+			InternalToogle(flags, BuildOptions.CompressWithLz4, EditorGUI.ToggleLeft(optionCompressWithLz4Rect, Styles.CompressWithLz4, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.CompressWithLz4)));
+			InternalToogle(flags, BuildOptions.CompressWithLz4HC, EditorGUI.ToggleLeft(optionCompressWithLz4HCRect, Styles.CompressWithLz4HC, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.CompressWithLz4HC)));
+			/*	*/
+			InternalToogle(flags, BuildOptions.IncludeTestAssemblies, EditorGUI.ToggleLeft(optionIncludeTestAssembliesRect, Styles.IncludeTestAssemblies, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.IncludeTestAssemblies)));
+			InternalToogle(flags, BuildOptions.EnableCodeCoverage, EditorGUI.ToggleLeft(optionEnableCodeCoverageRect, Styles.EnableCodeCoverage, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableCodeCoverage)));
+			/*	*/
+			InternalToogle(flags, BuildOptions.EnableDeepProfilingSupport, EditorGUI.ToggleLeft(optionEnableDeepProfilingSupportRect, Styles.EnableDeepProfilingSupport, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableDeepProfilingSupport)));
+			InternalToogle(flags, BuildOptions.WaitForPlayerConnection, EditorGUI.ToggleLeft(optionWaitForPlayerConnectionRect, Styles.WaitForPlayerConnection, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.WaitForPlayerConnection)));
+
+            /*  TODO add clear and add all button.*/
 
             EditorGUI.indentLevel--;
 
@@ -211,15 +213,15 @@ namespace BuildMultiPlatform
             EditorGUI.indentLevel = indent;
             EditorGUI.EndProperty();
         }
-		static internal void InternalToogle(BuildTarget target, BuildOptions flag, bool enabled)
+		static internal void InternalToogle(SerializedProperty target, BuildOptions flag, bool enabled)
 		{
 			if (enabled)
 			{
-				target.options = (BuildOptions)(target.options | flag);
+				target.intValue = (int)(target.intValue | (int)flag);
 			}
 			else
 			{
-				target.options = (BuildOptions)(target.options & ~(flag));
+				target.intValue = (int)(target.intValue & ~((int)flag));
 			}
 		}
     }

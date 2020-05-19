@@ -33,6 +33,7 @@ namespace BuildMultiPlatform
 				settings = ScriptableObject.CreateInstance<BuilderConfigSettings>();
 				settings.rootOutputDirectory = "";
 				settings.verbose = true;
+				settings.targets = new BuildTarget[0];
 				AssetDatabase.CreateAsset(settings, GetSettingFilePath());
 				AssetDatabase.SaveAssets();
 			}

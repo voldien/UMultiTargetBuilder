@@ -19,8 +19,6 @@ namespace BuildMultiPlatform
 		public bool enabled = true;
 		[SerializeField, Tooltip("Use the default scenes specified by the build setting.")] // Tooltip("Set of Build Options."), InspectorName("Build Configuration Options")
 		public bool useDefaultScenes = true;
-		[SerializeField, Obsolete("")]
-		public BuildPlayerOptions buildPlayerOptions;   // TODO remove.
 		[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
 		public SceneTarget[] scenes;
 		[SerializeField, Tooltip("The target group.")]

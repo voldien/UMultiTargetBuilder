@@ -97,7 +97,7 @@ namespace BuildMultiPlatform
 					if (Builder.isBuildTargetSupported(optionItem))
 					{
 						//EditorGUIUtility.IconContent("SettingsIcon")
-						GUILayout.Label(EditorGUIUtility.IconContent("SettingsIcon"), GUILayout.MaxWidth(16));
+						//GUILayout.Label(EditorGUIUtility.IconContent("SettingsIcon"), GUILayout.MaxWidth(16));
 						GUILayout.Label("Supported target");
 					}
 					else
@@ -125,8 +125,8 @@ namespace BuildMultiPlatform
 
 		public override Texture2D RenderStaticPreview(string assetPath, UnityEngine.Object[] subAssets, int width, int height)
 		{
-			Texture2D tex = EditorGUIUtility.IconContent("SettingsIcon").image as Texture2D;
-			return EditorGUIUtility.IconContent("SettingsIcon").image as Texture2D;
+			Texture2D tex = EditorGUIUtility.IconContent("Settings").image as Texture2D;
+			return tex;
 		}
 	}
 }
