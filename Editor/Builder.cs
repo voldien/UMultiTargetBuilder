@@ -200,22 +200,22 @@ namespace BuildMultiPlatform
                 /*	Determine if supported on the target unity modules.	*/
                 if (!Builder.isBuildTargetSupported(buildTarget))
                 {
-                    Debug.LogError("Not build target " + buildTarget.name + "Not supported to be built with this Unity");
+                    Debug.LogError(string.Format("Not build target {0}, Not supported to be built with this Unity.", buildTarget.name));
                 }
 
                 /*	Populate the build struct with the build target configuration.	*/
                 EditorBuildSettingsScene[] targetScenes = getDefaultScenes();
-                if (buildTarget.scenes == null)
+                if (!buildTarget.useDefaultScenes)
                 {
-                    // Use the default scenes.
-                }
-                else
-                {
-                    if (buildTarget.scenes.Length > 0)
+                    targetScenes = new EditorBuildSettingsScene[buildTarget.scenes.Length];
+                    for (int j = 0; j < targetScenes.Length; j++)
                     {
-                        //targetScenes = buildTarget.scenes;
-                    }
-                }
+                        string path = AssetDatabase.GetAssetPath(buildTarget.scenes[j]);
+                        Debug.Log(path);
+						targetScenes[j] = new EditorBuildSettingsScene(path, true);
+					}
+				}
+
                 BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
                 buildPlayerOptions.locationPathName = GetTargetLocationAbsolutePath(buildTarget);
                 buildPlayerOptions.scenes = new string[targetScenes.Length];

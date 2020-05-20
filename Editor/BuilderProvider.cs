@@ -317,6 +317,15 @@ namespace BuildMultiPlatform
 					/*	Draw main build target property.	*/
 					EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true, GUILayout.ExpandHeight(true));
 
+					if(GUILayout.Button("Set Default Scenes")){
+
+					}
+					if (GUILayout.Button("Clear Scenes"))
+					{
+
+					}
+					//Builder.getDefaultScenes();
+
 					/*	Draw build buttons.	*/
 					BuildTarget optionItem = BuilderConfigSettings.GetOrCreateSettings().targets[selectedConfigIndex];
 					EditorGUILayout.BeginHorizontal();

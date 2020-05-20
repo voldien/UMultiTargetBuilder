@@ -1,174 +1,177 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEditorInternal;
 
 namespace BuildMultiPlatform
 {
-    //TODO rename
-    [CustomPropertyDrawer(typeof(BuildTarget))]
-    public class ConfigOptionItemPropertyDrawer : PropertyDrawer
-    {
-        public class Styles
-        {
-            public static GUIContent metaInformation = new GUIContent("Meta Information");
-            public static GUIContent title = new GUIContent("Title");
-            public static GUIContent output = new GUIContent("outputDirectory");
+	//TODO rename
+	[CustomPropertyDrawer(typeof(BuildTarget))]
+	public class ConfigOptionItemPropertyDrawer : PropertyDrawer
+	{
+		public class Styles
+		{
+			public static GUIContent metaInformation = new GUIContent("Meta Information");
+			public static GUIContent title = new GUIContent("Title");
+			public static GUIContent output = new GUIContent("outputDirectory");
 			public static GUIContent BuildSettingLabel = new GUIContent("Build Settings");
-            public static GUIContent target = new GUIContent("Target");
-            public static GUIContent targeGroup = new GUIContent("Target Group");
-            public static GUIContent optionFlagsLabel = new GUIContent("Option Flags");
+			public static GUIContent target = new GUIContent("Target");
+			public static GUIContent targeGroup = new GUIContent("Target Group");
+			public static GUIContent optionFlagsLabel = new GUIContent("Option Flags");
 
-            /*	Options Flags.	*/
-            public static GUIContent development = new GUIContent("Development", "");
-            public static GUIContent strict = new GUIContent("Strict", "");
-            public static GUIContent CRC = new GUIContent("Compute CRC", "");
-            public static GUIContent AllowDebugging = new GUIContent("Allow Debugging", "");
-            public static GUIContent UncompressedAssetBundle = new GUIContent("UnCompress AssetBundle", "");
-            internal static GUIContent CompressWithLz4 = new GUIContent("Compress With Lz4", "");
-            internal static GUIContent EnabledHeadlessMode = new GUIContent("Headless Mode", "");
-            internal static readonly GUIContent CompressWithLz4HC = new GUIContent("Compress With Lz4HC", "");
-            internal static readonly GUIContent IncludeTestAssemblies = new GUIContent("Include Test Assemblies", "");
-            internal static readonly GUIContent EnableCodeCoverage = new GUIContent("Enable CodeCoverage", "");
-            internal static readonly GUIContent WaitForPlayerConnection = new GUIContent("Wait For Player Connection", "");
-            internal static readonly GUIContent EnableDeepProfilingSupport = new GUIContent("Enable Deep Profiling Support", "");
+			/*	Options Flags.	*/
+			public static GUIContent development = new GUIContent("Development", "");
+			public static GUIContent strict = new GUIContent("Strict", "");
+			public static GUIContent CRC = new GUIContent("Compute CRC", "");
+			public static GUIContent AllowDebugging = new GUIContent("Allow Debugging", "");
+			public static GUIContent UncompressedAssetBundle = new GUIContent("UnCompress AssetBundle", "");
+			internal static GUIContent CompressWithLz4 = new GUIContent("Compress With Lz4", "");
+			internal static GUIContent EnabledHeadlessMode = new GUIContent("Headless Mode", "");
+			internal static readonly GUIContent CompressWithLz4HC = new GUIContent("Compress With Lz4HC", "");
+			internal static readonly GUIContent IncludeTestAssemblies = new GUIContent("Include Test Assemblies", "");
+			internal static readonly GUIContent EnableCodeCoverage = new GUIContent("Enable CodeCoverage", "");
+			internal static readonly GUIContent WaitForPlayerConnection = new GUIContent("Wait For Player Connection", "");
+			internal static readonly GUIContent EnableDeepProfilingSupport = new GUIContent("Enable Deep Profiling Support", "");
 			/*	Scene options.	*/
 			public static GUIContent SceneSettingsLabel = new GUIContent("Scene Settings");
-            public static GUIContent useScene = new GUIContent("Use Default Scenes");
-        }
-        const int toggleOptionlineCount = 6;
-        const int lineCount = 10 + toggleOptionlineCount;
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            /*	Compute the height of all the fields.	*/
-            float height = EditorGUIUtility.singleLineHeight * lineCount + EditorGUIUtility.standardVerticalSpacing * (lineCount - 1);
+			public static GUIContent useScene = new GUIContent("Use Default Scenes");
+		}
+		const int toggleOptionlineCount = 6;
+		const int lineCount = 10 + toggleOptionlineCount;
+		private ReorderableList m_list;
+		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+		{
+			/*	Compute the height of all the fields.	*/
+			float height = EditorGUIUtility.singleLineHeight * lineCount + EditorGUIUtility.standardVerticalSpacing * (lineCount - 1);
 
-            switch ((BuildTargetGroup)property.FindPropertyRelative("targetGroup").intValue)
-            {
-                case BuildTargetGroup.Standalone:
-                    break;
-                case BuildTargetGroup.Android:
-                    break;
-            }
+			switch ((BuildTargetGroup)property.FindPropertyRelative("targetGroup").intValue)
+			{
+				case BuildTargetGroup.Standalone:
+					break;
+				case BuildTargetGroup.Android:
+					break;
+			}
 
-            SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
-            if (!useDefaultScenes.boolValue)
-            {
-                /*	Add additional height for the dynamic sized scene object.	*/
-                SerializedProperty scenes = property.FindPropertyRelative("scenes");
-                height += EditorGUI.GetPropertyHeight(scenes);
-            }
-            return height;
-        }
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            int nthRow = 0;
-            int nthCol = 0;
-            int nrCol = 2;
+			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
+			if (!useDefaultScenes.boolValue)
+			{
+				/*	Add additional height for the dynamic sized scene object.	*/
+				SerializedProperty scenes = property.FindPropertyRelative("scenes");
+				height += EditorGUI.GetPropertyHeight(scenes) * 1.25f;
+			}
+			return height;
+		}
+		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+		{
+			int nthRow = 0;
+			int nthCol = 0;
+			int nrCol = 2;
 
-            EditorGUI.BeginProperty(position, label, property);
+			EditorGUI.BeginProperty(position, label, property);
 
-            /*	*/
-            position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
-            var indent = EditorGUI.indentLevel;
-            EditorGUI.indentLevel++;
+			/*	*/
+			position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+			var indent = EditorGUI.indentLevel;
+			EditorGUI.indentLevel++;
 
-            /*	Extract all properties.	*/
-            SerializedProperty enabled = property.FindPropertyRelative("enabled");
-            SerializedProperty name = property.FindPropertyRelative("title");
-            SerializedProperty title = property.FindPropertyRelative("title");
-            SerializedProperty outputDirectory = property.FindPropertyRelative("outputDirectory");
-            /*	*/
-            SerializedProperty _target = property.FindPropertyRelative("target");
-            SerializedProperty targetGroup = property.FindPropertyRelative("targetGroup");
-            SerializedProperty flags = property.FindPropertyRelative("options");
-            SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
+			/*	Extract all properties.	*/
+			SerializedProperty enabled = property.FindPropertyRelative("enabled");
+			SerializedProperty name = property.FindPropertyRelative("title");
+			SerializedProperty title = property.FindPropertyRelative("title");
+			SerializedProperty outputDirectory = property.FindPropertyRelative("outputDirectory");
+			/*	*/
+			SerializedProperty _target = property.FindPropertyRelative("target");
+			SerializedProperty targetGroup = property.FindPropertyRelative("targetGroup");
+			SerializedProperty flags = property.FindPropertyRelative("options");
+			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
+			SerializedProperty scenes = property.FindPropertyRelative("scenes");
 
 			/*	*/
 			float propertyHeight = position.height / (float)lineCount;
-            const float textWidth = 100.0f;
-            float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            const float toggleTextWidth = 230.0f;
+			const float textWidth = 100.0f;
+			float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+			const float toggleTextWidth = 230.0f;
 
-            // Each property rectangle view bounds.
-            Rect metaRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect titleRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            //			Rect nameRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect enabledRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect outputRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			// Each property rectangle view bounds.
+			Rect metaRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect titleRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			//			Rect nameRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect enabledRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect outputRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
 			/*	*/
 			Rect targetGroupRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect targetRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect optionRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect targetRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect optionRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
-            /*	Settings options.	*/
-            Rect optionDevelopmentRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            Rect optionSrictRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            nthRow++;
+			/*	Settings options.	*/
+			Rect optionDevelopmentRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			Rect optionSrictRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			nthRow++;
 
-            Rect optionCRCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            Rect optionAllowDebuggingRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            nthRow++;
+			Rect optionCRCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			Rect optionAllowDebuggingRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			nthRow++;
 
-            Rect optionUncompressedAssetBundleRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            Rect optionEnableHeadlessModeRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            nthRow++;
+			Rect optionUncompressedAssetBundleRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			Rect optionEnableHeadlessModeRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			nthRow++;
 
-            Rect optionCompressWithLz4Rect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            Rect optionCompressWithLz4HCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            nthRow++;
+			Rect optionCompressWithLz4Rect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			Rect optionCompressWithLz4HCRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			nthRow++;
 
-            Rect optionIncludeTestAssembliesRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            Rect optionEnableCodeCoverageRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow,toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            nthRow++;
+			Rect optionIncludeTestAssembliesRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			Rect optionEnableCodeCoverageRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			nthRow++;
 
-            Rect optionEnableDeepProfilingSupportRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            Rect optionWaitForPlayerConnectionRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
-            nthCol = (nthCol + 1) % nrCol;
-            nthRow++;
+			Rect optionEnableDeepProfilingSupportRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			Rect optionWaitForPlayerConnectionRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
+			nthCol = (nthCol + 1) % nrCol;
+			nthRow++;
 
-            /*	TODO add additional options dependong on the target platform.	*/
-            switch ((BuildTargetGroup)flags.intValue)
-            {
-                case BuildTargetGroup.Standalone:
-                    break;
-                case BuildTargetGroup.Android:
-                    break;
-            }
+			/*	TODO add additional options dependong on the target platform.	*/
+			switch ((BuildTargetGroup)flags.intValue)
+			{
+				case BuildTargetGroup.Standalone:
+					break;
+				case BuildTargetGroup.Android:
+					break;
+			}
 
-            /*	Scene options.	*/
-            Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-            Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			/*	Scene options.	*/
+			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, EditorGUI.GetPropertyHeight(scenes));
 
 			//		EditorGUI.BeginChangeCheck();
 			//EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
-            EditorGUI.LabelField(metaRect, Styles.metaInformation, EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
-            //TODO add label
-            EditorGUI.PropertyField(titleRect, title, Styles.title);
-            EditorGUILayout.Separator();
-            //EditorGUI.PropertyField(enabledRect, enabled, new GUIContent("enabled"));
-            EditorGUI.PropertyField(outputRect, outputDirectory, Styles.output);
-            EditorGUI.indentLevel--;
+			EditorGUI.LabelField(metaRect, Styles.metaInformation, EditorStyles.boldLabel);
+			EditorGUI.indentLevel++;
+			//TODO add label
+			EditorGUI.PropertyField(titleRect, title, Styles.title);
+			EditorGUILayout.Separator();
+			//EditorGUI.PropertyField(enabledRect, enabled, new GUIContent("enabled"));
+			EditorGUI.PropertyField(outputRect, outputDirectory, Styles.output);
+			EditorGUI.indentLevel--;
 
-            EditorGUI.LabelField(settingLabelRect, Styles.BuildSettingLabel, EditorStyles.boldLabel);
+			EditorGUI.LabelField(settingLabelRect, Styles.BuildSettingLabel, EditorStyles.boldLabel);
 
-            EditorGUI.indentLevel++;
-            EditorGUI.PropertyField(targetRect, _target, Styles.target);
-            EditorGUI.PropertyField(targetGroupRect, targetGroup, Styles.targeGroup);
-            EditorGUI.PropertyField(optionRect, flags, Styles.optionFlagsLabel);
+			EditorGUI.indentLevel++;
+			EditorGUI.PropertyField(targetRect, _target, Styles.target);
+			EditorGUI.PropertyField(targetGroupRect, targetGroup, Styles.targeGroup);
+			EditorGUI.PropertyField(optionRect, flags, Styles.optionFlagsLabel);
 
 			//EditorGUI.PrefixLabel()
 
@@ -190,29 +193,30 @@ namespace BuildMultiPlatform
 			InternalToogle(flags, BuildOptions.EnableDeepProfilingSupport, EditorGUI.ToggleLeft(optionEnableDeepProfilingSupportRect, Styles.EnableDeepProfilingSupport, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableDeepProfilingSupport)));
 			InternalToogle(flags, BuildOptions.WaitForPlayerConnection, EditorGUI.ToggleLeft(optionWaitForPlayerConnectionRect, Styles.WaitForPlayerConnection, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.WaitForPlayerConnection)));
 
-            /*  TODO add clear and add all button.*/
+			EditorGUI.indentLevel--;
 
-            EditorGUI.indentLevel--;
+			EditorGUI.LabelField(sceneLabelRect, Styles.SceneSettingsLabel, EditorStyles.boldLabel);
+			EditorGUI.indentLevel++;
+			EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.useScene);
 
-            EditorGUI.LabelField(sceneLabelRect, Styles.SceneSettingsLabel, EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
-            EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.useScene);
-            if (!useDefaultScenes.boolValue)
-            {
-                /*	Draw scene property only if .	*/
-                SerializedProperty scenes = property.FindPropertyRelative("scenes");
-                EditorGUI.PropertyField(ScenesRect, scenes);
-            }
+			EditorGUI.BeginDisabledGroup(useDefaultScenes.boolValue);
+			/*	Draw scene property only.	*/
+			if (m_list == null)
+			{
+				m_list = BuildSceneAssetReorderableList(scenes);
+			}
+			else if (m_list.serializedProperty != scenes)
+			{
+				m_list = BuildSceneAssetReorderableList(scenes);
+			}
+			m_list.DoList(ScenesRect);
+			EditorGUI.EndDisabledGroup();
 
-            EditorGUI.indentLevel--;
+			EditorGUI.indentLevel--;
 
-            //		if(EditorGUI.EndChangeCheck()){
-            //			EditorUtility.SetDirty(property.serializedObject.targetObject);
-            //		}
-
-            EditorGUI.indentLevel = indent;
-            EditorGUI.EndProperty();
-        }
+			EditorGUI.indentLevel = indent;
+			EditorGUI.EndProperty();
+		}
 		static internal void InternalToogle(SerializedProperty target, BuildOptions flag, bool enabled)
 		{
 			if (enabled)
@@ -224,7 +228,29 @@ namespace BuildMultiPlatform
 				target.intValue = (int)(target.intValue & ~((int)flag));
 			}
 		}
-    }
+
+		private ReorderableList BuildSceneAssetReorderableList(SerializedProperty property)
+		{
+			ReorderableList list = new ReorderableList(property.serializedObject, property, true, true, true, true);
+
+			list.drawHeaderCallback = (Rect rect) =>
+			{
+				EditorGUI.LabelField(rect, string.Format("Scenes {0}", property.arraySize));
+			};
+            list.elementHeightCallback = (int index) => {
+				return EditorGUIUtility.singleLineHeight;
+			};
+			list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+			{
+				var indent = EditorGUI.indentLevel;
+				EditorGUI.indentLevel++;
+				EditorGUI.PropertyField(rect, property.GetArrayElementAtIndex(index), false);
+
+				EditorGUI.indentLevel = indent;
+			};
+			return list;
+		}
+	}
 
 
 }

@@ -20,7 +20,8 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("Use the default scenes specified by the build setting.")] // Tooltip("Set of Build Options."), InspectorName("Build Configuration Options")
 		public bool useDefaultScenes = true;
 		[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
-		public SceneTarget[] scenes;
+		//public SceneTargetList scenes;
+		public SceneAsset[] scenes;
 		[SerializeField, Tooltip("The target group.")]
 		public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
 		[SerializeField, Tooltip("Specified target.")]
@@ -39,7 +40,7 @@ namespace BuildMultiPlatform
 			copy.targetGroup = this.targetGroup;
 			copy.useDefaultScenes = this.useDefaultScenes;
 			copy.options = this.options;
-			copy.scenes = (SceneTarget[])this.scenes.Clone();
+			copy.scenes = (SceneAsset[])this.scenes.Clone();
 			return (object)copy;
 		}
 
@@ -55,7 +56,7 @@ namespace BuildMultiPlatform
 			copy.targetGroup = this.targetGroup;
 			copy.useDefaultScenes = this.useDefaultScenes;
 			copy.options = this.options;
-			copy.scenes = (SceneTarget[])this.scenes.Clone();
+			copy.scenes = (SceneAsset[])this.scenes.Clone();
 			return (object)copy;
 		}
 
