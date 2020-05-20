@@ -56,11 +56,6 @@ namespace BuildMultiPlatform
 			BuildFromConfigScriptOnly(config);
 		}
 
-		public static void PerformDefaultBuild()
-		{
-			/*	Find the default.	*/
-		}
-
 		public static void BuildFromConfig(BuilderConfigSettings settings)
 		{
 			/*	Remeber the state of the current build target.	*/
