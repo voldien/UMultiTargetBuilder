@@ -57,7 +57,6 @@ namespace BuildMultiPlatform
 		public static void GenerateConfig()
 		{
 			BuilderConfigSettings.GetOrCreateSettings();
-			/*	Update the provider.	*/
 		}
 
 		internal static SerializedObject GetSerializedSettings()

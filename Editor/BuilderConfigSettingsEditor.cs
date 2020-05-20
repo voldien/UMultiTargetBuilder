@@ -25,19 +25,10 @@ namespace BuildMultiPlatform
 		{
 			if (GUILayout.Button(BuilderSettingsProvider.Styles.buildTargets))
 			{
-				try
-				{
-					Builder.BuildFromConfig((BuilderConfigSettings)configurations.objectReferenceValue);
-				}
-				catch (Exception ex)
-				{
-
-				}
+				Builder.BuildFromConfig((BuilderConfigSettings)configurations.objectReferenceValue);
 			}
 			GUILayout.Label("Number of targets: " + configurations.arraySize.ToString());
-			//EditorGUILayout.PropertyField(rootOutputDirectory);
 			EditorGUILayout.Separator();
-
 
 			base.OnInspectorGUI();
 			serializedObject.Update();
@@ -56,7 +47,7 @@ namespace BuildMultiPlatform
 				BuildTargetGroup _targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 				configurations.InsertArrayElementAtIndex(configurations.arraySize);
 				SerializedProperty rsef = configurations.GetArrayElementAtIndex(configurations.arraySize);
-				//			EditorBuildSettings.AddConfigObject
+
 				EditorUtility.SetDirty(serializedObject.targetObject);
 			}
 
@@ -70,15 +61,14 @@ namespace BuildMultiPlatform
 				{
 					SerializedProperty option = configurations.GetArrayElementAtIndex(i);
 
-					// SerializedProperty buildOption = option.FindPropertyRelative("buildPlayerOptions");
-					// SerializedProperty buildTarget = option.FindPropertyRelative("target");
+
 					BuildTarget optionItem = ((BuilderConfigSettings)serializedObject.targetObject).targets[i];
 
 					/*	Draw build option configuration.	*/
-					EditorGUILayout.PropertyField(option, new GUIContent("")); // buildTarget.enumDisplayNames[buildTarget.enumValueIndex]
+					EditorGUILayout.PropertyField(option, GUIContent.none); // buildTarget.enumDisplayNames[buildTarget.enumValueIndex]
 
 					if (GUILayout.Button(BuilderSettingsProvider.Styles.remove))
-					{ // TODO ADD icon
+					{
 						this.configurations.DeleteArrayElementAtIndex(i);
 						/*	Break out of the iteraton.	*/
 						break;
@@ -96,19 +86,17 @@ namespace BuildMultiPlatform
 					EditorGUILayout.BeginHorizontal();
 					if (Builder.isBuildTargetSupported(optionItem))
 					{
-						//EditorGUIUtility.IconContent("SettingsIcon")
-						//GUILayout.Label(EditorGUIUtility.IconContent("SettingsIcon"), GUILayout.MaxWidth(16));
 						GUILayout.Label("Supported target");
 					}
 					else
 					{
 						GUIStyle TextFieldStyles = new GUIStyle(EditorStyles.textField);
 
-						GUILayout.Label(EditorGUIUtility.IconContent("sv_icon_dot4_pix16_gizmo"), GUILayout.MinWidth(16), GUILayout.MaxWidth(32));
-						Color currentColor = EditorStyles.label.normal.textColor;
-						EditorStyles.label.normal.textColor = Color.red;
+						//						GUILayout.Label(EditorGUIUtility.IconContent("sv_icon_dot4_pix16_gizmo"), GUILayout.MinWidth(16), GUILayout.MaxWidth(32));
+						//						Color currentColor = EditorStyles.label.normal.textColor;
+						//						EditorStyles.label.normal.textColor = Color.red;
 						GUILayout.Label("Non Supported target");
-						EditorStyles.label.normal.textColor = currentColor;
+						//						EditorStyles.label.normal.textColor = currentColor;
 					}
 
 					EditorGUILayout.EndHorizontal();
@@ -121,12 +109,6 @@ namespace BuildMultiPlatform
 			EditorGUILayout.EndScrollView();
 
 			serializedObject.ApplyModifiedProperties();
-		}
-
-		public override Texture2D RenderStaticPreview(string assetPath, UnityEngine.Object[] subAssets, int width, int height)
-		{
-			Texture2D tex = EditorGUIUtility.IconContent("Settings").image as Texture2D;
-			return tex;
 		}
 	}
 }
