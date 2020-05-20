@@ -3,6 +3,7 @@ using System.IO;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters;
+using UnityEditor;
 
 namespace BuildMultiPlatform
 {
@@ -10,31 +11,30 @@ namespace BuildMultiPlatform
     {
         //TODO Change to use AssetDatabase, created copy, get the fully path and use system file move.
         // For load, change the editor path of settings and invoke update asset.
-        public static BuilderConfigSettings LoadConfigSetting(string path)
+        public static void LoadConfigSetting(string path)
         {
-            if (File.Exists(path))
+			if (File.Exists(path))
             {
-				/*	*/
-                BinaryFormatter binary = new BinaryFormatter();
-                /*  */
-                FileStream stream = File.Open(path, FileMode.Open);
-
-                BuilderConfigSettings settings = (BuilderConfigSettings)binary.Deserialize(stream);
-                stream.Close();
-				
-                return settings;
+				/*  Dialog.*/
+				string assetPath = BuilderConfigSettings.GetSettingFilePath();
+				string projectPath = Application.dataPath.Replace("/Assets", "");   //TODO improve.
+				string FullPath = string.Format("{0}/{1}", projectPath, assetPath);
+                if(File.Exists(FullPath)){
+                    if(EditorUtility.DisplayDialog("Overwrite", "Are you sure you want to overwrite the settings", "Yes", "No")){
+    					File.Copy(path, FullPath, true);
+						AssetDatabase.ImportAsset(assetPath);
+					}
+				}else
+					throw new ArgumentException(string.Format("Invalid path {0}", FullPath));
             }
-			throw new ArgumentException("");
+            else
+				throw new ArgumentException(string.Format("Invalid path {0}", path));
 		}
 
-        public static void SaveConfigSetting(string path, BuilderConfigSettings settings)
+        public static void SaveConfigSetting(string path)
         {
-            BinaryFormatter binary = new BinaryFormatter();
-
-            FileStream stream = File.Open(path, FileMode.OpenOrCreate);
-			/*	*/
-            binary.Serialize(stream, settings);
-            stream.Close();
+			string assetPath = BuilderConfigSettings.GetSettingFilePath();
+			File.Copy(assetPath, path);
         }
     }
 }

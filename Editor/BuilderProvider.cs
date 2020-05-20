@@ -358,7 +358,9 @@ namespace BuildMultiPlatform
 
 			EditorGUILayout.EndScrollView();
 
+
 			/*	Summary information.	*/
+			EditorGUILayout.Space();
 			EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.targets.Length.ToString()));
 
 			EditorGUILayout.BeginHorizontal();
@@ -384,11 +386,11 @@ namespace BuildMultiPlatform
 				{
 					try
 					{
-						BuilderConfigIO.SaveConfigSetting(path, settings);
+						BuilderConfigIO.SaveConfigSetting(path);
 					}
 					catch (Exception ex)
 					{
-						Debug.LogError(ex.Message);
+						EditorUtility.DisplayDialog("Error", ex.Message, "Ok");
 					}
 					finally
 					{
@@ -409,7 +411,7 @@ namespace BuildMultiPlatform
 					}
 					catch (Exception ex)
 					{
-						Debug.LogError(ex.Message);
+						EditorUtility.DisplayDialog("Error", ex.Message, "Ok");
 					}
 					finally
 					{

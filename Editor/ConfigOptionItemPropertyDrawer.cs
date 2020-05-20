@@ -10,17 +10,18 @@ namespace BuildMultiPlatform
 	{
 		public class Styles
 		{
-			public static GUIContent metaInformation = new GUIContent("Meta Information");
-			public static GUIContent title = new GUIContent("Title");
-			public static GUIContent output = new GUIContent("outputDirectory");
-			public static GUIContent BuildSettingLabel = new GUIContent("Build Settings");
-			public static GUIContent target = new GUIContent("Target");
-			public static GUIContent targeGroup = new GUIContent("Target Group");
-			public static GUIContent optionFlagsLabel = new GUIContent("Option Flags");
+			/*	*/
+			public static GUIContent metaInformation = new GUIContent("Meta Information", "");
+			public static GUIContent title = new GUIContent("Title", "Title of the game, if empty the default title from the project player settings will be used.");
+			public static GUIContent output = new GUIContent("outputDirectory", "Relative path from the global path.");
+			public static GUIContent BuildSettingLabel = new GUIContent("Build Settings", "");
+			public static GUIContent target = new GUIContent("Target", "Specific group target.");
+			public static GUIContent targeGroup = new GUIContent("Target Group", "Target group.");
+			public static GUIContent optionFlagsLabel = new GUIContent("Option Flags", "");
 
 			/*	Options Flags.	*/
 			public static GUIContent development = new GUIContent("Development", "");
-			public static GUIContent strict = new GUIContent("Strict", "");
+			public static GUIContent strict = new GUIContent("Strict", "No error or warnings allowed.");
 			public static GUIContent CRC = new GUIContent("Compute CRC", "");
 			public static GUIContent AllowDebugging = new GUIContent("Allow Debugging", "");
 			public static GUIContent UncompressedAssetBundle = new GUIContent("UnCompress AssetBundle", "");
@@ -28,7 +29,7 @@ namespace BuildMultiPlatform
 			internal static GUIContent EnabledHeadlessMode = new GUIContent("Headless Mode", "");
 			internal static readonly GUIContent CompressWithLz4HC = new GUIContent("Compress With Lz4HC", "");
 			internal static readonly GUIContent IncludeTestAssemblies = new GUIContent("Include Test Assemblies", "");
-			internal static readonly GUIContent EnableCodeCoverage = new GUIContent("Enable CodeCoverage", "");
+			internal static readonly GUIContent EnableCodeCoverage = new GUIContent("Enable Code Coverage", "");
 			internal static readonly GUIContent WaitForPlayerConnection = new GUIContent("Wait For Player Connection", "");
 			internal static readonly GUIContent EnableDeepProfilingSupport = new GUIContent("Enable Deep Profiling Support", "");
 			/*	Scene options.	*/

@@ -20,7 +20,6 @@ namespace BuildMultiPlatform
 
 		public static string GetSettingFilePath()
 		{
-			//TOOD handle the path for the asset file.
 			return "Assets/Editor/BuildConfigSettings.asset";
 		}
 
@@ -48,13 +47,13 @@ namespace BuildMultiPlatform
 		}
 
 
-		[MenuItem("Build/Config/Generate Config", true, 15)]
+		[MenuItem("Build/Builder/Generate Config", true, 15)]
 		public static bool IsSettingsAvailableContextMenu()
 		{
 			return IsSettingsAvailable() == false;
 		}
 
-		[MenuItem("Build/Config/Generate Config", false, 15)]
+		[MenuItem("Build/Builder/Generate Config", false, 15)]
 		public static void GenerateConfig()
 		{
 			BuilderConfigSettings.GetOrCreateSettings();
