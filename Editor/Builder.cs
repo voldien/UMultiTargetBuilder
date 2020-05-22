@@ -101,10 +101,15 @@ namespace BuildMultiPlatform
 			//TODO handle invalid path.
 			string path = null;
 			string root = settings.rootOutputDirectory;
-			//if(Path.IsPathFullyQualified)
+
 			if (root.Length == 0)
 			{
-				//TODO add default output directory if invalid.
+				/*	Create default directory from user home directory.	*/
+				root = string.Format("{0}/{1}", Environment.SpecialFolder.Personal, PlayerSettings.productName);
+			}
+
+			if(!Directory.Exists(root)){
+				throw new InvalidOperationException("");
 			}
 
 			/*	Compute the output filepath.	*/
@@ -114,7 +119,7 @@ namespace BuildMultiPlatform
 				path = Path.GetFullPath(string.Format("{0}/{1}", settings.rootOutputDirectory, target.Title));
 
 			/*	Add extension in order to make the target work properly in its environment.	*/
-			if (!Path.HasExtension(path))
+			if (!Path.HasExtension(settings.Title))
 			{
 				switch (target.target)
 				{
@@ -149,7 +154,6 @@ namespace BuildMultiPlatform
 						break;
 				}
 			}
-
 			/*	Validate the path is an absolute path.	*/
 			if (Path.IsPathRooted(path))
 				return path;
