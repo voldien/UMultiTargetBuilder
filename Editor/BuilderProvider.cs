@@ -153,7 +153,7 @@ namespace BuildMultiPlatform
 			Rect enabledRect = new Rect(rect.x + iconWidth - 10, rect.y, toggleWidth * 2, EditorGUIUtility.singleLineHeight);
 			Rect displayNameRect = new Rect(rect.x + iconWidth + toggleWidth, rect.y, displayName.Length * characterWidth, EditorGUIUtility.singleLineHeight);
 			Rect nameRect = new Rect(rect.x + iconWidth + toggleWidth + displayName.Length * characterWidth, rect.y, textWidth, EditorGUIUtility.singleLineHeight);
-			
+
 			/*	*/
 			EditorGUI.LabelField(iconRect, new GUIContent(icon, targetGroup.ToString()));
 			EditorGUI.PropertyField(enabledRect, enabled, new GUIContent("", "Enable target for building."));
@@ -166,7 +166,7 @@ namespace BuildMultiPlatform
 		}
 		private void DrawListHeader(Rect rect)
 		{
-			rect = EditorGUI.IndentedRect(rect);
+			//rect = EditorGUI.IndentedRect(rect);
 			GUI.Label(rect, string.Format("Build Targets: {0}", this.m_configurations.arraySize), EditorStyles.boldLabel);
 		}
 		public override void OnDeactivate()
@@ -297,166 +297,178 @@ namespace BuildMultiPlatform
 			m_BuilderConfigSettings.Update();
 			BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
 
-			var indent = EditorGUI.indentLevel;
-			EditorGUI.indentLevel++;
-
-			/*	*/
-			this.scroll = EditorGUILayout.BeginScrollView(scroll, false, true);
-
-			/*	*/
-			DisplayGUIHeader();
-
-			EditorGUILayout.Space();
-
-			/*	*/
-			EditorGUILayout.BeginHorizontal();
-
-			DisplayLeftBuildTargets();
-
-			EditorGUILayout.Separator();
-
-			/*  */
-			EditorGUILayout.BeginVertical("GroupBox", GUILayout.ExpandHeight(true),
-				GUILayout.MinWidth(800.0f), GUILayout.ExpandWidth(true), GUILayout.MinHeight(600), GUILayout.MaxHeight(EditorGUI.GetPropertyHeight(m_configurations, true))); //TODO add height from property.	
-			EditorGUILayout.LabelField("");
-
-			/*	Displace the build target if selected and is a valid index.	*/
-			if (m_configurations.arraySize > 0)
+			//var indent = EditorGUI.indentLevel;
+			//EditorGUI.indentLevel++;
+			using (new EditorGUI.IndentLevelScope(1))
 			{
-				if (selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize)
-				{
-					/*	Draw main build target property.	*/
-					EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true);
 
-					EditorGUILayout.BeginHorizontal();
-					//TOOD add support.
-					if (GUILayout.Button(Styles.SetDefaultScenes))
+				/*	*/
+				this.scroll = EditorGUILayout.BeginScrollView(scroll, false, true);
+
+				/*	*/
+				DisplayGUIHeader();
+
+				EditorGUILayout.Space();
+
+				/*	*/
+				EditorGUILayout.BeginHorizontal("Box");
+
+				DisplayLeftBuildTargets();
+
+				EditorGUILayout.Separator();
+
+				/*  */
+				EditorGUILayout.BeginVertical("GroupBox",
+					 GUILayout.MinHeight(600), GUILayout.MaxHeight(EditorGUI.GetPropertyHeight(m_configurations, true))); //TODO add height from property.	
+				EditorGUILayout.LabelField("");
+
+				/*	Displace the build target if selected and is a valid index.	*/
+				if (m_configurations.arraySize > 0)
+				{
+					if (selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize)
 					{
-						SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
-						EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
-						for (int i = 0; i < defScenes.Length; i++)
+						/*	Draw main build target property.	*/
+						EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true);
+
+						EditorGUILayout.BeginHorizontal();
+
+						//					var indent2 = EditorGUI.indentLevel;
+						//					EditorGUI.indentLevel += 2;
+						using (new EditorGUI.IndentLevelScope(3))
+						{
+							//TOOD add support.
+							EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
+							if (GUILayout.Button(Styles.SetDefaultScenes,GUILayout.MaxWidth(150)))
+							{
+								SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
+								EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
+								for (int i = 0; i < defScenes.Length; i++)
+								{
+
+								}
+							}
+							if (GUILayout.Button(Styles.ClearScenes))
+							{
+								SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(selectedConfigIndex).FindPropertyRelative("scenes");
+								scenes.ClearArray();
+								//
+							}
+							EditorGUI.EndDisabledGroup();
+							EditorGUILayout.EndHorizontal();
+
+							/*	Draw build buttons.	*/
+							BuildTarget optionItem = BuilderConfigSettings.GetOrCreateSettings().targets[selectedConfigIndex];
+							EditorGUILayout.BeginHorizontal();
+							bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
+							EditorGUI.BeginDisabledGroup(!isTargetSupported);
+							if (GUILayout.Button(Styles.build))
+							{
+								Builder.BuildTarget(optionItem);
+							}
+							if (GUILayout.Button(Styles.buildScript))
+							{
+								Builder.BuildTargetScriptOnly(optionItem);
+							}
+							EditorGUI.EndDisabledGroup();
+							EditorGUILayout.EndHorizontal();
+							try
+							{
+								string outputPathLabel = string.Format("Executable fielpath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem));
+								EditorGUILayout.LabelField(outputPathLabel);
+							}
+							catch (Exception ex)
+							{
+
+								EditorGUILayout.LabelField("Invalid setttings: Not a valid path.");
+							}
+						}
+						//EditorGUI.indentLevel = indent2;
+					}
+				}
+
+				EditorGUILayout.EndVertical();
+
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUILayout.Separator();
+
+				/*  Draw quick run UI.	*/
+				DisplayRunList();
+
+				EditorGUILayout.Separator();
+
+				EditorGUILayout.EndScrollView();
+
+
+				/*	Summary information.	*/
+				EditorGUILayout.BeginVertical("Box");
+				EditorGUILayout.Space();
+				EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.targets.Length.ToString()));
+
+				EditorGUILayout.BeginHorizontal();
+
+				/*	Build all buttons.	*/
+				if (GUILayout.Button(Styles.buildTargets))
+				{
+					Builder.BuildFromConfig((BuilderConfigSettings)settings);
+				}
+				if (GUILayout.Button(Styles.buildTargetsScriptOnly))
+				{
+					Builder.BuildFromConfigScriptOnly((BuilderConfigSettings)settings);
+				}
+
+				/*	Export and import buttons.	*/
+				const string ext = "asset";
+				if (GUILayout.Button(Styles.export))
+				{
+					/*	Export.	*/
+					string path = EditorUtility.SaveFilePanel("Choose export file path", Directory.GetCurrentDirectory(), string.Format("{0}", Application.productName), ext);
+					/*	*/
+					if (path.Length != 0)
+					{
+						try
+						{
+							BuilderConfigIO.SaveConfigSetting(path);
+						}
+						catch (Exception ex)
+						{
+							EditorUtility.DisplayDialog("Error when exporting the settings", ex.Message, "Ok");
+						}
+						finally
 						{
 
 						}
 					}
-					if (GUILayout.Button(Styles.ClearScenes))
-					{
-						SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
-						scenes.ClearArray();
-						//
-					}
-					EditorGUILayout.EndHorizontal();
-
-					/*	Draw build buttons.	*/
-					BuildTarget optionItem = BuilderConfigSettings.GetOrCreateSettings().targets[selectedConfigIndex];
-					EditorGUILayout.BeginHorizontal();
-					bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
-					EditorGUI.BeginDisabledGroup(!isTargetSupported);
-					if (GUILayout.Button(Styles.build))
-					{
-						Builder.BuildTarget(optionItem);
-					}
-					if (GUILayout.Button(Styles.buildScript))
-					{
-						Builder.BuildTargetScriptOnly(optionItem);
-					}
-					EditorGUI.EndDisabledGroup();
-					EditorGUILayout.EndHorizontal();
-					try
-					{
-						string outputPathLabel = string.Format("Executable fielpath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem));
-						EditorGUILayout.LabelField(outputPathLabel);
-					}
-					catch (Exception ex)
-					{
-						EditorGUILayout.LabelField("");
-					}
-
 				}
-			}
-
-			EditorGUILayout.EndVertical();
-
-			EditorGUILayout.EndHorizontal();
-
-			EditorGUILayout.Separator();
-
-			/*  Draw quick run UI.	*/
-			DisplayRunList();
-
-			EditorGUILayout.Separator();
-
-			EditorGUILayout.EndScrollView();
-
-
-			/*	Summary information.	*/
-			EditorGUILayout.BeginVertical("Box");
-			EditorGUILayout.Space();
-			EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.targets.Length.ToString()));
-
-			EditorGUILayout.BeginHorizontal();
-
-			/*	Build all buttons.	*/
-			if (GUILayout.Button(Styles.buildTargets))
-			{
-				Builder.BuildFromConfig((BuilderConfigSettings)settings);
-			}
-			if (GUILayout.Button(Styles.buildTargetsScriptOnly))
-			{
-				Builder.BuildFromConfigScriptOnly((BuilderConfigSettings)settings);
-			}
-
-			/*	Export and import buttons.	*/
-			const string ext = "asset";
-			if (GUILayout.Button(Styles.export))
-			{
-				/*	Export.	*/
-				string path = EditorUtility.SaveFilePanel("Choose export file path", Directory.GetCurrentDirectory(), string.Format("{0}", Application.productName), ext);
-				/*	*/
-				if (path.Length != 0)
+				if (GUILayout.Button(Styles.import))
 				{
-					try
+					/*	Import.	*/
+					string path = EditorUtility.OpenFilePanel("Choose import file path", Directory.GetCurrentDirectory(), ext);
+					/*	*/
+					if (path.Length != 0)
 					{
-						BuilderConfigIO.SaveConfigSetting(path);
-					}
-					catch (Exception ex)
-					{
-						EditorUtility.DisplayDialog("Error when exporting the settings", ex.Message, "Ok");
-					}
-					finally
-					{
+						try
+						{
+							BuilderConfigIO.LoadConfigSetting(path);
+						}
+						catch (Exception ex)
+						{
+							EditorUtility.DisplayDialog("Error when importing settings", ex.Message, "Ok");
+						}
+						finally
+						{
+
+						}
 
 					}
 				}
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.EndVertical();
+				m_BuilderConfigSettings.ApplyModifiedProperties();
+
+				/*	Reset indent.	*/
+				//EditorGUI.indentLevel = indent;
 			}
-			if (GUILayout.Button(Styles.import))
-			{
-				/*	Import.	*/
-				string path = EditorUtility.OpenFilePanel("Choose import file path", Directory.GetCurrentDirectory(), ext);
-				/*	*/
-				if (path.Length != 0)
-				{
-					try
-					{
-						BuilderConfigIO.LoadConfigSetting(path);
-					}
-					catch (Exception ex)
-					{
-						EditorUtility.DisplayDialog("Error when importing settings", ex.Message, "Ok");
-					}
-					finally
-					{
-
-					}
-
-				}
-			}
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.EndVertical();
-			m_BuilderConfigSettings.ApplyModifiedProperties();
-
-			/*	Reset indent.	*/
-			EditorGUI.indentLevel = indent;
 		}
 
 #if UNITY_2018_1_OR_NEWER

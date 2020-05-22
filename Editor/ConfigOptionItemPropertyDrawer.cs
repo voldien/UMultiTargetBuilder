@@ -54,12 +54,9 @@ namespace BuildMultiPlatform
 			}
 
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
-			if (!useDefaultScenes.boolValue)
-			{
-				/*	Add additional height for the dynamic sized scene object.	*/
-				SerializedProperty scenes = property.FindPropertyRelative("scenes");
-				height += scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.15f;
-			}
+			/*	Add additional height for the dynamic sized scene object.	*/
+			SerializedProperty scenes = property.FindPropertyRelative("scenes");
+			height += scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
 			return height;
 		}
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -89,15 +86,14 @@ namespace BuildMultiPlatform
 
 			/*	*/
 			float propertyHeight = position.height / (float)lineCount;
-			const float textWidth = 100.0f;
 			float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 			const float toggleTextWidth = 230.0f;
 
 			// Each property rectangle view bounds.
 			Rect metaRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect titleRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-			//			Rect nameRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-			Rect enabledRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			//Rect nameRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			//Rect enabledRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect outputRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
@@ -240,18 +236,16 @@ namespace BuildMultiPlatform
 
 			list.drawHeaderCallback = (Rect rect) =>
 			{
-				EditorGUI.LabelField(rect, string.Format("Scenes {0}", property.arraySize));
+				EditorGUI.LabelField(rect, string.Format("Number of Scenes: {0}", property.arraySize));
 			};
             list.elementHeightCallback = (int index) => {
 				return EditorGUIUtility.singleLineHeight;
 			};
 			list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
-				var indent = EditorGUI.indentLevel;
-				EditorGUI.indentLevel++;
-				EditorGUI.PropertyField(rect, property.GetArrayElementAtIndex(index), false);
-
-				EditorGUI.indentLevel = indent;
+				SerializedProperty item = property.GetArrayElementAtIndex(index);
+				string itemName = string.Format("Scene ({0}):", index);
+				EditorGUI.PropertyField(rect, item, new GUIContent(itemName));
 			};
 			return list;
 		}
