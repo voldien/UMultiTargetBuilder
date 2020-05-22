@@ -35,7 +35,7 @@ namespace BuildMultiPlatform
 		public static bool ValidatePerformBuildContext()
 		{
 			BuilderConfigSettings setting = BuilderConfigSettings.GetOrCreateSettings();
-			return setting.targets.Length > 0 && Directory.Exists(setting.path);
+			return setting.targets.Length > 0 && Directory.Exists(setting.rootOutputDirectory);
 		}
 
 		[MenuItem("Build/Builder/Build Targets", false, 0)]
@@ -121,7 +121,7 @@ namespace BuildMultiPlatform
 				path = Path.GetFullPath(string.Format("{0}/{1}", settings.rootOutputDirectory, target.Title));
 
 			/*	Add extension in order to make the target work properly in its environment.	*/
-			if (!Path.HasExtension(settings.Title))
+			if (!Path.HasExtension(target.Title))
 			{
 				switch (target.target)
 				{
@@ -176,13 +176,18 @@ namespace BuildMultiPlatform
 		public static bool IsTargetRunable(BuildTarget target)
 		{
 			/*	*/
-			string path = GetTargetLocationAbsolutePath(target);
-			if (File.Exists(path))
-			{
-				/*	TODO add support if path is executable and what platform the target is in respect to current.	*/
-				return true;
+			try{
+				string path = GetTargetLocationAbsolutePath(target);
+				if (File.Exists(path))
+				{
+					/*	TODO add support if path is executable and what platform the target is in respect to current.	*/
+					return true;
+				}
+				return false;
 			}
-			return false;
+			catch(Exception ex){
+				return false;
+			}
 		}
 
 		internal static void InternalBuildScriptOnly(BuildTarget buildTarget)

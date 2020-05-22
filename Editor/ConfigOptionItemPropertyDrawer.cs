@@ -36,13 +36,14 @@ namespace BuildMultiPlatform
 			public static GUIContent SceneSettingsLabel = new GUIContent("Scene Settings");
 			public static GUIContent useScene = new GUIContent("Use Default Scenes");
 		}
+		const int listLineCount = 2;
 		const int toggleOptionlineCount = 6;
-		const int lineCount = 10 + toggleOptionlineCount;
+		const int lineCount = 10 + toggleOptionlineCount + listLineCount;
 		private ReorderableList m_list;
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			/*	Compute the height of all the fields.	*/
-			float height = EditorGUIUtility.singleLineHeight * lineCount + EditorGUIUtility.standardVerticalSpacing * (lineCount - 1);
+			float height = EditorGUIUtility.singleLineHeight * lineCount + EditorGUIUtility.standardVerticalSpacing * (lineCount - 1) * 1.25f;
 
 			switch ((BuildTargetGroup)property.FindPropertyRelative("targetGroup").intValue)
 			{
@@ -57,7 +58,7 @@ namespace BuildMultiPlatform
 			{
 				/*	Add additional height for the dynamic sized scene object.	*/
 				SerializedProperty scenes = property.FindPropertyRelative("scenes");
-				height += EditorGUI.GetPropertyHeight(scenes) * 1.25f;
+				height += scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.15f;
 			}
 			return height;
 		}
@@ -156,6 +157,7 @@ namespace BuildMultiPlatform
 			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, EditorGUI.GetPropertyHeight(scenes));
 
+
 			//		EditorGUI.BeginChangeCheck();
 			//EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
 			EditorGUI.LabelField(metaRect, Styles.metaInformation, EditorStyles.boldLabel);
@@ -202,6 +204,7 @@ namespace BuildMultiPlatform
 
 			EditorGUI.BeginDisabledGroup(useDefaultScenes.boolValue);
 			/*	Draw scene property only.	*/
+
 			if (m_list == null)
 			{
 				m_list = BuildSceneAssetReorderableList(scenes);
@@ -210,6 +213,7 @@ namespace BuildMultiPlatform
 			{
 				m_list = BuildSceneAssetReorderableList(scenes);
 			}
+			ScenesRect = EditorGUI.IndentedRect(ScenesRect);
 			m_list.DoList(ScenesRect);
 			EditorGUI.EndDisabledGroup();
 
