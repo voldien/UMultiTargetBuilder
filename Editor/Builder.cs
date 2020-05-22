@@ -18,22 +18,24 @@ namespace BuildMultiPlatform
 			Debug.Log(pathToBuiltProject);
 		}
 
+
 		[MenuItem("Build/Builder/Default Build", false, 1)]
 		public static void PerformDefaultBuildContext()
 		{
-
 			BuildTarget defaultTarget = new BuildTarget();
 			defaultTarget.name = "Default";
 			defaultTarget.target = EditorUserBuildSettings.activeBuildTarget;
 			defaultTarget.targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 			defaultTarget.options = BuildOptions.None;
+			defaultTarget.outputDirectory = EditorUserBuildSettings.GetBuildLocation(defaultTarget.target);
 			Builder.BuildTarget(defaultTarget);
 		}
 
 		[MenuItem("Build/Builder/Build Targets", true, 0)]
 		public static bool ValidatePerformBuildContext()
 		{
-			return BuilderConfigSettings.GetOrCreateSettings().targets.Length > 0;
+			BuilderConfigSettings setting = BuilderConfigSettings.GetOrCreateSettings();
+			return setting.targets.Length > 0 && Directory.Exists(setting.path);
 		}
 
 		[MenuItem("Build/Builder/Build Targets", false, 0)]
@@ -46,7 +48,7 @@ namespace BuildMultiPlatform
 		[MenuItem("Build/Builder/Build Targets (Script only)", true, 1)]
 		public static bool ValidatePerformBuildScriptOnlyContext()
 		{
-			return BuilderConfigSettings.GetOrCreateSettings().targets.Length > 0;
+			return ValidatePerformBuildContext();
 		}
 
 		[MenuItem("Build/Builder/Build Targets (Script only)", false, 1)]
@@ -58,7 +60,7 @@ namespace BuildMultiPlatform
 
 		public static void BuildFromConfig(BuilderConfigSettings settings)
 		{
-			/*	Remeber the state of the current build target.	*/
+			/*	Remember the state of the current build target.	*/
 			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
 			BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 			try

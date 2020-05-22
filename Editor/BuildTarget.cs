@@ -4,6 +4,7 @@ using System;
 
 namespace BuildMultiPlatform
 {
+	//EditorUserBuildSettings.SetPlatformSettings	//TODO add support
 	[Serializable]
 	public class BuildTarget : ICloneable
 	{
