@@ -30,7 +30,8 @@ namespace BuildMultiPlatform
 			{
 				/*	Create default setting object.	*/
 				settings = ScriptableObject.CreateInstance<BuilderConfigSettings>();
-				settings.rootOutputDirectory = "";
+					
+				settings.rootOutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 				settings.verbose = true;
 				settings.targets = new BuildTarget[0];
 				AssetDatabase.CreateAsset(settings, GetSettingFilePath());

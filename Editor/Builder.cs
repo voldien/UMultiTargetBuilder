@@ -107,11 +107,11 @@ namespace BuildMultiPlatform
 			if (root.Length == 0)
 			{
 				/*	Create default directory from user home directory.	*/
-				root = string.Format("{0}/{1}", Environment.SpecialFolder.Personal, PlayerSettings.productName);
+				root = string.Format("{0}/{1}", Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName);
 			}
 
 			if(!Directory.Exists(root)){
-				throw new InvalidOperationException("");
+				throw new InvalidOperationException("Root output directory does not exists.");
 			}
 
 			/*	Compute the output filepath.	*/
@@ -160,7 +160,7 @@ namespace BuildMultiPlatform
 			if (Path.IsPathRooted(path))
 				return path;
 			else
-				throw new Exception("Could not construct valid global path");
+				throw new Exception("Could not construct valid global path.");
 
 		}
 

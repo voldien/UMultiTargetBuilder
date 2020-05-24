@@ -9,20 +9,20 @@ namespace BuildMultiPlatform
 	public class BuildTarget : ICloneable
 	{
 		[Tooltip("The name of the executable."), SerializeField]
-		public string title;
+		public string title = "";
 		[Tooltip(""), SerializeField]
-		public string company;
+		public string company = "";
 		[Tooltip("Relative output directory."), SerializeField]
-		public string outputDirectory;
+		public string outputDirectory = "";
 		[Tooltip("The name of the target. (Used in the editor only)")]
-		public string name;
+		public string name = "";
 		[Tooltip("Enabled for building when invoking build all targets."), SerializeField]
 		public bool enabled = true;
 		[SerializeField, Tooltip("Use the default scenes specified by the build setting.")] // Tooltip("Set of Build Options."), InspectorName("Build Configuration Options")
 		public bool useDefaultScenes = true;
 		[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
 		//public SceneTargetList scenes;
-		public SceneAsset[] scenes;
+		public SceneAsset[] scenes = new SceneAsset[0];
 		[SerializeField, Tooltip("The target group.")]
 		public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
 		[SerializeField, Tooltip("Specified target.")]

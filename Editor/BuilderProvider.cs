@@ -188,18 +188,15 @@ namespace BuildMultiPlatform
 			{
 				/*	Add default instance.	*/
 				int index = m_configurations.arraySize;
+				m_configurations.InsertArrayElementAtIndex(index);
 
-				m_configurations.InsertArrayElementAtIndex(m_configurations.arraySize);
-				// 				BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
-				// //				settings.targets[index] = new BuildTarget();
-				// 				settings.targets.Append(new BuildTarget());
-				// 				EditorUtility.SetDirty(m_BuilderConfigSettings.targetObject);
+				m_BuilderConfigSettings.ApplyModifiedProperties();
 
-				//TODO set default value.	
-				/*	Reset the values.	*/    //TODO add support for reseting the value.
-											  //SerializedProperty item = configurations.GetArrayElementAtIndex(index);
-											  //BuildConfigTarget _target = (BuildConfigTarget)item.serializedObject.targetObject;
-											  //TODO improve the logic.
+				/*	Set the default value.	*/
+				BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
+				settings.targets[index] = new BuildTarget();
+				m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
+				m_BuilderConfigSettings.Update();
 
 				if (m_configurations.arraySize == 1)
 					selectedConfigIndex = 0;
@@ -216,6 +213,13 @@ namespace BuildMultiPlatform
 				int index = m_configurations.arraySize;
 				/*	Add copy based on the current selected index.	*/
 				m_configurations.InsertArrayElementAtIndex(index);
+				m_BuilderConfigSettings.ApplyModifiedProperties();
+
+				BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
+				BuildTarget selected = settings.targets[selectedConfigIndex];
+				settings.targets[index] = (BuildTarget)selected.Clone();
+				m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
+				m_BuilderConfigSettings.Update();
 			}
 
 			if (GUILayout.Button(Styles.remove))
@@ -297,8 +301,6 @@ namespace BuildMultiPlatform
 			m_BuilderConfigSettings.Update();
 			BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
 
-			//var indent = EditorGUI.indentLevel;
-			//EditorGUI.indentLevel++;
 			using (new EditorGUI.IndentLevelScope(1))
 			{
 
@@ -332,8 +334,6 @@ namespace BuildMultiPlatform
 
 						EditorGUILayout.BeginHorizontal();
 
-						//					var indent2 = EditorGUI.indentLevel;
-						//					EditorGUI.indentLevel += 2;
 						using (new EditorGUI.IndentLevelScope(3))
 						{
 							//TOOD add support.
@@ -379,10 +379,9 @@ namespace BuildMultiPlatform
 							catch (Exception ex)
 							{
 
-								EditorGUILayout.LabelField("Invalid setttings: Not a valid path.");
+								EditorGUILayout.LabelField(string.Format("Invalid setttings: {0}.", ex.Message));
 							}
 						}
-						//EditorGUI.indentLevel = indent2;
 					}
 				}
 
@@ -465,10 +464,7 @@ namespace BuildMultiPlatform
 				EditorGUILayout.EndHorizontal();
 				EditorGUILayout.EndVertical();
 				m_BuilderConfigSettings.ApplyModifiedProperties();
-
-				/*	Reset indent.	*/
-				//EditorGUI.indentLevel = indent;
-			}
+			}   /*	Reset indent.	*/
 		}
 
 #if UNITY_2018_1_OR_NEWER
