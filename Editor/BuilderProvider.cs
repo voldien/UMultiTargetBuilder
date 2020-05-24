@@ -375,11 +375,12 @@ namespace BuildMultiPlatform
 							{
 								string outputPathLabel = string.Format("Executable fielpath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem));
 								EditorGUILayout.LabelField(outputPathLabel);
-							}
-							catch (Exception ex)
+							}scatch (Exception ex)
 							{
-
+								Color currentColor = EditorStyles.label.normal.textColor;
+								EditorStyles.label.normal.textColor = Color.red;
 								EditorGUILayout.LabelField(string.Format("Invalid setttings: {0}.", ex.Message));
+								EditorStyles.label.normal.textColor = currentColor;
 							}
 						}
 					}

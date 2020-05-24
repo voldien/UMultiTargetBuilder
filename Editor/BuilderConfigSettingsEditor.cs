@@ -33,6 +33,8 @@ namespace BuildMultiPlatform
 			base.OnInspectorGUI();
 			serializedObject.Update();
 
+
+
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button(BuilderSettingsProvider.Styles.add))
 			{
@@ -54,58 +56,60 @@ namespace BuildMultiPlatform
 			EditorGUILayout.EndHorizontal();
 
 			scroll = EditorGUILayout.BeginScrollView(scroll);
-			EditorGUILayout.BeginVertical();
-			if (configurations.hasChildren)
+			using (new EditorGUI.IndentLevelScope(1))
 			{
-				for (int i = 0; i < configurations.arraySize; i++)
+				EditorGUILayout.BeginVertical();
+				if (configurations.hasChildren)
 				{
-					SerializedProperty option = configurations.GetArrayElementAtIndex(i);
-
-
-					BuildTarget optionItem = ((BuilderConfigSettings)serializedObject.targetObject).targets[i];
-
-					/*	Draw build option configuration.	*/
-					EditorGUILayout.PropertyField(option, GUIContent.none); // buildTarget.enumDisplayNames[buildTarget.enumValueIndex]
-
-					if (GUILayout.Button(BuilderSettingsProvider.Styles.remove))
+					for (int i = 0; i < configurations.arraySize; i++)
 					{
-						this.configurations.DeleteArrayElementAtIndex(i);
-						/*	Break out of the iteraton.	*/
-						break;
-					}
+						SerializedProperty option = configurations.GetArrayElementAtIndex(i);
 
-					bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
-					EditorGUI.BeginDisabledGroup(!isTargetSupported);
-					if (GUILayout.Button(BuilderSettingsProvider.Styles.build))
-					{
-						Builder.BuildTarget(optionItem);
-					}
 
-					EditorGUILayout.Separator();
-					/*	*/
-					EditorGUILayout.BeginHorizontal();
-					if (Builder.isBuildTargetSupported(optionItem))
-					{
-						GUILayout.Label("Supported target");
-					}
-					else
-					{
-						GUIStyle TextFieldStyles = new GUIStyle(EditorStyles.textField);
+						BuildTarget optionItem = ((BuilderConfigSettings)serializedObject.targetObject).targets[i];
 
-						//						GUILayout.Label(EditorGUIUtility.IconContent("sv_icon_dot4_pix16_gizmo"), GUILayout.MinWidth(16), GUILayout.MaxWidth(32));
-						//						Color currentColor = EditorStyles.label.normal.textColor;
-						//						EditorStyles.label.normal.textColor = Color.red;
-						GUILayout.Label("Non Supported target");
-						//						EditorStyles.label.normal.textColor = currentColor;
-					}
+						/*	Draw build option configuration.	*/
+						EditorGUILayout.PropertyField(option, GUIContent.none); // buildTarget.enumDisplayNames[buildTarget.enumValueIndex]
 
-					EditorGUILayout.EndHorizontal();
+						if (GUILayout.Button(BuilderSettingsProvider.Styles.remove))
+						{
+							this.configurations.DeleteArrayElementAtIndex(i);
+							/*	Break out of the iteraton.	*/
+							break;
+						}
+
+						bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
+						EditorGUI.BeginDisabledGroup(!isTargetSupported);
+						if (GUILayout.Button(BuilderSettingsProvider.Styles.build))
+						{
+							Builder.BuildTarget(optionItem);
+						}
+
+						EditorGUILayout.Separator();
+						/*	*/
+						EditorGUILayout.BeginHorizontal();
+						if (Builder.isBuildTargetSupported(optionItem))
+						{
+							GUILayout.Label("Supported target");
+						}
+						else
+						{
+
+							//						GUILayout.Label(EditorGUIUtility.IconContent("sv_icon_dot4_pix16_gizmo"), GUILayout.MinWidth(16), GUILayout.MaxWidth(32));
+							Color currentColor = EditorStyles.label.normal.textColor;
+							EditorStyles.label.normal.textColor = Color.red;
+							GUILayout.Label("Non Supported target");
+							EditorStyles.label.normal.textColor = currentColor;
+						}
+
+						EditorGUILayout.EndHorizontal();
+					}
 				}
+
+				EditorGUILayout.Separator();
+
+				EditorGUILayout.EndVertical();
 			}
-
-			EditorGUILayout.Separator();
-
-			EditorGUILayout.EndVertical();
 			EditorGUILayout.EndScrollView();
 
 			serializedObject.ApplyModifiedProperties();
