@@ -44,27 +44,6 @@ namespace BuildMultiPlatform
 			copy.scenes = (SceneAsset[])this.scenes.Clone();
 			return (object)copy;
 		}
-
-		object ICloneable.Clone()
-		{
-			BuildTarget copy = new BuildTarget();
-			copy.title = this.title;
-			copy.company = this.company;
-			copy.enabled = this.enabled;
-			copy.outputDirectory = this.outputDirectory;
-			copy.name = this.name;
-			copy.target = this.target;
-			copy.targetGroup = this.targetGroup;
-			copy.useDefaultScenes = this.useDefaultScenes;
-			copy.options = this.options;
-			copy.scenes = (SceneAsset[])this.scenes.Clone();
-			return (object)copy;
-		}
-
-		// object ICloneable.Clone()
-		// {
-		// 	throw new NotImplementedException();
-		// }
 	}
 
 }
