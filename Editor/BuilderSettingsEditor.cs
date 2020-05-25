@@ -6,8 +6,8 @@ using System.IO;
 namespace BuildMultiPlatform
 {
 
-	[CustomEditor(typeof(BuilderConfigSettings))]
-	public class BuilderConfigSettingsEditor : Editor
+	[CustomEditor(typeof(BuilderSettings))]
+	public class BuilderSettingsEditor : Editor
 	{
 		SerializedProperty configurations;
 		SerializedProperty rootOutputDirectory;
@@ -25,7 +25,7 @@ namespace BuildMultiPlatform
 		{
 			if (GUILayout.Button(BuilderSettingsProvider.Styles.buildTargets))
 			{
-				Builder.BuildFromConfig((BuilderConfigSettings)configurations.objectReferenceValue);
+				Builder.BuildFromConfig((BuilderSettings)configurations.objectReferenceValue);
 			}
 			GUILayout.Label("Number of targets: " + configurations.arraySize.ToString());
 			EditorGUILayout.Separator();
@@ -66,7 +66,7 @@ namespace BuildMultiPlatform
 						SerializedProperty option = configurations.GetArrayElementAtIndex(i);
 
 
-						BuildTarget optionItem = ((BuilderConfigSettings)serializedObject.targetObject).targets[i];
+						BuildTarget optionItem = ((BuilderSettings)serializedObject.targetObject).targets[i];
 
 						/*	Draw build option configuration.	*/
 						EditorGUILayout.PropertyField(option, GUIContent.none); // buildTarget.enumDisplayNames[buildTarget.enumValueIndex]

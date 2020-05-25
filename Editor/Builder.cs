@@ -34,14 +34,14 @@ namespace BuildMultiPlatform
 		[MenuItem("Build/Builder/Build Targets", true, 0)]
 		public static bool ValidatePerformBuildContext()
 		{
-			BuilderConfigSettings setting = BuilderConfigSettings.GetOrCreateSettings();
+			BuilderSettings setting = BuilderSettings.GetOrCreateSettings();
 			return setting.targets.Length > 0 && Directory.Exists(setting.rootOutputDirectory);
 		}
 
 		[MenuItem("Build/Builder/Build Targets", false, 0)]
 		public static void PerformBuildContext()
 		{
-			BuilderConfigSettings config = BuilderConfigSettings.GetOrCreateSettings();
+			BuilderSettings config = BuilderSettings.GetOrCreateSettings();
 			BuildFromConfig(config);
 		}
 
@@ -54,11 +54,11 @@ namespace BuildMultiPlatform
 		[MenuItem("Build/Builder/Build Targets (Script only)", false, 1)]
 		public static void PerformBuildScriptOnlyContext()
 		{
-			BuilderConfigSettings config = BuilderConfigSettings.GetOrCreateSettings();
+			BuilderSettings config = BuilderSettings.GetOrCreateSettings();
 			BuildFromConfigScriptOnly(config);
 		}
 
-		public static void BuildFromConfig(BuilderConfigSettings settings)
+		public static void BuildFromConfig(BuilderSettings settings)
 		{
 			/*	Remember the state of the current build target.	*/
 			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -77,7 +77,7 @@ namespace BuildMultiPlatform
 			}
 		}
 
-		public static void BuildFromConfigScriptOnly(BuilderConfigSettings settings)
+		public static void BuildFromConfigScriptOnly(BuilderSettings settings)
 		{
 			/*	Remeber the state of the current build target.	*/
 			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -104,7 +104,7 @@ namespace BuildMultiPlatform
 
 		public static string GetTargetLocationAbsolutePath(BuildTarget target)
 		{
-			BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
+			BuilderSettings settings = BuilderSettings.GetOrCreateSettings();
 
 			string path = null;
 			string root = settings.rootOutputDirectory;
@@ -114,6 +114,8 @@ namespace BuildMultiPlatform
 				/*	Create default directory from user home directory.	*/
 				root = string.Format("{0}/{1}", Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName);
 			}
+
+			/*	Check if target path is rooted or relative.	*/
 
 			/*	Compute the output filepath.	*/
 			if (target.outputDirectory.Length > 0)
@@ -168,7 +170,7 @@ namespace BuildMultiPlatform
 		public static void RunTarget(BuildTarget target)
 		{
 			/*	*/
-			BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
+			BuilderSettings settings = BuilderSettings.GetOrCreateSettings();
 			System.Diagnostics.Process proc = new System.Diagnostics.Process();
 			proc.StartInfo.FileName = GetTargetLocationAbsolutePath(target);
 			proc.Start();
@@ -201,7 +203,7 @@ namespace BuildMultiPlatform
 
 		internal static void InternalBuildTarget(BuildTarget buildTarget)
 		{
-			BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
+			BuilderSettings settings = BuilderSettings.GetOrCreateSettings();
 			if (buildTarget.enabled)
 			{
 				/*	Determine if supported on the target unity modules.	*/

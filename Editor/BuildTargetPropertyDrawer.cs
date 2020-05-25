@@ -4,9 +4,8 @@ using UnityEditorInternal;
 
 namespace BuildMultiPlatform
 {
-	//TODO rename
 	[CustomPropertyDrawer(typeof(BuildTarget))]
-	public class ConfigOptionItemPropertyDrawer : PropertyDrawer
+	public class BuildTargetPropertyDrawer : PropertyDrawer
 	{
 		public class Styles
 		{

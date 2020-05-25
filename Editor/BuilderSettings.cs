@@ -8,7 +8,7 @@ namespace BuildMultiPlatform
 {
 	//TODO rename.
 	[Serializable]
-	public class BuilderConfigSettings : ScriptableObject
+	public class BuilderSettings : ScriptableObject
 	{
 		[Tooltip("Root Directory where all build will be located"), SerializeField]
 		public string rootOutputDirectory;
@@ -23,13 +23,13 @@ namespace BuildMultiPlatform
 			return "Assets/Editor/BuildConfigSettings.asset";
 		}
 
-		internal static BuilderConfigSettings GetOrCreateSettings()
+		internal static BuilderSettings GetOrCreateSettings()
 		{
-			BuilderConfigSettings settings = AssetDatabase.LoadAssetAtPath<BuilderConfigSettings>(GetSettingFilePath());
+			BuilderSettings settings = AssetDatabase.LoadAssetAtPath<BuilderSettings>(GetSettingFilePath());
 			if (settings == null)
 			{
 				/*	Create default setting object.	*/
-				settings = ScriptableObject.CreateInstance<BuilderConfigSettings>();
+				settings = ScriptableObject.CreateInstance<BuilderSettings>();
 					
 				settings.rootOutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 				settings.verbose = true;
@@ -57,7 +57,7 @@ namespace BuildMultiPlatform
 		[MenuItem("Build/Builder/Generate Config", false, 15)]
 		public static void GenerateConfig()
 		{
-			BuilderConfigSettings.GetOrCreateSettings();
+			BuilderSettings.GetOrCreateSettings();
 		}
 
 		internal static SerializedObject GetSerializedSettings()

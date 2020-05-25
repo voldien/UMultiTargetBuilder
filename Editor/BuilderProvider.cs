@@ -55,12 +55,12 @@ namespace BuildMultiPlatform
 
 		public static bool IsSettingsAvailable()
 		{
-			return File.Exists(BuilderConfigSettings.GetSettingFilePath());
+			return File.Exists(BuilderSettings.GetSettingFilePath());
 		}
 
 		public override void OnActivate(string searchContext, VisualElement rootElement)
 		{
-			m_BuilderConfigSettings = BuilderConfigSettings.GetSerializedSettings();
+			m_BuilderConfigSettings = BuilderSettings.GetSerializedSettings();
 
 			/*	*/
 			m_configurations = m_BuilderConfigSettings.FindProperty("targets");
@@ -80,7 +80,7 @@ namespace BuildMultiPlatform
 			}
 
 			/*	Autoselect the first if any build target exists.	*/
-			if (BuilderConfigSettings.GetOrCreateSettings().targets.Length > 0)
+			if (BuilderSettings.GetOrCreateSettings().targets.Length > 0)
 				this.selectedConfigIndex = 0;
 		}
 
@@ -127,7 +127,7 @@ namespace BuildMultiPlatform
 					break;
 				case BuildTargetGroup.Unknown:
 				default:
-					/*	Invalid state.	*/
+					/*	Invalid state or could not find the target icon.	*/
 					return null;
 			}
 			return (Texture)EditorGUIUtility.IconContent(builtin_icon_name).image;
@@ -194,7 +194,7 @@ namespace BuildMultiPlatform
 				m_BuilderConfigSettings.ApplyModifiedProperties();
 
 				/*	Set the default value.	*/
-				BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
+				BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 				settings.targets[index] = new BuildTarget();
 				m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
 				m_BuilderConfigSettings.Update();
@@ -216,7 +216,7 @@ namespace BuildMultiPlatform
 				m_configurations.InsertArrayElementAtIndex(index);
 				m_BuilderConfigSettings.ApplyModifiedProperties();
 
-				BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
+				BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 				BuildTarget selected = settings.targets[selectedConfigIndex];
 				settings.targets[index] = (BuildTarget)selected.Clone();
 				m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
@@ -244,7 +244,7 @@ namespace BuildMultiPlatform
 			using (new EditorGUI.IndentLevelScope(1))
 			{
 				/*	Iterate through each item.	*/
-				BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
+				BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 				foreach (BuildTarget target in settings.targets)
 				{
 
@@ -304,7 +304,7 @@ namespace BuildMultiPlatform
 		{
 
 			m_BuilderConfigSettings.Update();
-			BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
+			BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 
 			using (new EditorGUI.IndentLevelScope(1))
 			{
@@ -344,7 +344,7 @@ namespace BuildMultiPlatform
 						{
 							//TOOD add support.
 							EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
-							if (GUILayout.Button(Styles.SetDefaultScenes,GUILayout.MaxWidth(150)))
+							if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(150)))
 							{
 								SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
 								EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
@@ -363,7 +363,7 @@ namespace BuildMultiPlatform
 							EditorGUILayout.EndHorizontal();
 
 							/*	Draw build buttons.	*/
-							BuildTarget optionItem = BuilderConfigSettings.GetOrCreateSettings().targets[selectedConfigIndex];
+							BuildTarget optionItem = BuilderSettings.GetOrCreateSettings().targets[selectedConfigIndex];
 							bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
 							if (!isTargetSupported)
 							{
@@ -389,7 +389,8 @@ namespace BuildMultiPlatform
 							{
 								string outputPathLabel = string.Format("Executable filepath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem), EditorStyles.boldLabel);
 								EditorGUILayout.LabelField(outputPathLabel);
-							}catch (Exception ex)
+							}
+							catch (Exception ex)
 							{
 								Color currentColor = EditorStyles.label.normal.textColor;
 								EditorStyles.label.normal.textColor = Color.red;
@@ -413,7 +414,6 @@ namespace BuildMultiPlatform
 
 				EditorGUILayout.EndScrollView();
 
-
 				/*	Summary information.	*/
 				EditorGUILayout.BeginVertical("Box");
 				EditorGUILayout.Space();
@@ -423,18 +423,23 @@ namespace BuildMultiPlatform
 				/*	Check if any has invalid.	*/
 				int nbadpath = 0;
 				int ntargetpath = 0;
-				foreach(BuildTarget target in settings.targets){
-					if(Builder.isBuildTargetSupported(target)){
+				foreach (BuildTarget target in settings.targets)
+				{
+					if (Builder.isBuildTargetSupported(target))
+					{
 						ntargetpath++;
 					}
-					if(Builder.validateTargetPath(target)){
+					if (Builder.validateTargetPath(target))
+					{
 						nbadpath++;
 					}
 				}
-				if(nbadpath > 0){
+				if (nbadpath > 0)
+				{
 					EditorGUILayout.LabelField(string.Format("Number of invalid path targets: {0}", nbadpath));
 				}
-				if(ntargetpath > 0){
+				if (ntargetpath > 0)
+				{
 					EditorGUILayout.LabelField(string.Format("Number of invalid target configuratons: {0}", ntargetpath));
 				}
 
@@ -444,11 +449,11 @@ namespace BuildMultiPlatform
 				/*	Build all buttons.	*/
 				if (GUILayout.Button(Styles.buildTargets))
 				{
-					Builder.BuildFromConfig((BuilderConfigSettings)settings);
+					Builder.BuildFromConfig((BuilderSettings)settings);
 				}
 				if (GUILayout.Button(Styles.buildTargetsScriptOnly))
 				{
-					Builder.BuildFromConfigScriptOnly((BuilderConfigSettings)settings);
+					Builder.BuildFromConfigScriptOnly((BuilderSettings)settings);
 				}
 
 				/*	Export and import buttons.	*/
@@ -462,7 +467,7 @@ namespace BuildMultiPlatform
 					{
 						try
 						{
-							BuilderConfigIO.SaveConfigSetting(path);
+							BuilderIO.SaveConfigSetting(path);
 						}
 						catch (Exception ex)
 						{
@@ -483,7 +488,7 @@ namespace BuildMultiPlatform
 					{
 						try
 						{
-							BuilderConfigIO.LoadConfigSetting(path);
+							BuilderIO.LoadConfigSetting(path);
 						}
 						catch (Exception ex)
 						{
@@ -509,7 +514,7 @@ namespace BuildMultiPlatform
 			if (!IsSettingsAvailable())
 			{
 				/*	Create setting object if it does not exist.	*/
-				BuilderConfigSettings.GetOrCreateSettings();
+				BuilderSettings.GetOrCreateSettings();
 			}
 			SettingsProvider provider = new BuilderSettingsProvider("Project/MultiTarget Build Settings", SettingsScope.Project);
 

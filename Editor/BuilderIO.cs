@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace BuildMultiPlatform
 {
-    public static class BuilderConfigIO
+    public static class BuilderIO
     {
         //TODO Change to use AssetDatabase, created copy, get the fully path and use system file move.
         // For load, change the editor path of settings and invoke update asset.
@@ -16,7 +16,7 @@ namespace BuildMultiPlatform
 			if (File.Exists(path))
             {
 				/*  Dialog.*/
-				string assetPath = BuilderConfigSettings.GetSettingFilePath();
+				string assetPath = BuilderSettings.GetSettingFilePath();
 				string projectPath = Application.dataPath.Replace("/Assets", "");   //TODO improve.
 				string FullPath = string.Format("{0}/{1}", projectPath, assetPath);
                 if(File.Exists(FullPath)){
@@ -33,7 +33,7 @@ namespace BuildMultiPlatform
 
         public static void SaveConfigSetting(string path)
         {
-			string assetPath = BuilderConfigSettings.GetSettingFilePath();
+			string assetPath = BuilderSettings.GetSettingFilePath();
 			File.Copy(assetPath, path);
         }
     }
