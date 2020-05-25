@@ -47,6 +47,7 @@ namespace BuildMultiPlatform
 			public static GUIContent remove = new GUIContent("Remove", "Remove selected target.");
 
 			public static GUIContent RunTargets = new GUIContent("Runnable Targets");
+			/*	GUIStyles.	*/
 		}
 
 		public BuilderSettingsProvider(string path, SettingsScope scope = SettingsScope.User)
@@ -238,33 +239,36 @@ namespace BuildMultiPlatform
 
 		private void DisplayRunList()
 		{
+			EditorGUILayout.LabelField(Styles.RunTargets, EditorStyles.boldLabel);
 			EditorGUILayout.BeginVertical("GroupBox");
-			EditorGUILayout.LabelField(Styles.RunTargets);
-			/*	Iterate through each item.	*/
-			BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
-			foreach (BuildTarget target in settings.targets)
+			using (new EditorGUI.IndentLevelScope(1))
 			{
-
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField(string.Format("{0}, ({1})", target.name, target.Title));
-
-				EditorGUI.BeginDisabledGroup(!Builder.IsTargetRunable(target));
-				if (GUILayout.Button(Styles.run))
+				/*	Iterate through each item.	*/
+				BuilderConfigSettings settings = (BuilderConfigSettings)m_BuilderConfigSettings.targetObject;
+				foreach (BuildTarget target in settings.targets)
 				{
-					try
+
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField(string.Format("{0}, ({1})", target.name, target.Title));
+
+					EditorGUI.BeginDisabledGroup(!Builder.IsTargetRunable(target));
+					if (GUILayout.Button(Styles.run))
 					{
-						Builder.RunTarget(target);
+						try
+						{
+							Builder.RunTarget(target);
+						}
+						catch (Exception ex)
+						{
+							string dialog_title = string.Format("Failed Running '{}'", target.name);
+							string dialog_message = string.Format("Failed running target {0} on the path {1} \n Error {2}", target.name, Builder.GetTargetLocationAbsolutePath(target), ex.Message);
+							EditorUtility.DisplayDialog(dialog_title, dialog_message, "OK");
+						}
 					}
-					catch (Exception ex)
-					{
-						string dialog_title = string.Format("Failed Running '{}'", target.name);
-						string dialog_message = string.Format("Failed running target {0} on the path {1} \n Error {2}", target.name, Builder.GetTargetLocationAbsolutePath(target), ex.Message);
-						EditorUtility.DisplayDialog(dialog_title, dialog_message, "OK");
-					}
+					EditorGUI.EndDisabledGroup();
+					EditorGUILayout.EndHorizontal();
+					EditorGUILayout.Space();
 				}
-				EditorGUI.EndDisabledGroup();
-				EditorGUILayout.EndHorizontal();
-				EditorGUILayout.Space();
 			}
 
 			EditorGUILayout.EndVertical();
@@ -273,6 +277,7 @@ namespace BuildMultiPlatform
 		private void DisplayGUIHeader()
 		{
 			/*	Display global properties on all of the build targets.	*/
+			EditorGUILayout.LabelField("Global Settings", EditorStyles.boldLabel);
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PropertyField(m_outpdirectory, Styles.rootOutputDirectory);
 			if (GUILayout.Button(Styles.choosePath))
@@ -313,6 +318,7 @@ namespace BuildMultiPlatform
 				EditorGUILayout.Space();
 
 				/*	*/
+				EditorGUILayout.LabelField("Target Settings", EditorStyles.boldLabel);
 				EditorGUILayout.BeginHorizontal("Box");
 
 				DisplayLeftBuildTargets();
@@ -358,8 +364,16 @@ namespace BuildMultiPlatform
 
 							/*	Draw build buttons.	*/
 							BuildTarget optionItem = BuilderConfigSettings.GetOrCreateSettings().targets[selectedConfigIndex];
-							EditorGUILayout.BeginHorizontal();
 							bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
+							if (!isTargetSupported)
+							{
+								Color currentColor = EditorStyles.label.normal.textColor;
+								EditorStyles.label.normal.textColor = Color.red;
+								EditorGUILayout.LabelField("Target Group and Target is not valid configuration");
+								EditorStyles.label.normal.textColor = currentColor;
+							}
+							/*	*/
+							EditorGUILayout.BeginHorizontal();
 							EditorGUI.BeginDisabledGroup(!isTargetSupported);
 							if (GUILayout.Button(Styles.build))
 							{
@@ -373,9 +387,9 @@ namespace BuildMultiPlatform
 							EditorGUILayout.EndHorizontal();
 							try
 							{
-								string outputPathLabel = string.Format("Executable fielpath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem));
+								string outputPathLabel = string.Format("Executable filepath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem), EditorStyles.boldLabel);
 								EditorGUILayout.LabelField(outputPathLabel);
-							}scatch (Exception ex)
+							}catch (Exception ex)
 							{
 								Color currentColor = EditorStyles.label.normal.textColor;
 								EditorStyles.label.normal.textColor = Color.red;
@@ -404,6 +418,26 @@ namespace BuildMultiPlatform
 				EditorGUILayout.BeginVertical("Box");
 				EditorGUILayout.Space();
 				EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.targets.Length.ToString()));
+
+
+				/*	Check if any has invalid.	*/
+				int nbadpath = 0;
+				int ntargetpath = 0;
+				foreach(BuildTarget target in settings.targets){
+					if(Builder.isBuildTargetSupported(target)){
+						ntargetpath++;
+					}
+					if(Builder.validateTargetPath(target)){
+						nbadpath++;
+					}
+				}
+				if(nbadpath > 0){
+					EditorGUILayout.LabelField(string.Format("Number of invalid path targets: {0}", nbadpath));
+				}
+				if(ntargetpath > 0){
+					EditorGUILayout.LabelField(string.Format("Number of invalid target configuratons: {0}", ntargetpath));
+				}
+
 
 				EditorGUILayout.BeginHorizontal();
 
@@ -477,7 +511,7 @@ namespace BuildMultiPlatform
 				/*	Create setting object if it does not exist.	*/
 				BuilderConfigSettings.GetOrCreateSettings();
 			}
-			SettingsProvider provider = new BuilderSettingsProvider("Project/Build Setting Configuration", SettingsScope.Project);
+			SettingsProvider provider = new BuilderSettingsProvider("Project/MultiTarget Build Settings", SettingsScope.Project);
 
 			provider.keywords = GetSearchKeywordsFromGUIContentProperties<Styles>();
 			return provider;

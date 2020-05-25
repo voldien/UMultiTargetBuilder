@@ -97,10 +97,15 @@ namespace BuildMultiPlatform
 
 		}
 
+		public static bool validateTargetPath(BuildTarget target){
+			string path = GetTargetLocationAbsolutePath(target);
+			return Directory.Exists(path);
+		}
+
 		public static string GetTargetLocationAbsolutePath(BuildTarget target)
 		{
 			BuilderConfigSettings settings = BuilderConfigSettings.GetOrCreateSettings();
-			//TODO handle invalid path.
+
 			string path = null;
 			string root = settings.rootOutputDirectory;
 
@@ -110,15 +115,11 @@ namespace BuildMultiPlatform
 				root = string.Format("{0}/{1}", Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName);
 			}
 
-			if(!Directory.Exists(root)){
-				throw new InvalidOperationException("Root output directory does not exists.");
-			}
-
 			/*	Compute the output filepath.	*/
 			if (target.outputDirectory.Length > 0)
-				path = Path.GetFullPath(string.Format("{0}/{1}/{2}", settings.rootOutputDirectory, target.outputDirectory, target.Title));
+				path = Path.GetFullPath(string.Format("{0}/{1}/{2}", root, target.outputDirectory, target.Title));
 			else
-				path = Path.GetFullPath(string.Format("{0}/{1}", settings.rootOutputDirectory, target.Title));
+				path = Path.GetFullPath(string.Format("{0}/{1}", root, target.Title));
 
 			/*	Add extension in order to make the target work properly in its environment.	*/
 			if (!Path.HasExtension(target.Title))
@@ -211,6 +212,11 @@ namespace BuildMultiPlatform
 					return;
 				}
 
+				if(validateTargetPath(buildTarget)){
+					Debug.LogError(string.Format("Filepath: '{0}' is not valid.", GetTargetLocationAbsolutePath(buildTarget)));
+					return;
+				}
+
 				/*	Populate the build struct with the build target configuration.	*/
 				EditorBuildSettingsScene[] targetScenes = getDefaultScenes();
 				if (!buildTarget.useDefaultScenes)
@@ -225,6 +231,7 @@ namespace BuildMultiPlatform
 						targetScenes[j] = new EditorBuildSettingsScene(path, true);
 					}
 				}
+
 
 				/*	Pass argument to the building options.	*/
 				BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
