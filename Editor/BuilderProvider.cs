@@ -22,6 +22,9 @@ namespace BuildMultiPlatform
 		[NonSerialized]
 		private int selectedConfigIndex = -1;   /*	Select none.	*/
 
+		private GUIStyle errorStyle;
+		private GUIStyle warningStyle;
+
 		public class Styles
 		{
 			public static GUIContent rootOutputDirectory = new GUIContent("Root output directory", "The root directory that all the target build will be stored.");
@@ -47,11 +50,17 @@ namespace BuildMultiPlatform
 			public static GUIContent remove = new GUIContent("Remove", "Remove selected target.");
 
 			public static GUIContent RunTargets = new GUIContent("Runnable Targets");
-			/*	GUIStyles.	*/
 		}
 
+
 		public BuilderSettingsProvider(string path, SettingsScope scope = SettingsScope.User)
-			: base(path, scope) { }
+			: base(path, scope) { 
+				errorStyle = new GUIStyle();
+				errorStyle.normal.textColor = Color.red;
+
+				warningStyle = new GUIStyle();
+				warningStyle.normal.textColor = Color.yellow;
+			}
 
 		public static bool IsSettingsAvailable()
 		{
@@ -196,6 +205,7 @@ namespace BuildMultiPlatform
 				/*	Set the default value.	*/
 				BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 				settings.targets[index] = new BuildTarget();
+				settings.targets[index].title = PlayerSettings.productName;
 				m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
 				m_BuilderConfigSettings.Update();
 
@@ -326,89 +336,93 @@ namespace BuildMultiPlatform
 				EditorGUILayout.Separator();
 
 				/*  */
-				EditorGUILayout.BeginVertical("GroupBox",
-					 GUILayout.MinHeight(600), GUILayout.MaxHeight(EditorGUI.GetPropertyHeight(m_configurations, true))); //TODO add height from property.	
-				EditorGUILayout.LabelField("");
-
-				/*	Displace the build target if selected and is a valid index.	*/
 				if (m_configurations.arraySize > 0)
 				{
-					if (selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize)
+					EditorGUILayout.BeginVertical("GroupBox",
+						 GUILayout.MinHeight(600), GUILayout.MaxHeight(EditorGUI.GetPropertyHeight(m_configurations, true))); //TODO add height from property.	
+					EditorGUILayout.LabelField("");
+
+					/*	Displace the build target if selected and is a valid index.	*/
+					if (m_configurations.arraySize > 0)
 					{
-						/*	Draw main build target property.	*/
-						EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true);
-
-						EditorGUILayout.BeginHorizontal();
-
-						using (new EditorGUI.IndentLevelScope(3))
+						if (selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize)
 						{
-							//TOOD add support.
-							EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
-							if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(150)))
-							{
-								SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
-								EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
-								for (int i = 0; i < defScenes.Length; i++)
-								{
+							/*	Draw main build target property.	*/
+							EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true);
 
-								}
-							}
-							if (GUILayout.Button(Styles.ClearScenes))
-							{
-								SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(selectedConfigIndex).FindPropertyRelative("scenes");
-								scenes.ClearArray();
-								//
-							}
-							EditorGUI.EndDisabledGroup();
-							EditorGUILayout.EndHorizontal();
-
-							/*	Draw build buttons.	*/
-							BuildTarget optionItem = BuilderSettings.GetOrCreateSettings().targets[selectedConfigIndex];
-							bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
-							if (!isTargetSupported)
-							{
-								Color currentColor = EditorStyles.label.normal.textColor;
-								EditorStyles.label.normal.textColor = Color.red;
-								EditorGUILayout.LabelField("Target Group and Target is not valid configuration");
-								EditorStyles.label.normal.textColor = currentColor;
-							}
-							/*	*/
 							EditorGUILayout.BeginHorizontal();
-							EditorGUI.BeginDisabledGroup(!isTargetSupported);
-							if (GUILayout.Button(Styles.build))
+
+							using (new EditorGUI.IndentLevelScope(3))
 							{
-								Builder.BuildTarget(optionItem);
-							}
-							if (GUILayout.Button(Styles.buildScript))
-							{
-								Builder.BuildTargetScriptOnly(optionItem);
-							}
-							EditorGUI.EndDisabledGroup();
-							EditorGUILayout.EndHorizontal();
-							try
-							{
-								string outputPathLabel = string.Format("Executable filepath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem), EditorStyles.boldLabel);
-								EditorGUILayout.LabelField(outputPathLabel);
-							}
-							catch (Exception ex)
-							{
-								Color currentColor = EditorStyles.label.normal.textColor;
-								EditorStyles.label.normal.textColor = Color.red;
-								EditorGUILayout.LabelField(string.Format("Invalid setttings: {0}.", ex.Message));
-								EditorStyles.label.normal.textColor = currentColor;
+								//TOOD add support.
+								EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
+								if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(150)))
+								{
+									SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
+									EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
+									for (int i = 0; i < defScenes.Length; i++)
+									{
+
+									}
+								}
+								if (GUILayout.Button(Styles.ClearScenes))
+								{
+									SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(selectedConfigIndex).FindPropertyRelative("scenes");
+									scenes.ClearArray();
+									//
+								}
+								EditorGUI.EndDisabledGroup();
+								EditorGUILayout.EndHorizontal();
+
+								/*	Draw build buttons.	*/
+								BuildTarget optionItem = BuilderSettings.GetOrCreateSettings().targets[selectedConfigIndex];
+								bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
+								if (!isTargetSupported)
+								{
+									//								Color currentColor = EditorStyles.label.normal.textColor;
+									//								EditorStyles.label.normal.textColor = Color.red;
+									EditorGUILayout.LabelField("Target Group and Target is not valid configuration", this.errorStyle);
+									//								EditorStyles.label.normal.textColor = currentColor;
+								}
+								/*	*/
+								EditorGUILayout.BeginHorizontal();
+								EditorGUI.BeginDisabledGroup(!isTargetSupported);
+								if (GUILayout.Button(Styles.build))
+								{
+									Builder.BuildTarget(optionItem);
+								}
+								if (GUILayout.Button(Styles.buildScript))
+								{
+									Builder.BuildTargetScriptOnly(optionItem);
+								}
+								EditorGUI.EndDisabledGroup();
+								EditorGUILayout.EndHorizontal();
+								try
+								{
+									string outputPathLabel = string.Format("Executable filepath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem), EditorStyles.boldLabel);
+									EditorGUILayout.LabelField(outputPathLabel);
+								}
+								catch (Exception ex)
+								{
+									Color currentColor = EditorStyles.label.normal.textColor;
+									EditorStyles.label.normal.textColor = Color.red;
+									EditorGUILayout.LabelField(string.Format("Invalid setttings: {0}.", ex.Message));
+									EditorStyles.label.normal.textColor = currentColor;
+								}
 							}
 						}
 					}
-				}
 
-				EditorGUILayout.EndVertical();
+					EditorGUILayout.EndVertical();
+				}
 
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.Separator();
 
 				/*  Draw quick run UI.	*/
-				DisplayRunList();
+				if(m_configurations.arraySize > 0)
+					DisplayRunList();
 
 				EditorGUILayout.Separator();
 
@@ -425,7 +439,7 @@ namespace BuildMultiPlatform
 				int ntargetpath = 0;
 				foreach (BuildTarget target in settings.targets)
 				{
-					if (Builder.isBuildTargetSupported(target))
+					if (!Builder.isBuildTargetSupported(target))
 					{
 						ntargetpath++;
 					}

@@ -20,7 +20,7 @@ namespace BuildMultiPlatform
 
 		public static string GetSettingFilePath()
 		{
-			return "Assets/Editor/BuildConfigSettings.asset";
+			return "Assets/Editor/com.linuxsenpai.builderconfig/BuildSettings.asset";
 		}
 
 		internal static BuilderSettings GetOrCreateSettings()
@@ -28,10 +28,17 @@ namespace BuildMultiPlatform
 			BuilderSettings settings = AssetDatabase.LoadAssetAtPath<BuilderSettings>(GetSettingFilePath());
 			if (settings == null)
 			{
+				/*	Create and make sure the directory exits.	*/
+				if(!AssetDatabase.IsValidFolder("Assets/Editor")){
+					string guid = AssetDatabase.CreateFolder("Assets", "Editor");
+				}
+				if (!AssetDatabase.IsValidFolder("Assets/Editor/com.linuxsenpai.builderconfig"))
+				{
+					string guid1 = AssetDatabase.CreateFolder("Assets/Editor", "com.linuxsenpai.builderconfig");
+				}
 				/*	Create default setting object.	*/
 				settings = ScriptableObject.CreateInstance<BuilderSettings>();
-					
-				settings.rootOutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+				settings.rootOutputDirectory = string.Format("{0}/{1}", Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName);
 				settings.verbose = true;
 				settings.targets = new BuildTarget[0];
 				AssetDatabase.CreateAsset(settings, GetSettingFilePath());

@@ -18,7 +18,7 @@ namespace BuildMultiPlatform
 		public string name = "";
 		[Tooltip("Enabled for building when invoking build all targets."), SerializeField]
 		public bool enabled = true;
-		[SerializeField, Tooltip("Use the default scenes specified by the build setting.")] // Tooltip("Set of Build Options."), InspectorName("Build Configuration Options")
+		[SerializeField, Tooltip("Use the default scenes specified by the build setting.")]
 		public bool useDefaultScenes = true;
 		[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
 		//public SceneTargetList scenes;
@@ -29,14 +29,17 @@ namespace BuildMultiPlatform
 		public UnityEditor.BuildTarget target = UnityEditor.BuildTarget.StandaloneLinux64;
 		[SerializeField, Tooltip("Build options.")]
 		public BuildOptions options = BuildOptions.None;
+
+
 		public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }
-		public object Clone(){
+		public object Clone()
+		{
 			BuildTarget copy = new BuildTarget();
 			copy.title = this.title;
 			copy.company = this.company;
 			copy.enabled = this.enabled;
 			copy.outputDirectory = this.outputDirectory;
-			copy.name = this.name;	
+			copy.name = this.name;
 			copy.target = this.target;
 			copy.targetGroup = this.targetGroup;
 			copy.useDefaultScenes = this.useDefaultScenes;
