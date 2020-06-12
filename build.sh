@@ -20,14 +20,15 @@
 # This will build a project with the 
 #
 
-$unityPath=$1   # First argument - Path to the Unity executable. 
-$path=$2        # Second argument - Path to the project root direcrory.
-$buildmode=$3   # Script build or full build. ( argument s for script build and argument f for full build)
-$additional=${4:-""}
+unityPath=$1   # First argument - Path to the Unity executable. 
+path=$2        # Second argument - Path to the project root direcrory.
+buildmode=$3   # Script build or full build. ( argument s for script build and argument f for full build)
+additional=${4:-""}
 
 if [ $buildmode == 'f' ]
 then
     $unityPath -projectPath "$path" -batchmode -nographics -executeMethod BuildMultiPlatform.Builder.PerformBuildContext -quit $additional
-elif [ $fasbuildmodet == 's' ]
+elif [ $fasbuildmodet == 's' ] 
+then
     $unityPath -projectPath "$path" -batchmode -nographics -executeMethod BuildMultiPlatform.Builder.PerformBuildScriptOnlyContext -quit $additional
 fi
