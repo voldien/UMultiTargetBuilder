@@ -23,7 +23,7 @@ namespace BuildMultiPlatform
 			public static GUIContent strict = new GUIContent("Strict", "No error or warnings allowed.");
 			public static GUIContent CRC = new GUIContent("Compute CRC", "");
 			public static GUIContent AllowDebugging = new GUIContent("Allow Debugging", "");
-			public static GUIContent UncompressedAssetBundle = new GUIContent("UnCompress AssetBundle", "");
+			public static GUIContent UncompressedAssetBundle = new GUIContent("Uncompressed AssetBundle", "");
 			internal static GUIContent CompressWithLz4 = new GUIContent("Compress With Lz4", "");
 			internal static GUIContent EnabledHeadlessMode = new GUIContent("Headless Mode", "");
 			internal static readonly GUIContent CompressWithLz4HC = new GUIContent("Compress With Lz4HC", "");
@@ -53,6 +53,7 @@ namespace BuildMultiPlatform
 			}
 
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
+
 			/*	Add additional height for the dynamic sized scene object.	*/
 			SerializedProperty scenes = property.FindPropertyRelative("scenes");
 			height += scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
@@ -88,11 +89,9 @@ namespace BuildMultiPlatform
 			float defaultHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 			const float toggleTextWidth = 230.0f;
 
-			// Each property rectangle view bounds.
+			/* Each property rectangle view bounds.	*/
 			Rect metaRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect titleRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-			//Rect nameRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-			//Rect enabledRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect outputRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
@@ -152,15 +151,13 @@ namespace BuildMultiPlatform
 			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, EditorGUI.GetPropertyHeight(scenes));
 
-
-			//		EditorGUI.BeginChangeCheck();
-			//EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
+			/*	*/
 			EditorGUI.LabelField(metaRect, Styles.metaInformation, EditorStyles.boldLabel);
 			EditorGUI.indentLevel++;
+
 			//TODO add label
 			EditorGUI.PropertyField(titleRect, title, Styles.title);
 			EditorGUILayout.Separator();
-			//EditorGUI.PropertyField(enabledRect, enabled, new GUIContent("enabled"));
 			EditorGUI.PropertyField(outputRect, outputDirectory, Styles.output);
 			EditorGUI.indentLevel--;
 
@@ -170,8 +167,6 @@ namespace BuildMultiPlatform
 			EditorGUI.PropertyField(targetRect, _target, Styles.target);
 			EditorGUI.PropertyField(targetGroupRect, targetGroup, Styles.targeGroup);
 			EditorGUI.PropertyField(optionRect, flags, Styles.optionFlagsLabel);
-
-			//EditorGUI.PrefixLabel()
 
 			InternalToogle(flags, BuildOptions.Development, EditorGUI.ToggleLeft(optionDevelopmentRect, Styles.development, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.Development)));
 			InternalToogle(flags, BuildOptions.StrictMode, EditorGUI.ToggleLeft(optionSrictRect, Styles.strict, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.StrictMode)));
@@ -198,8 +193,9 @@ namespace BuildMultiPlatform
 			EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.useScene);
 
 			EditorGUI.BeginDisabledGroup(useDefaultScenes.boolValue);
-			/*	Draw scene property only.	*/
 
+			/*	Draw scene property only.	*/
+			/*	Update the list only if null or changed property.	*/
 			if (m_list == null)
 			{
 				m_list = BuildSceneAssetReorderableList(scenes);
@@ -214,6 +210,7 @@ namespace BuildMultiPlatform
 
 			EditorGUI.indentLevel--;
 
+			/*	Reset indent.	*/
 			EditorGUI.indentLevel = indent;
 			EditorGUI.EndProperty();
 		}
