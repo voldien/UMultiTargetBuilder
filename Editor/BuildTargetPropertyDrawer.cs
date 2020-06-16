@@ -12,7 +12,7 @@ namespace BuildMultiPlatform
 			/*	*/
 			public static GUIContent metaInformation = new GUIContent("Meta Information", "");
 			public static GUIContent title = new GUIContent("Title", "Title of the game, if empty the default title from the project player settings will be used.");
-			public static GUIContent output = new GUIContent("outputDirectory", "Relative path from the global path.");
+			public static GUIContent output = new GUIContent("Relative Directory", "Relative path from the global path.");
 			public static GUIContent BuildSettingLabel = new GUIContent("Build Settings", "");
 			public static GUIContent target = new GUIContent("Target", "Specific group target.");
 			public static GUIContent targeGroup = new GUIContent("Target Group", "Target group.");

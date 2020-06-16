@@ -208,6 +208,7 @@ namespace BuildMultiPlatform
 				BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 				settings.targets[index] = new BuildTarget();
 				settings.targets[index].title = PlayerSettings.productName;
+				settings.targets[index].name = string.Format("Target {0}", index);
 				m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
 				m_BuilderConfigSettings.Update();
 
@@ -231,6 +232,7 @@ namespace BuildMultiPlatform
 				BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 				BuildTarget selected = settings.targets[selectedConfigIndex];
 				settings.targets[index] = (BuildTarget)selected.Clone();
+
 				m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
 				m_BuilderConfigSettings.Update();
 			}
@@ -351,6 +353,7 @@ namespace BuildMultiPlatform
 						/*	Set the default value.	*/
 						settings.targets[index] = new BuildTarget();
 						settings.targets[index].title = PlayerSettings.productName;
+						settings.targets[index].name = string.Format("Target {0}", index);
 						m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
 						m_BuilderConfigSettings.Update();
 
@@ -497,10 +500,11 @@ namespace BuildMultiPlatform
 				{
 					EditorGUILayout.LabelField(string.Format("Number of invalid target configuratons: {0}", ntargetpath));
 				}
-
+	
 
 				EditorGUILayout.BeginHorizontal();
 
+				EditorGUI.BeginDisabledGroup(m_configurations.arraySize == 0);
 				/*	Build all buttons.	*/
 				if (GUILayout.Button(Styles.buildTargets))
 				{
@@ -510,6 +514,7 @@ namespace BuildMultiPlatform
 				{
 					Builder.BuildFromConfigScriptOnly((BuilderSettings)settings);
 				}
+
 
 				/*	Export and import buttons.	*/
 				const string ext = "asset";
@@ -534,6 +539,7 @@ namespace BuildMultiPlatform
 						}
 					}
 				}
+				EditorGUI.EndDisabledGroup();
 				if (GUILayout.Button(Styles.import))
 				{
 					/*	Import.	*/
