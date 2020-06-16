@@ -333,7 +333,7 @@ namespace BuildMultiPlatform
 
 				if (m_configurations.arraySize == 0)
 				{
-					EditorGUILayout.Separator();
+					EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 					GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
 					GUILayout.FlexibleSpace();
 					GUILayout.BeginVertical();
@@ -399,7 +399,7 @@ namespace BuildMultiPlatform
 								{
 									EditorGUILayout.BeginHorizontal();
 									EditorGUILayout.Space();
-									//TOOD add support.
+
 									EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
 									if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(120)))
 									{
@@ -411,7 +411,7 @@ namespace BuildMultiPlatform
 											settings.targets[selectedConfigIndex].scenes[i] = AssetDatabase.LoadAssetAtPath<SceneAsset>(defScenes[i].path);
 										}
 									}
-									if (GUILayout.Button(Styles.ClearScenes,GUILayout.MaxWidth(120)))
+									if (GUILayout.Button(Styles.ClearScenes, GUILayout.MaxWidth(120)))
 									{
 										SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(selectedConfigIndex).FindPropertyRelative("scenes");
 										scenes.ClearArray();
@@ -430,11 +430,11 @@ namespace BuildMultiPlatform
 
 									EditorGUILayout.BeginHorizontal();
 									EditorGUI.BeginDisabledGroup(!isTargetSupported);
-									if (GUILayout.Button(Styles.build,GUILayout.MaxWidth(120)))
+									if (GUILayout.Button(Styles.build, GUILayout.MaxWidth(120)))
 									{
 										Builder.BuildTarget(optionItem);
 									}
-									if (GUILayout.Button(Styles.buildScript,GUILayout.MaxWidth(120)))
+									if (GUILayout.Button(Styles.buildScript, GUILayout.MaxWidth(120)))
 									{
 										Builder.BuildTargetScriptOnly(optionItem);
 									}
@@ -501,7 +501,7 @@ namespace BuildMultiPlatform
 				{
 					EditorGUILayout.LabelField(string.Format("Number of invalid target configuratons: {0}", ntargetpath));
 				}
-	
+
 
 				EditorGUILayout.BeginHorizontal();
 
