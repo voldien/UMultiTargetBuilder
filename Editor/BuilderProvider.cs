@@ -393,22 +393,25 @@ namespace BuildMultiPlatform
 								/*	Draw main build target property.	*/
 								EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true);
 
-								EditorGUILayout.BeginHorizontal();
+
 
 								using (new EditorGUI.IndentLevelScope(3))
 								{
+									EditorGUILayout.BeginHorizontal();
+									EditorGUILayout.Space();
 									//TOOD add support.
 									EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
-									if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(150)))
+									if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(120)))
 									{
 										SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
 										EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
+										settings.targets[selectedConfigIndex].scenes = new SceneAsset[defScenes.Length];
 										for (int i = 0; i < defScenes.Length; i++)
 										{
-
+											settings.targets[selectedConfigIndex].scenes[i] = AssetDatabase.LoadAssetAtPath<SceneAsset>(defScenes[i].path);
 										}
 									}
-									if (GUILayout.Button(Styles.ClearScenes))
+									if (GUILayout.Button(Styles.ClearScenes,GUILayout.MaxWidth(120)))
 									{
 										SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(selectedConfigIndex).FindPropertyRelative("scenes");
 										scenes.ClearArray();
@@ -422,24 +425,22 @@ namespace BuildMultiPlatform
 									bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
 									if (!isTargetSupported)
 									{
-										//								Color currentColor = EditorStyles.label.normal.textColor;
-										//								EditorStyles.label.normal.textColor = Color.red;
 										EditorGUILayout.LabelField("Target Group and Target is not valid configuration", this.errorStyle);
-										//								EditorStyles.label.normal.textColor = currentColor;
 									}
-									/*	*/
+
 									EditorGUILayout.BeginHorizontal();
 									EditorGUI.BeginDisabledGroup(!isTargetSupported);
-									if (GUILayout.Button(Styles.build))
+									if (GUILayout.Button(Styles.build,GUILayout.MaxWidth(120)))
 									{
 										Builder.BuildTarget(optionItem);
 									}
-									if (GUILayout.Button(Styles.buildScript))
+									if (GUILayout.Button(Styles.buildScript,GUILayout.MaxWidth(120)))
 									{
 										Builder.BuildTargetScriptOnly(optionItem);
 									}
 									EditorGUI.EndDisabledGroup();
 									EditorGUILayout.EndHorizontal();
+
 									try
 									{
 										string outputPathLabel = string.Format("Executable filepath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem), EditorStyles.boldLabel);
