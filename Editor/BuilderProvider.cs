@@ -191,9 +191,7 @@ namespace BuildMultiPlatform
 			/*	Begin the vertical left view for adding, selecting and removing build targets.	*/
 			EditorGUILayout.BeginVertical(GUILayout.MaxWidth(230.0f), GUILayout.ExpandHeight(true));
 
-			/*	*/
-			EditorGUILayout.Separator();
-			m_list.DoLayoutList();
+
 
 			EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(350.0f), GUILayout.MinWidth(280.0f));
 			if (GUILayout.Button(Styles.add))
@@ -246,6 +244,10 @@ namespace BuildMultiPlatform
 			EditorGUI.EndDisabledGroup();
 
 			EditorGUILayout.EndHorizontal();
+
+			/*	*/
+			EditorGUILayout.Separator();
+			m_list.DoLayoutList();
 
 			EditorGUILayout.EndVertical();
 			/*	End	the vertical left view for adding, selecting and removing build targets.	*/
@@ -376,7 +378,8 @@ namespace BuildMultiPlatform
 
 					DisplayLeftBuildTargets();
 
-					EditorGUILayout.Separator();
+//					EditorGUILayout.Separator();
+					GUILayout.FlexibleSpace();
 
 					/*  */
 					if (m_configurations.arraySize > 0)
@@ -477,6 +480,7 @@ namespace BuildMultiPlatform
 				EditorGUILayout.BeginVertical("Box");
 				EditorGUILayout.Space();
 				EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.targets.Length.ToString()));
+				EditorGUILayout.LabelField(string.Format("Number of enabled build targets: {0}", GetNrEnabledTargets()));
 
 
 				/*	Check if any has invalid.	*/
@@ -567,6 +571,19 @@ namespace BuildMultiPlatform
 				EditorGUILayout.EndVertical();
 				m_BuilderConfigSettings.ApplyModifiedProperties();
 			}   /*	Reset indent.	*/
+		}
+
+		private int GetNrEnabledTargets()
+		{
+			int nth = 0;
+			BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
+			if(m_configurations.isArray){
+				foreach(BuildTarget target in settings.targets){
+					if(target.enabled)
+						nth++;
+				}
+			}
+			return nth;
 		}
 
 #if UNITY_2018_1_OR_NEWER

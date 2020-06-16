@@ -52,8 +52,6 @@ namespace BuildMultiPlatform
 					break;
 			}
 
-			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
-
 			/*	Add additional height for the dynamic sized scene object.	*/
 			SerializedProperty scenes = property.FindPropertyRelative("scenes");
 			height += scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
@@ -149,7 +147,8 @@ namespace BuildMultiPlatform
 			/*	Scene options.	*/
 			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, EditorGUI.GetPropertyHeight(scenes));
+			float  sceneheight = scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
+			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, sceneheight);
 
 			/*	*/
 			EditorGUI.LabelField(metaRect, Styles.metaInformation, EditorStyles.boldLabel);
@@ -235,13 +234,13 @@ namespace BuildMultiPlatform
 				EditorGUI.LabelField(rect, string.Format("Number of Scenes: {0}", property.arraySize));
 			};
             list.elementHeightCallback = (int index) => {
-				return EditorGUIUtility.singleLineHeight;
+				return EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing * 1.5f;
 			};
 			list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
 				SerializedProperty item = property.GetArrayElementAtIndex(index);
 				string itemName = string.Format("Scene ({0}):", index);
-				EditorGUI.PropertyField(rect, item, new GUIContent(itemName));
+				EditorGUI.PropertyField(rect, item, new GUIContent(itemName, "Scene Object"));
 			};
 			return list;
 		}
