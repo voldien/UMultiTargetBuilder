@@ -378,7 +378,7 @@ namespace BuildMultiPlatform
 
 					DisplayLeftBuildTargets();
 
-//					EditorGUILayout.Separator();
+					//					EditorGUILayout.Separator();
 					GUILayout.FlexibleSpace();
 
 					/*  */
@@ -577,9 +577,11 @@ namespace BuildMultiPlatform
 		{
 			int nth = 0;
 			BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
-			if(m_configurations.isArray){
-				foreach(BuildTarget target in settings.targets){
-					if(target.enabled)
+			if (m_configurations.isArray)
+			{
+				foreach (BuildTarget target in settings.targets)
+				{
+					if (target.enabled)
 						nth++;
 				}
 			}
@@ -601,5 +603,10 @@ namespace BuildMultiPlatform
 			return provider;
 		}
 #endif
+		[MenuItem("Window/Multi Build Targets/Settings", false, 1)]
+		public static void OpenSettings()
+		{
+			SettingsService.OpenProjectSettings("Project/MultiTarget Build Settings");
+		}
 	}
 }

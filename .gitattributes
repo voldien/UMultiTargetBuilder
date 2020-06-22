@@ -15,3 +15,4 @@ thirdparty/* linguist-vendored
 *.png binary
 *.ttf binary
 *.mp4 binary
+*.kra binary
