@@ -1,7 +1,7 @@
 # Properly detect languages on Github
 *.h linguist-language=cpp
 *.inc linguist-language=cpp
-*.cs linguist-language=csharps
+*.cs linguist-language=csharp
 *.sh linguist-language=shell
 thirdparty/* linguist-vendored
 
