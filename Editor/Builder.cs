@@ -337,6 +337,7 @@ namespace BuildMultiPlatform
 			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
 			BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 		}
+		
 		internal static void StackPopBuildConfiguration()
 		{
 			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;

@@ -15,7 +15,8 @@ namespace BuildMultiPlatform
             {
 				/*  Dialog.*/
 				string assetPath = BuilderSettings.GetSettingFilePath();
-				string projectPath = Application.dataPath.Replace("/Assets", "");   //TODO improve.
+				/*	TODO improve.	*/
+				string projectPath = Application.dataPath.Replace("/Assets", "");   
 				string FullPath = string.Format("{0}/{1}", projectPath, assetPath);
                 if(File.Exists(FullPath)){
                     if(EditorUtility.DisplayDialog("Overwrite", "Are you sure you want to overwrite the settings", "Yes", "No")){

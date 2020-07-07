@@ -20,7 +20,6 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("Use the default scenes specified by the build setting.")]
 		public bool useDefaultScenes = true;
 		[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
-		//public SceneTargetList scenes;
 		public SceneAsset[] scenes = new SceneAsset[0];
 		[SerializeField, Tooltip("The target group.")]
 		public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
