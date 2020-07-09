@@ -11,6 +11,7 @@ namespace BuildMultiPlatform
 		{
 			/*	*/
 			public static GUIContent metaInformation = new GUIContent("Meta Information", "");
+			public static GUIContent name = new GUIContent("Target name", "Name of the target in the project setting.");
 			public static GUIContent title = new GUIContent("Title", "Title of the game, if empty the default title from the project player settings will be used.");
 			public static GUIContent output = new GUIContent("Relative Directory", "Relative path from the global path.");
 			public static GUIContent BuildSettingLabel = new GUIContent("Build Settings", "");
@@ -36,8 +37,9 @@ namespace BuildMultiPlatform
 			public static GUIContent useScene = new GUIContent("Use Default Scenes");
 		}
 		const int listLineCount = 2;
-		const int toggleOptionlineCount = 6;
-		const int lineCount = 10 + toggleOptionlineCount + listLineCount;
+		const int toggleOptionlineCount = 6;    /*	Toggle grid number of lines.	*/
+		const int attribueLines = 11;	/*	Number of attribues lines.	*/
+		const int lineCount = attribueLines + toggleOptionlineCount + listLineCount;
 		private ReorderableList m_list;
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
@@ -72,7 +74,7 @@ namespace BuildMultiPlatform
 
 			/*	Extract all properties.	*/
 			SerializedProperty enabled = property.FindPropertyRelative("enabled");
-			SerializedProperty name = property.FindPropertyRelative("title");
+			SerializedProperty name = property.FindPropertyRelative("name");
 			SerializedProperty title = property.FindPropertyRelative("title");
 			SerializedProperty outputDirectory = property.FindPropertyRelative("outputDirectory");
 			/*	*/
@@ -89,6 +91,7 @@ namespace BuildMultiPlatform
 
 			/* Each property rectangle view bounds.	*/
 			Rect metaRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect targetNameRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect titleRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect outputRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect settingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
@@ -155,6 +158,7 @@ namespace BuildMultiPlatform
 			EditorGUI.indentLevel++;
 
 			//TODO add label
+			EditorGUI.PropertyField(targetNameRect, name, Styles.name);
 			EditorGUI.PropertyField(titleRect, title, Styles.title);
 			EditorGUILayout.Separator();
 			EditorGUI.PropertyField(outputRect, outputDirectory, Styles.output);
@@ -167,6 +171,7 @@ namespace BuildMultiPlatform
 			EditorGUI.PropertyField(targetGroupRect, targetGroup, Styles.targeGroup);
 			EditorGUI.PropertyField(optionRect, flags, Styles.optionFlagsLabel);
 
+			/*	*/
 			InternalToogle(flags, BuildOptions.Development, EditorGUI.ToggleLeft(optionDevelopmentRect, Styles.development, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.Development)));
 			InternalToogle(flags, BuildOptions.StrictMode, EditorGUI.ToggleLeft(optionSrictRect, Styles.strict, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.StrictMode)));
 			/*	*/

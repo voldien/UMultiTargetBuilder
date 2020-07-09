@@ -50,6 +50,7 @@ namespace BuildMultiPlatform
 			public static GUIContent addCopy = new GUIContent("Add Copy", "Add additional as a copy of the selected.");
 			public static GUIContent remove = new GUIContent("Remove", "Remove selected target.");
 
+			public static GUIContent TargetTab = new GUIContent("Targets", "");
 			public static GUIContent RunTargets = new GUIContent("Runnable Targets");
 		}
 
@@ -191,8 +192,6 @@ namespace BuildMultiPlatform
 			/*	Begin the vertical left view for adding, selecting and removing build targets.	*/
 			EditorGUILayout.BeginVertical(GUILayout.MaxWidth(230.0f), GUILayout.ExpandHeight(true));
 
-
-
 			EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(350.0f), GUILayout.MinWidth(280.0f));
 			if (GUILayout.Button(Styles.add))
 			{
@@ -240,6 +239,8 @@ namespace BuildMultiPlatform
 				/*	Add copy based on tehcurrent selected.	*/
 				m_configurations.DeleteArrayElementAtIndex(selectedConfigIndex);
 				selectedConfigIndex = selectedConfigIndex - 1;
+				//TODO update the index.
+				//m_list. = selectedConfigIndex;
 			}
 			EditorGUI.EndDisabledGroup();
 
@@ -316,6 +317,152 @@ namespace BuildMultiPlatform
 			EditorGUILayout.PropertyField(m_verbose, Styles.Verbose);
 		}
 
+		private void DisplayTargetView(){
+
+			BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
+
+			if (m_configurations.arraySize == 0)
+			{
+				EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+				GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
+				GUILayout.FlexibleSpace();
+				GUILayout.BeginVertical();
+				GUILayout.BeginHorizontal();
+
+				GUILayout.FlexibleSpace();
+				GUILayout.Label("Start Build Configuration by Creating a Target.");
+
+				if (GUILayout.Button(Styles.addFirstTarget))
+				{
+					/*	Add default instance.	*/
+					int index = m_configurations.arraySize;
+					m_configurations.InsertArrayElementAtIndex(index);
+
+					m_BuilderConfigSettings.ApplyModifiedProperties();
+
+					/*	Set the default value.	*/
+					settings.targets[index] = new BuildTarget();
+					settings.targets[index].title = PlayerSettings.productName;
+					settings.targets[index].name = string.Format("Target {0}", index);
+					m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
+					m_BuilderConfigSettings.Update();
+
+					if (m_configurations.arraySize == 1)
+						selectedConfigIndex = 0;
+
+				}
+				GUILayout.FlexibleSpace();
+				GUILayout.EndHorizontal();
+				GUILayout.EndVertical();
+
+				GUILayout.FlexibleSpace();
+				GUILayout.EndArea();
+			}
+			else
+			{
+				/*	*/
+				EditorGUILayout.LabelField("Target Settings", EditorStyles.boldLabel);
+				EditorGUILayout.BeginHorizontal("Box");
+
+				DisplayLeftBuildTargets();
+
+				//GUILayout.FlexibleSpace();
+
+				/*  */
+				if (m_configurations.arraySize > 0)
+				{
+					EditorGUILayout.BeginVertical("GroupBox",
+						 GUILayout.MinHeight(600), GUILayout.MaxHeight(EditorGUI.GetPropertyHeight(m_configurations, true))); //TODO add height from property.	
+					EditorGUILayout.LabelField("");
+
+					/*	Displace the build target if selected and is a valid index.	*/
+					if (m_configurations.arraySize > 0)
+					{
+						if (selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize)
+						{
+							/*	Draw main build target property.	*/
+							EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true);
+
+							using (new EditorGUI.IndentLevelScope(3))
+							{
+								EditorGUILayout.BeginHorizontal();
+								EditorGUILayout.Space();
+
+								EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
+								if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(120)))
+								{
+									SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
+									EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
+									settings.targets[selectedConfigIndex].scenes = new SceneAsset[defScenes.Length];
+									for (int i = 0; i < defScenes.Length; i++)
+									{
+										settings.targets[selectedConfigIndex].scenes[i] = AssetDatabase.LoadAssetAtPath<SceneAsset>(defScenes[i].path);
+									}
+								}
+								if (GUILayout.Button(Styles.ClearScenes, GUILayout.MaxWidth(120)))
+								{
+									SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(selectedConfigIndex).FindPropertyRelative("scenes");
+									scenes.ClearArray();
+									//
+								}
+								EditorGUI.EndDisabledGroup();
+								EditorGUILayout.EndHorizontal();
+
+								/*	Draw build buttons.	*/
+								BuildTarget optionItem = BuilderSettings.GetOrCreateSettings().targets[selectedConfigIndex];
+								bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
+								if (!isTargetSupported)
+								{
+									EditorGUILayout.LabelField("Target Group and Target is not valid configuration", this.errorStyle);
+								}
+
+								EditorGUILayout.BeginHorizontal();
+								EditorGUI.BeginDisabledGroup(!isTargetSupported);
+								if (GUILayout.Button(Styles.build, GUILayout.MaxWidth(120)))
+								{
+									Builder.BuildTarget(optionItem);
+								}
+								if (GUILayout.Button(Styles.buildScript, GUILayout.MaxWidth(120)))
+								{
+									Builder.BuildTargetScriptOnly(optionItem);
+								}
+								EditorGUI.EndDisabledGroup();
+								EditorGUILayout.EndHorizontal();
+
+								try
+								{
+									string outputPathLabel = string.Format("Executable filepath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem), EditorStyles.boldLabel);
+									EditorGUILayout.LabelField(outputPathLabel);
+								}
+								catch (Exception ex)
+								{
+									Color currentColor = EditorStyles.label.normal.textColor;
+									EditorStyles.label.normal.textColor = Color.red;
+									EditorGUILayout.LabelField(string.Format("Invalid setttings: {0}.", ex.Message));
+									EditorStyles.label.normal.textColor = currentColor;
+								}
+							}
+						}
+					}
+
+					EditorGUILayout.EndVertical();
+				}
+
+				EditorGUILayout.EndHorizontal();
+
+
+				EditorGUILayout.Separator();
+			}
+		}
+
+		private void DisplayRunable(){
+			BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
+			/*  Draw quick run UI.	*/
+			if (m_configurations.arraySize > 0)
+				DisplayRunList();
+		}
+
+		private int tab = 0;
 		public override void OnGUI(string searchContext)
 		{
 
@@ -333,151 +480,22 @@ namespace BuildMultiPlatform
 
 				EditorGUILayout.Space();
 
-				if (m_configurations.arraySize == 0)
+				tab = GUILayout.Toolbar(tab, new GUIContent[] { Styles.TargetTab, Styles.RunTargets});
+				switch (tab)
 				{
-					EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-					GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
-					GUILayout.FlexibleSpace();
-					GUILayout.BeginVertical();
-					GUILayout.BeginHorizontal();
-
-					GUILayout.FlexibleSpace();
-					GUILayout.Label("Start Build Configuration by Creating a target.");
-
-					if (GUILayout.Button(Styles.addFirstTarget))
-					{
-						/*	Add default instance.	*/
-						int index = m_configurations.arraySize;
-						m_configurations.InsertArrayElementAtIndex(index);
-
-						m_BuilderConfigSettings.ApplyModifiedProperties();
-
-						/*	Set the default value.	*/
-						settings.targets[index] = new BuildTarget();
-						settings.targets[index].title = PlayerSettings.productName;
-						settings.targets[index].name = string.Format("Target {0}", index);
-						m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
-						m_BuilderConfigSettings.Update();
-
-						if (m_configurations.arraySize == 1)
-							selectedConfigIndex = 0;
-
-					}
-					GUILayout.FlexibleSpace();
-					GUILayout.EndHorizontal();
-					GUILayout.EndVertical();
-
-					GUILayout.FlexibleSpace();
-					GUILayout.EndArea();
+					default:
+					case 0:
+						DisplayTargetView();
+						break;
+						case 1:
+						DisplayRunable();
+						break;
 				}
-				else
-				{
-					/*	*/
-					EditorGUILayout.LabelField("Target Settings", EditorStyles.boldLabel);
-					EditorGUILayout.BeginHorizontal("Box");
 
-					DisplayLeftBuildTargets();
-
-					//					EditorGUILayout.Separator();
-					GUILayout.FlexibleSpace();
-
-					/*  */
-					if (m_configurations.arraySize > 0)
-					{
-						EditorGUILayout.BeginVertical("GroupBox",
-							 GUILayout.MinHeight(600), GUILayout.MaxHeight(EditorGUI.GetPropertyHeight(m_configurations, true))); //TODO add height from property.	
-						EditorGUILayout.LabelField("");
-
-						/*	Displace the build target if selected and is a valid index.	*/
-						if (m_configurations.arraySize > 0)
-						{
-							if (selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize)
-							{
-								/*	Draw main build target property.	*/
-								EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true);
-
-
-
-								using (new EditorGUI.IndentLevelScope(3))
-								{
-									EditorGUILayout.BeginHorizontal();
-									EditorGUILayout.Space();
-
-									EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
-									if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(120)))
-									{
-										SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
-										EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
-										settings.targets[selectedConfigIndex].scenes = new SceneAsset[defScenes.Length];
-										for (int i = 0; i < defScenes.Length; i++)
-										{
-											settings.targets[selectedConfigIndex].scenes[i] = AssetDatabase.LoadAssetAtPath<SceneAsset>(defScenes[i].path);
-										}
-									}
-									if (GUILayout.Button(Styles.ClearScenes, GUILayout.MaxWidth(120)))
-									{
-										SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(selectedConfigIndex).FindPropertyRelative("scenes");
-										scenes.ClearArray();
-										//
-									}
-									EditorGUI.EndDisabledGroup();
-									EditorGUILayout.EndHorizontal();
-
-									/*	Draw build buttons.	*/
-									BuildTarget optionItem = BuilderSettings.GetOrCreateSettings().targets[selectedConfigIndex];
-									bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
-									if (!isTargetSupported)
-									{
-										EditorGUILayout.LabelField("Target Group and Target is not valid configuration", this.errorStyle);
-									}
-
-									EditorGUILayout.BeginHorizontal();
-									EditorGUI.BeginDisabledGroup(!isTargetSupported);
-									if (GUILayout.Button(Styles.build, GUILayout.MaxWidth(120)))
-									{
-										Builder.BuildTarget(optionItem);
-									}
-									if (GUILayout.Button(Styles.buildScript, GUILayout.MaxWidth(120)))
-									{
-										Builder.BuildTargetScriptOnly(optionItem);
-									}
-									EditorGUI.EndDisabledGroup();
-									EditorGUILayout.EndHorizontal();
-
-									try
-									{
-										string outputPathLabel = string.Format("Executable filepath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem), EditorStyles.boldLabel);
-										EditorGUILayout.LabelField(outputPathLabel);
-									}
-									catch (Exception ex)
-									{
-										Color currentColor = EditorStyles.label.normal.textColor;
-										EditorStyles.label.normal.textColor = Color.red;
-										EditorGUILayout.LabelField(string.Format("Invalid setttings: {0}.", ex.Message));
-										EditorStyles.label.normal.textColor = currentColor;
-									}
-								}
-							}
-						}
-
-						EditorGUILayout.EndVertical();
-					}
-
-					EditorGUILayout.EndHorizontal();
-
-					EditorGUILayout.Separator();
-
-
-					/*  Draw quick run UI.	*/
-					if (m_configurations.arraySize > 0)
-						DisplayRunList();
-
-					EditorGUILayout.Separator();
-				}
 				EditorGUILayout.EndScrollView();
 
 				/*	Summary information.	*/
-				EditorGUILayout.BeginVertical("Box");
+				EditorGUILayout.BeginVertical();
 				EditorGUILayout.Space();
 				EditorGUILayout.LabelField(string.Format("Number of targets: {0}", settings.targets.Length.ToString()));
 				EditorGUILayout.LabelField(string.Format("Number of enabled build targets: {0}", GetNrEnabledTargets()));
