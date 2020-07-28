@@ -1,3 +1,8 @@
+## [0.1.3] - 2020-07-28
+### Minor Patch Release
+- Update the license.
+- Minor fixes and changes.
+
 ## [0.1.2] - 2020-07-28
 ### First Public Release
 - Minor changes and fixes for release.

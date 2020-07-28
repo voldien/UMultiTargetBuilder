@@ -1,4 +1,4 @@
-# Building Configuration for Multiple Targets
+# MultiTarget Builder Project Configuration Tool
 
 A Unity Provider setting tool that supports adding multiple build targets with different configurations. Where all the targets can be built with a single button. Allowing less time spent on the build configuration. Where it can be export and imported onto other projects easily.
 
@@ -22,7 +22,7 @@ Find `Packages/manifest.json` in your project and add the following:
 ```json
 {
   "dependencies": {
-    "com.supyrb.configurableshaders": "https://github.com/voldien/UMultiTargetBuilder.git#0.1.2",
+    "com.linuxsenpai.multitargetbuilder": "https://github.com/voldien/UMultiTargetBuilder.git#0.1.2",
     "...": "..."
   }
 }

@@ -1,13 +1,12 @@
 {
   "name": "com.linuxsenpai.multitargetbuilder",
   "displayName": "MultiTarget Builder",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "unity": "2019.3",
   "description": "A tool for creating multiple build targets with the option of different configurations such as platform and among other settings.",
   "keywords": [
     "Build Configuration",
-    "Automation",
-    "Multi Targets"
+    "Automation"
   ],
   "author": {
     "name": "Valdemar Lindberg",
