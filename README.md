@@ -45,9 +45,9 @@ $ openupm add com.linuxsenpai.multitargetbuilder
 
 ## Resources ##
 
-Quick Video of the main functionlities: [Video](https://www.youtube.com/watch?v=F8CBExsLApk)
+Quick Video of the main functionalities: [Video](https://www.youtube.com/watch?v=F8CBExsLApk)
 
-Comprehensive guid: Work in progress.
+A Comprehensive guide: Still work in progress.
 
 
 
