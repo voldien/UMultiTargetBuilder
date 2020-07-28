@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# SCRIPT: Building Unity target using the MultiTarget Build tool.
+# SCRIPT: Building Unity targets using the MultiTarget Builder tool.
 # AUTHOR: Valdemar Lindberg
 # DATE: 25/05/2020
 # REV: 1.0

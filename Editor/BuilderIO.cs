@@ -18,10 +18,12 @@ namespace BuildMultiPlatform
 				/*	TODO improve.	*/
 				string projectPath = Application.dataPath.Replace("/Assets", "");   
 				string FullPath = string.Format("{0}/{1}", projectPath, assetPath);
-                if(File.Exists(FullPath)){
+				if(File.Exists(FullPath)){
                     if(EditorUtility.DisplayDialog("Overwrite", "Are you sure you want to overwrite the settings", "Yes", "No")){
     					File.Copy(path, FullPath, true);
+						AssetDatabase.SaveAssets();
 						AssetDatabase.ImportAsset(assetPath);
+						AssetDatabase.Refresh();
 					}
 				}else
 					throw new ArgumentException(string.Format("Invalid path {0}", FullPath));

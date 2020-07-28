@@ -20,7 +20,7 @@ namespace BuildMultiPlatform
 
 		public static string GetSettingFilePath()
 		{
-			return "Assets/Editor/com.linuxsenpai.builderconfig/BuildSettings.asset";
+			return "Assets/Editor/com.linuxsenpai.multitargetbuilder/BuildSettings.asset";
 		}
 
 		internal static BuilderSettings GetOrCreateSettings()
@@ -32,9 +32,9 @@ namespace BuildMultiPlatform
 				if(!AssetDatabase.IsValidFolder("Assets/Editor")){
 					string guid = AssetDatabase.CreateFolder("Assets", "Editor");
 				}
-				if (!AssetDatabase.IsValidFolder("Assets/Editor/com.linuxsenpai.builderconfig"))
+				if (!AssetDatabase.IsValidFolder("Assets/Editor/com.linuxsenpai.multitargetbuilder"))
 				{
-					string guid1 = AssetDatabase.CreateFolder("Assets/Editor", "com.linuxsenpai.builderconfig");
+					string guid1 = AssetDatabase.CreateFolder("Assets/Editor", "com.linuxsenpai.multitargetbuilder");
 				}
 				/*	Create default setting object.	*/
 				settings = ScriptableObject.CreateInstance<BuilderSettings>();

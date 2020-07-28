@@ -621,7 +621,7 @@ namespace BuildMultiPlatform
 			return provider;
 		}
 #endif
-		[MenuItem("Window/Multi Build Targets/Settings", false, 1)]
+		[MenuItem("Window/MultiTarget Build/Settings", false, 1)]
 		public static void OpenSettings()
 		{
 			SettingsService.OpenProjectSettings("Project/MultiTarget Build Settings");
