@@ -1,4 +1,6 @@
 # MultiTarget Builder Project Configuration Tool
+[![openupm](https://img.shields.io/npm/v/com.linuxsenpai.multitargetbuilder?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.linuxsenpai.multitargetbuilder/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 A Unity Provider setting tool that supports adding multiple build targets with different configurations. Where all the targets can be built with a single button. Allowing less time spent on the build configuration. Where it can be export and imported onto other projects easily.
 
@@ -64,7 +66,9 @@ If you have any idea, feel inclined to fork it and submit your changes back to m
 
 
 ## Donations ##
-The project was originally intended to be put on the Unity asset store. However, it was decided to make it free instead. If you find this tool useful consider make a donation.
+The project was originally intended to be put on the Unity asset store. However, it was decided to make it free instead. If you find this tool useful consider making a donation.
+
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R35V8EE62CBDL&source=url)
 
 ## License ##
 This project is licensed under the GPL+3 License - see the [LICENSE](LICENSE) file for details
