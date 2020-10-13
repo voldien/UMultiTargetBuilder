@@ -72,7 +72,7 @@ The configuration window can be found in the project settings window, under the 
 ## Fresh Configuration
 The first thing on a fresh configuration is to create a target.  After the first target, all the other configuration UI will be presented and visible for configuration.
 
-![image](add_first_target.png)
+![image](images/add_first_target.png)
 
 ## Additional Targets
 Adding a target can be done as an empty new target or copy the currently selected target. The name is only used in the project and will not be the title. There is a dedicated field for setting the title for the target.
