@@ -67,7 +67,7 @@ $ openupm add com.linuxsenpai.multitargetbuilder
 ## Open up the Configuration Window
 The configuration window can be found in the project settings window, under the *MultiTarget Build Settings* tab.
 
-![image](open_project_settings.png)
+![image](images/open_project_settings.png)
 
 ## Fresh Configuration
 The first thing on a fresh configuration is to create a target.  After the first target, all the other configuration UI will be presented and visible for configuration.
@@ -77,17 +77,17 @@ The first thing on a fresh configuration is to create a target.  After the first
 ## Additional Targets
 Adding a target can be done as an empty new target or copy the currently selected target. The name is only used in the project and will not be the title. There is a dedicated field for setting the title for the target.
 
-![image](adding_targets.png)
+![image](images/adding_targets.png)
 
 ## Configuration Target
 In the target configuration window. The meta-information, build settings, and scenes settings can be configured. 
 
-![image](target_configuration.png)
+![image](images/target_configuration.png)
 
 
 ## Override Scenes
 On a selected *build target*, unchecking the Use default scene will enable the configuration list. From there adding and removing scenes can be performed.
-![image](override_scene_for_target.png)
+![image](images/override_scene_for_target.png)
 
 ## Run from Editor
 Currently on the target with its platform that matches the host target platform can be run with success from the editor directly.
@@ -95,7 +95,7 @@ Currently on the target with its platform that matches the host target platform 
 ## Export/Import Settings
 The settings can be export and import. Thus making it possible to use the settings across the project with the exception of the scene override that is dependent on the current project.
 
-![image](import_export.png)
+![image](images/import_export.png)
 
 ## Build
 The tool support for building individual build target as well all the targets that are enabled. Furthermore, both support script only to build only the script.
