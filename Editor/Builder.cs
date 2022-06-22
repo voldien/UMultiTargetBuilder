@@ -240,6 +240,9 @@ namespace BuildMultiPlatform
 				buildPlayerOptions.locationPathName = GetTargetLocationAbsolutePath(buildTarget);
 				buildPlayerOptions.scenes = new string[targetScenes.Length];
 				buildPlayerOptions.target = buildTarget.target;
+#if UNITY_2021_2_OR_NEWER
+				buildPlayerOptions.subtarget = (int)buildTarget.subtarget;
+#endif
 				buildPlayerOptions.targetGroup = buildTarget.targetGroup;
 				buildPlayerOptions.options = buildTarget.options;
 

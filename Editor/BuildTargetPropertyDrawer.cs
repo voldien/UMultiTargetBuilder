@@ -16,6 +16,9 @@ namespace BuildMultiPlatform
 			public static GUIContent output = new GUIContent("Relative Directory", "Relative path from the global path.");
 			public static GUIContent BuildSettingLabel = new GUIContent("Build Settings", "");
 			public static GUIContent target = new GUIContent("Target", "Specific group target.");
+#if UNITY_2021_2_OR_NEWER
+			public static GUIContent subtarget = new GUIContent("Subtarget", "Specific group subtarget.");
+#endif
 			public static GUIContent targeGroup = new GUIContent("Target Group", "Target group.");
 			public static GUIContent optionFlagsLabel = new GUIContent("Option Flags", "");
 
@@ -26,7 +29,9 @@ namespace BuildMultiPlatform
 			public static GUIContent AllowDebugging = new GUIContent("Allow Debugging", "");
 			public static GUIContent UncompressedAssetBundle = new GUIContent("Uncompressed AssetBundle", "");
 			internal static GUIContent CompressWithLz4 = new GUIContent("Compress With Lz4", "");
+#if !UNITY_2021_2_OR_NEWER
 			internal static GUIContent EnabledHeadlessMode = new GUIContent("Headless Mode", "");
+#endif
 			internal static readonly GUIContent CompressWithLz4HC = new GUIContent("Compress With Lz4HC", "");
 			internal static readonly GUIContent IncludeTestAssemblies = new GUIContent("Include Test Assemblies", "");
 			internal static readonly GUIContent EnableCodeCoverage = new GUIContent("Enable Code Coverage", "");
@@ -79,6 +84,9 @@ namespace BuildMultiPlatform
 			SerializedProperty outputDirectory = property.FindPropertyRelative("outputDirectory");
 			/*	*/
 			SerializedProperty _target = property.FindPropertyRelative("target");
+#if UNITY_2021_2_OR_NEWER
+			SerializedProperty _subtarget = property.FindPropertyRelative("subtarget");
+#endif
 			SerializedProperty targetGroup = property.FindPropertyRelative("targetGroup");
 			SerializedProperty flags = property.FindPropertyRelative("options");
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
@@ -99,6 +107,9 @@ namespace BuildMultiPlatform
 			/*	*/
 			Rect targetGroupRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect targetRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+#if UNITY_2021_2_OR_NEWER
+			Rect subtargetRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+#endif
 			Rect optionRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 
 			/*	Settings options.	*/
@@ -116,8 +127,10 @@ namespace BuildMultiPlatform
 
 			Rect optionUncompressedAssetBundleRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
 			nthCol = (nthCol + 1) % nrCol;
+#if !UNITY_2021_2_OR_NEWER
 			Rect optionEnableHeadlessModeRect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
 			nthCol = (nthCol + 1) % nrCol;
+#endif
 			nthRow++;
 
 			Rect optionCompressWithLz4Rect = new Rect(position.x + nthCol * toggleTextWidth, position.y + defaultHeight * nthRow, toggleTextWidth, defaultHeight);
@@ -168,6 +181,9 @@ namespace BuildMultiPlatform
 
 			EditorGUI.indentLevel++;
 			EditorGUI.PropertyField(targetRect, _target, Styles.target);
+#if UNITY_2021_2_OR_NEWER
+			EditorGUI.PropertyField(subtargetRect, _subtarget, Styles.subtarget);
+#endif
 			EditorGUI.PropertyField(targetGroupRect, targetGroup, Styles.targeGroup);
 			EditorGUI.PropertyField(optionRect, flags, Styles.optionFlagsLabel);
 
@@ -179,7 +195,9 @@ namespace BuildMultiPlatform
 			InternalToogle(flags, BuildOptions.AllowDebugging, EditorGUI.ToggleLeft(optionAllowDebuggingRect, Styles.AllowDebugging, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.AllowDebugging)));
 			/*	*/
 			InternalToogle(flags, BuildOptions.UncompressedAssetBundle, EditorGUI.ToggleLeft(optionUncompressedAssetBundleRect, Styles.UncompressedAssetBundle, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle)));
+#if !UNITY_2021_2_OR_NEWER
 			InternalToogle(flags, BuildOptions.EnableHeadlessMode, EditorGUI.ToggleLeft(optionEnableHeadlessModeRect, Styles.EnabledHeadlessMode, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode)));
+#endif
 			/*	*/
 			InternalToogle(flags, BuildOptions.CompressWithLz4, EditorGUI.ToggleLeft(optionCompressWithLz4Rect, Styles.CompressWithLz4, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.CompressWithLz4)));
 			InternalToogle(flags, BuildOptions.CompressWithLz4HC, EditorGUI.ToggleLeft(optionCompressWithLz4HCRect, Styles.CompressWithLz4HC, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.CompressWithLz4HC)));
