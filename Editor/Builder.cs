@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
@@ -112,16 +112,20 @@ namespace BuildMultiPlatform
 			if (root.Length == 0)
 			{
 				/*	Create default directory from user home directory.	*/
-				root = string.Format("{0}/{1}", Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName);
+				root = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName);// string.Format("{0}/{1}", );
 			}
 
 			/*	Check if target path is rooted or relative.	*/
 
 			/*	Compute the output filepath.	*/
 			if (target.outputDirectory.Length > 0)
-				path = Path.GetFullPath(string.Format("{0}/{1}/{2}", root, target.outputDirectory, target.Title));
+			{
+				path = Path.GetFullPath(Path.Join(Path.Join(root, target.outputDirectory), target.Title));// string.Format("{0}/{1}/{2}", root, target.outputDirectory, target.Title));
+			}
 			else
-				path = Path.GetFullPath(string.Format("{0}/{1}", root, target.Title));
+			{
+				path = Path.GetFullPath(Path.Join(root, target.Title));
+			}
 
 			/*	Add extension in order to make the target work properly in its environment.	*/
 			if (!Path.HasExtension(target.Title))
