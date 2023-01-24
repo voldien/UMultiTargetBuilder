@@ -34,7 +34,7 @@ namespace BuildMultiPlatform
 			serializedObject.Update();
 
 
-
+			/*	*/
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button(BuilderSettingsProvider.Styles.add))
 			{

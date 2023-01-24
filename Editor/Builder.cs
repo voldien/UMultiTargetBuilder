@@ -97,7 +97,8 @@ namespace BuildMultiPlatform
 
 		}
 
-		public static bool validateTargetPath(BuildTarget target){
+		public static bool IsValidTargetPath(BuildTarget target)
+		{
 			string path = GetTargetLocationAbsolutePath(target);
 			return Directory.Exists(path);
 		}
@@ -165,9 +166,13 @@ namespace BuildMultiPlatform
 			}
 			/*	Validate the path is an absolute path.	*/
 			if (Path.IsPathRooted(path))
+			{
 				return path;
+			}
 			else
+			{
 				throw new Exception("Could not construct valid global path.");
+			}
 
 		}
 
@@ -183,7 +188,8 @@ namespace BuildMultiPlatform
 		public static bool IsTargetRunable(BuildTarget target)
 		{
 			/*	*/
-			try{
+			try
+			{
 				string path = GetTargetLocationAbsolutePath(target);
 				if (File.Exists(path))
 				{
@@ -192,7 +198,8 @@ namespace BuildMultiPlatform
 				}
 				return false;
 			}
-			catch(Exception ex){
+			catch (Exception ex)
+			{
 				return false;
 			}
 		}
@@ -218,7 +225,8 @@ namespace BuildMultiPlatform
 					return;
 				}
 
-				if(validateTargetPath(buildTarget)){
+				if (IsValidTargetPath(buildTarget))
+				{
 					Debug.LogError(string.Format("Filepath: '{0}' is not valid.", GetTargetLocationAbsolutePath(buildTarget)));
 					return;
 				}
@@ -341,7 +349,7 @@ namespace BuildMultiPlatform
 			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
 			BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 		}
-		
+
 		internal static void StackPopBuildConfiguration()
 		{
 			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;

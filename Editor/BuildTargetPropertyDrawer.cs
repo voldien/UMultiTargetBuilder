@@ -32,13 +32,14 @@ namespace BuildMultiPlatform
 			internal static readonly GUIContent EnableCodeCoverage = new GUIContent("Enable Code Coverage", "");
 			internal static readonly GUIContent WaitForPlayerConnection = new GUIContent("Wait For Player Connection", "");
 			internal static readonly GUIContent EnableDeepProfilingSupport = new GUIContent("Enable Deep Profiling Support", "");
+
 			/*	Scene options.	*/
 			public static GUIContent SceneSettingsLabel = new GUIContent("Scene Settings");
 			public static GUIContent useScene = new GUIContent("Use Default Scenes");
 		}
 		const int listLineCount = 2;
 		const int toggleOptionlineCount = 6;    /*	Toggle grid number of lines.	*/
-		const int attribueLines = 11;	/*	Number of attribues lines.	*/
+		const int attribueLines = 11;   /*	Number of attribues lines.	*/
 		const int lineCount = attribueLines + toggleOptionlineCount + listLineCount;
 		private ReorderableList m_list;
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -150,7 +151,7 @@ namespace BuildMultiPlatform
 			/*	Scene options.	*/
 			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-			float  sceneheight = scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
+			float sceneheight = scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
 			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, sceneheight);
 
 			/*	*/
@@ -218,6 +219,7 @@ namespace BuildMultiPlatform
 			EditorGUI.indentLevel = indent;
 			EditorGUI.EndProperty();
 		}
+
 		static internal void InternalToogle(SerializedProperty target, BuildOptions flag, bool enabled)
 		{
 			if (enabled)
@@ -238,7 +240,8 @@ namespace BuildMultiPlatform
 			{
 				EditorGUI.LabelField(rect, string.Format("Number of Scenes: {0}", property.arraySize));
 			};
-            list.elementHeightCallback = (int index) => {
+			list.elementHeightCallback = (int index) =>
+			{
 				return EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing * 1.5f;
 			};
 			list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>

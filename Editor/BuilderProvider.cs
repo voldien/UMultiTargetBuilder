@@ -83,6 +83,7 @@ namespace BuildMultiPlatform
 			if (m_configurations != null)
 			{
 
+				/*	*/
 				m_list = new ReorderableList(m_BuilderConfigSettings, m_configurations, true, true, false, false)
 				{
 					drawHeaderCallback = DrawListHeader,
@@ -93,8 +94,10 @@ namespace BuildMultiPlatform
 
 			/*	Autoselect the first if any build target exists.	*/
 			if (BuilderSettings.GetOrCreateSettings().targets.Length > 0)
+			{
 				this.selectedConfigIndex = 0;
 				this.m_list.Select(this.selectedConfigIndex);
+			}
 		}
 
 		private float getElementHeight(int index)
@@ -112,7 +115,6 @@ namespace BuildMultiPlatform
 					break;
 				case BuildTargetGroup.Standalone:
 					builtin_icon_name = "BuildSettings.Standalone.Small";
-
 					break;
 				case BuildTargetGroup.WebGL:
 					builtin_icon_name = "BuildSettings.Web.Small";
@@ -145,6 +147,7 @@ namespace BuildMultiPlatform
 			}
 			return (Texture)EditorGUIUtility.IconContent(builtin_icon_name).image;
 		}
+
 		private void DrawListElement(Rect rect, int index, bool isActive, bool isFocused)
 		{
 			var item = m_configurations.GetArrayElementAtIndex(index);
@@ -168,6 +171,7 @@ namespace BuildMultiPlatform
 			Rect displayNameRect = new Rect(rect.x + iconWidth + toggleWidth, rect.y, displayName.Length * characterWidth, EditorGUIUtility.singleLineHeight);
 			Rect nameRect = new Rect(rect.x + iconWidth + toggleWidth + displayName.Length * characterWidth, rect.y, textWidth, EditorGUIUtility.singleLineHeight);
 
+
 			/*	*/
 			EditorGUI.LabelField(iconRect, new GUIContent(icon, targetGroup.ToString()));
 			EditorGUI.PropertyField(enabledRect, enabled, new GUIContent("", "Enable target for building."));
@@ -178,11 +182,13 @@ namespace BuildMultiPlatform
 			if (isFocused && isActive)
 				this.selectedConfigIndex = index;
 		}
+
 		private void DrawListHeader(Rect rect)
 		{
 			//rect = EditorGUI.IndentedRect(rect);
 			GUI.Label(rect, string.Format("Build Targets: {0}", this.m_configurations.arraySize), EditorStyles.boldLabel);
 		}
+
 		public override void OnDeactivate()
 		{
 
@@ -211,8 +217,10 @@ namespace BuildMultiPlatform
 				m_BuilderConfigSettings.Update();
 
 				if (m_configurations.arraySize == 1)
+				{
 					selectedConfigIndex = 0;
 					m_list.Select(selectedConfigIndex);
+				}
 
 			}
 
@@ -318,7 +326,8 @@ namespace BuildMultiPlatform
 			EditorGUILayout.PropertyField(m_verbose, Styles.Verbose);
 		}
 
-		private void DisplayTargetView(){
+		private void DisplayTargetView()
+		{
 
 			BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 
@@ -349,8 +358,10 @@ namespace BuildMultiPlatform
 					m_BuilderConfigSettings.Update();
 
 					if (m_configurations.arraySize == 1)
+					{
 						selectedConfigIndex = 0;
 						m_list.Select(selectedConfigIndex);
+					}
 
 				}
 				GUILayout.FlexibleSpace();
@@ -431,6 +442,8 @@ namespace BuildMultiPlatform
 								EditorGUI.EndDisabledGroup();
 								EditorGUILayout.EndHorizontal();
 
+
+
 								try
 								{
 									string outputPathLabel = string.Format("Executable filepath: {0}", Builder.GetTargetLocationAbsolutePath(optionItem), EditorStyles.boldLabel);
@@ -457,11 +470,14 @@ namespace BuildMultiPlatform
 			}
 		}
 
-		private void DisplayRunable(){
+		private void DisplayRunable()
+		{
 			BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
 			/*  Draw quick run UI.	*/
 			if (m_configurations.arraySize > 0)
+			{
 				DisplayRunList();
+			}
 		}
 
 		private int tab = 0;
@@ -482,14 +498,14 @@ namespace BuildMultiPlatform
 
 				EditorGUILayout.Space();
 
-				tab = GUILayout.Toolbar(tab, new GUIContent[] { Styles.TargetTab, Styles.RunTargets});
+				tab = GUILayout.Toolbar(tab, new GUIContent[] { Styles.TargetTab, Styles.RunTargets });
 				switch (tab)
 				{
 					default:
 					case 0:
 						DisplayTargetView();
 						break;
-						case 1:
+					case 1:
 						DisplayRunable();
 						break;
 				}
@@ -512,7 +528,7 @@ namespace BuildMultiPlatform
 					{
 						ntargetpath++;
 					}
-					if (Builder.validateTargetPath(target))
+					if (Builder.IsValidTargetPath(target))
 					{
 						nbadpath++;
 					}

@@ -29,7 +29,8 @@ namespace BuildMultiPlatform
 			if (settings == null)
 			{
 				/*	Create and make sure the directory exits.	*/
-				if(!AssetDatabase.IsValidFolder("Assets/Editor")){
+				if (!AssetDatabase.IsValidFolder("Assets/Editor"))
+				{
 					string guid = AssetDatabase.CreateFolder("Assets", "Editor");
 				}
 				if (!AssetDatabase.IsValidFolder("Assets/Editor/com.linuxsenpai.multitargetbuilder"))
@@ -38,7 +39,7 @@ namespace BuildMultiPlatform
 				}
 				/*	Create default setting object.	*/
 				settings = ScriptableObject.CreateInstance<BuilderSettings>();
-				settings.rootOutputDirectory = Path.Join( Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName); // string.Format("{0}/{1}",
+				settings.rootOutputDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName); // string.Format("{0}/{1}",
 				settings.verbose = true;
 				settings.targets = new BuildTarget[0];
 				AssetDatabase.CreateAsset(settings, GetSettingFilePath());
