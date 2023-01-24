@@ -94,6 +94,7 @@ namespace BuildMultiPlatform
 			/*	Autoselect the first if any build target exists.	*/
 			if (BuilderSettings.GetOrCreateSettings().targets.Length > 0)
 				this.selectedConfigIndex = 0;
+				this.m_list.Select(this.selectedConfigIndex);
 		}
 
 		private float getElementHeight(int index)
@@ -211,6 +212,7 @@ namespace BuildMultiPlatform
 
 				if (m_configurations.arraySize == 1)
 					selectedConfigIndex = 0;
+					m_list.Select(selectedConfigIndex);
 
 			}
 
@@ -239,8 +241,7 @@ namespace BuildMultiPlatform
 				/*	Add copy based on tehcurrent selected.	*/
 				m_configurations.DeleteArrayElementAtIndex(selectedConfigIndex);
 				selectedConfigIndex = selectedConfigIndex - 1;
-				//TODO update the index.
-				//m_list. = selectedConfigIndex;
+				m_list.Select(selectedConfigIndex);
 			}
 			EditorGUI.EndDisabledGroup();
 
@@ -349,6 +350,7 @@ namespace BuildMultiPlatform
 
 					if (m_configurations.arraySize == 1)
 						selectedConfigIndex = 0;
+						m_list.Select(selectedConfigIndex);
 
 				}
 				GUILayout.FlexibleSpace();
