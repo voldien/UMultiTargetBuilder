@@ -38,7 +38,7 @@ namespace BuildMultiPlatform
 				}
 				/*	Create default setting object.	*/
 				settings = ScriptableObject.CreateInstance<BuilderSettings>();
-				settings.rootOutputDirectory = string.Format("{0}/{1}", Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName);
+				settings.rootOutputDirectory = Path.Join( Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName); // string.Format("{0}/{1}",
 				settings.verbose = true;
 				settings.targets = new BuildTarget[0];
 				AssetDatabase.CreateAsset(settings, GetSettingFilePath());
