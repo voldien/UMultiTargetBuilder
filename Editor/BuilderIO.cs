@@ -17,7 +17,7 @@ namespace BuildMultiPlatform
 				string assetPath = BuilderSettings.GetSettingFilePath();
 				/*	TODO improve.	*/
 				string projectPath = Application.dataPath.Replace("/Assets", "");
-				string FullPath = Path.Join(projectPath, assetPath);
+				string FullPath = Path.Combine(projectPath, assetPath);
 				//()
 				if (File.Exists(FullPath))
 				{
