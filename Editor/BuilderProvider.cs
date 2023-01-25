@@ -42,7 +42,7 @@ namespace BuildMultiPlatform
 			public static GUIContent ClearScenes = new GUIContent("Clear Scenes", "");
 			public static GUIContent SetDefaultScenes = new GUIContent("Set Default Scenes", "");
 			/*	*/
-			public static GUIContent run = new GUIContent("Run", "Run the target.");
+			public static GUIContent run = new GUIContent("Run", (Texture)EditorGUIUtility.IconContent("PlayButton").image, "Run the target.");
 			/*	*/
 			public static GUIContent export = new GUIContent("Export", "Export settings.");
 			public static GUIContent import = new GUIContent("Import", "Import settings.");
