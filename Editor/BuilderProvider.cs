@@ -416,7 +416,7 @@ namespace BuildMultiPlatform
 								if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(120)))
 								{
 									SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
-									EditorBuildSettingsScene[] defScenes = Builder.getDefaultScenes();
+									EditorBuildSettingsScene[] defScenes = Builder.GetDefaultScenes();
 									settings.targets[selectedConfigIndex].scenes = new SceneAsset[defScenes.Length];
 									for (int i = 0; i < defScenes.Length; i++)
 									{
@@ -434,14 +434,15 @@ namespace BuildMultiPlatform
 
 								/*	Draw build buttons.	*/
 								BuildTarget optionItem = BuilderSettings.GetOrCreateSettings().targets[selectedConfigIndex];
-								bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
+								bool isTargetSupported = Builder.IsBuildTargetSupported(optionItem);
+								bool isValidConfig = true;
 								if (!isTargetSupported)
 								{
 									EditorGUILayout.LabelField("Target Group and Target is not valid configuration", this.errorStyle);
 								}
 
 								EditorGUILayout.BeginHorizontal();
-								EditorGUI.BeginDisabledGroup(!isTargetSupported);
+								EditorGUI.BeginDisabledGroup(!(isTargetSupported && isValidConfig));
 								if (GUILayout.Button(Styles.build, GUILayout.MaxWidth(120)))
 								{
 									Builder.BuildTarget(optionItem);
@@ -544,7 +545,7 @@ namespace BuildMultiPlatform
 				int ntargetpath = 0;
 				foreach (BuildTarget target in settings.targets)
 				{
-					if (!Builder.isBuildTargetSupported(target))
+					if (!Builder.IsBuildTargetSupported(target))
 					{
 						ntargetpath++;
 					}

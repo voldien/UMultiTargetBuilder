@@ -78,7 +78,7 @@ namespace BuildMultiPlatform
 							break;
 						}
 
-						bool isTargetSupported = Builder.isBuildTargetSupported(optionItem);
+						bool isTargetSupported = Builder.IsBuildTargetSupported(optionItem);
 						EditorGUI.BeginDisabledGroup(!isTargetSupported);
 						if (GUILayout.Button(BuilderSettingsProvider.Styles.build))
 						{
@@ -97,7 +97,7 @@ namespace BuildMultiPlatform
 						EditorGUILayout.Separator();
 						/*	*/
 						EditorGUILayout.BeginHorizontal();
-						if (Builder.isBuildTargetSupported(optionItem))
+						if (Builder.IsBuildTargetSupported(optionItem))
 						{
 							GUILayout.Label("Supported target");
 						}

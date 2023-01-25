@@ -218,7 +218,7 @@ namespace BuildMultiPlatform
 			if (buildTarget.enabled)
 			{
 				/*	Determine if supported on the target unity modules.	*/
-				if (!Builder.isBuildTargetSupported(buildTarget))
+				if (!Builder.IsBuildTargetSupported(buildTarget))
 				{
 					Debug.LogError(string.Format("Build target {0} is not supported to be built with this Unity Version (Check if Modules are installed).", buildTarget.name));
 					/*	Break from continue executing.	*/
@@ -232,7 +232,7 @@ namespace BuildMultiPlatform
 				}
 
 				/*	Populate the build struct with the build target configuration.	*/
-				EditorBuildSettingsScene[] targetScenes = getDefaultScenes();
+				EditorBuildSettingsScene[] targetScenes = GetDefaultScenes();
 				if (!buildTarget.useDefaultScenes)
 				{
 
@@ -328,7 +328,7 @@ namespace BuildMultiPlatform
 			}
 		}
 
-		public static bool isBuildTargetSupported(BuildTarget configOptionItem)
+		public static bool IsBuildTargetSupported(BuildTarget configOptionItem)
 		{
 			if (BuildPipeline.IsBuildTargetSupported(configOptionItem.targetGroup, configOptionItem.target))
 			{
@@ -338,7 +338,7 @@ namespace BuildMultiPlatform
 			return false;
 		}
 
-		internal static EditorBuildSettingsScene[] getDefaultScenes()
+		internal static EditorBuildSettingsScene[] GetDefaultScenes()
 		{
 			return EditorBuildSettings.scenes;
 		}
