@@ -31,11 +31,13 @@ namespace BuildMultiPlatform
 			public static GUIContent buildConfigs = new GUIContent("Build Configuration Set", "Set of build configuration.");
 			public static GUIContent Verbose = new GUIContent("Verbose", "Output is verbosity.");
 			public static GUIContent choosePath = new GUIContent("Choose Path", "Choose the output directory for where all the target will be save to.");
+			public static GUIContent createPath = new GUIContent("Create Path", "Choose the output directory for where all the target will be save to.");
 			/*  */
 			public static GUIContent buildTargets = new GUIContent("Build Targets", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets.");
 			public static GUIContent buildTargetsScriptOnly = new GUIContent("Build Targets (Scripts", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets script only");
 			public static GUIContent build = new GUIContent("Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target.");
 			public static GUIContent buildScript = new GUIContent("Script Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target script only");
+			public static GUIContent openPath = new GUIContent("Open Path", null, "Open File Explorerer where the targets files are located, if they exists.");
 			/*	*/
 			public static GUIContent ClearScenes = new GUIContent("Clear Scenes", "");
 			public static GUIContent SetDefaultScenes = new GUIContent("Set Default Scenes", "");
@@ -314,6 +316,15 @@ namespace BuildMultiPlatform
 					m_outpdirectory.stringValue = path;
 				}
 			}
+
+			if (!Directory.Exists(m_outpdirectory.stringValue)) ////&& Path.IsPathFullyQualified(m_outpdirectory.stringValue))
+			{
+				if (GUILayout.Button(Styles.createPath))
+				{
+					Directory.CreateDirectory(m_outpdirectory.stringValue);
+				}
+			}
+
 			EditorGUILayout.EndHorizontal();
 			if (m_outpdirectory.stringValue.Length != 0)
 			{
@@ -439,6 +450,15 @@ namespace BuildMultiPlatform
 								{
 									Builder.BuildTargetScriptOnly(optionItem);
 								}
+
+								/*	*/
+								EditorGUI.BeginDisabledGroup(!Directory.Exists(Path.GetDirectoryName(Builder.GetTargetLocationAbsolutePath(optionItem))));
+								if (GUILayout.Button(Styles.openPath, GUILayout.MaxWidth(120)))
+								{
+									EditorUtility.RevealInFinder(Builder.GetTargetLocationAbsolutePath(optionItem));
+								}
+								EditorGUI.EndDisabledGroup();
+
 								EditorGUI.EndDisabledGroup();
 								EditorGUILayout.EndHorizontal();
 

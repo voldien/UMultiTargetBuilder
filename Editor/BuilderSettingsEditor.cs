@@ -84,6 +84,15 @@ namespace BuildMultiPlatform
 						{
 							Builder.BuildTarget(optionItem);
 						}
+						EditorGUI.EndDisabledGroup();
+
+						/*	Open Path button.	*/
+						EditorGUI.BeginDisabledGroup(!Directory.Exists(Path.GetDirectoryName(Builder.GetTargetLocationAbsolutePath(optionItem))));
+						if (GUILayout.Button(BuilderSettingsProvider.Styles.openPath))
+						{
+							EditorUtility.RevealInFinder(Builder.GetTargetLocationAbsolutePath(optionItem));
+						}
+						EditorGUI.EndDisabledGroup();
 
 						EditorGUILayout.Separator();
 						/*	*/
