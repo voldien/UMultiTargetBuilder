@@ -25,6 +25,9 @@ namespace BuildMultiPlatform
 		private GUIStyle errorStyle;
 		private GUIStyle warningStyle;
 
+		private List<string> devices = new List<string>();
+		private int selectedDevice = 0;
+
 		public class Styles
 		{
 			public static GUIContent rootOutputDirectory = new GUIContent("Root output directory", "The root directory that all the target build will be stored.");
@@ -43,6 +46,7 @@ namespace BuildMultiPlatform
 			public static GUIContent SetDefaultScenes = new GUIContent("Set Default Scenes", "");
 			/*	*/
 			public static GUIContent run = new GUIContent("Run", (Texture)EditorGUIUtility.IconContent("PlayButton").image, "Run the target.");
+			public static GUIContent refresh = new GUIContent("", (Texture)EditorGUIUtility.IconContent("Refresh").image, "Refresh.");
 			/*	*/
 			public static GUIContent export = new GUIContent("Export", "Export settings.");
 			public static GUIContent import = new GUIContent("Import", "Import settings.");
@@ -280,11 +284,50 @@ namespace BuildMultiPlatform
 					EditorGUILayout.LabelField(string.Format("{0}, ({1})", target.name, target.Title));
 
 					EditorGUI.BeginDisabledGroup(!Builder.IsTargetRunable(target));
+
+
+					EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(512));
+					if (target.targetGroup == BuildTargetGroup.Android)
+					{
+						if (target.targetGroup == BuildTargetGroup.Android)
+						{
+							EditorGUI.BeginDisabledGroup(devices.Count <= 0);
+							EditorGUILayout.LabelField("Device");
+							selectedDevice = EditorGUILayout.Popup("", selectedDevice, devices.ToArray(), GUILayout.MaxWidth(256));
+							EditorGUI.EndDisabledGroup();
+						}
+						if (GUILayout.Button(Styles.refresh, GUILayout.MaxWidth(32)))
+						{
+
+							RefreshDevices();
+							EditorGUILayout.Space(10);
+						}
+					}
+					/*	*/
 					if (GUILayout.Button(Styles.run))
 					{
 						try
 						{
-							Builder.RunTarget(target);
+							//TODO cleanup code.
+							if (target.targetGroup == BuildTargetGroup.Android)
+							{
+
+								string errrMesg = "";
+								string[] installCommand = new string[] { "-d", "-s", devices[selectedDevice], "install", Builder.GetTargetLocationAbsolutePath(target) };
+
+								UnityEditor.Android.ADB.GetInstance().Run(installCommand, errrMesg);
+
+								string appID = PlayerSettings.GetApplicationIdentifier(target.targetGroup); // Must be a valid.
+								Debug.Log(appID);
+								string[] runTargetCommand = new string[] { "-s", devices[selectedDevice], "shell", "am", "start", "-n", appID };
+								Debug.Log(runTargetCommand.ToArray());
+								UnityEditor.Android.ADB.GetInstance().Run(runTargetCommand, errrMesg);
+
+							}
+							else
+							{
+								Builder.RunTarget(target);
+							}
 						}
 						catch (Exception ex)
 						{
@@ -293,6 +336,8 @@ namespace BuildMultiPlatform
 							EditorUtility.DisplayDialog(dialog_title, dialog_message, "OK");
 						}
 					}
+					EditorGUILayout.EndHorizontal();
+
 					EditorGUI.EndDisabledGroup();
 					EditorGUILayout.EndHorizontal();
 					EditorGUILayout.Space();
@@ -300,6 +345,39 @@ namespace BuildMultiPlatform
 			}
 
 			EditorGUILayout.EndVertical();
+		}
+
+		private void RefreshDevices()
+		{
+			try
+			{
+				string errrMesg = "";
+				string extractedDeviceInfo = UnityEditor.Android.ADB.GetInstance().Run(new string[] { "devices" }, errrMesg);
+
+				string[] deviceLines = extractedDeviceInfo.Split(Environment.NewLine.ToCharArray());
+
+				this.devices.Clear();
+				for (int i = 1; i < deviceLines.Length; i++)    /*	Ignore the first verbose line.	*/
+				{
+
+					int length = deviceLines[i].IndexOfAny(new char[] { '\t', ' ' }, 0);
+					if (length > 0)
+					{
+						string resultDevice = deviceLines[i].Substring(0, length);
+
+						if (resultDevice.Length > 0)
+						{
+
+							devices.Add(resultDevice);
+						}
+					}
+
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.Log(ex.Message);
+			}
 		}
 
 		private void DisplayGUIHeader()
