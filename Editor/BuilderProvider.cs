@@ -298,8 +298,7 @@ namespace BuildMultiPlatform
 						}
 						if (GUILayout.Button(Styles.refresh, GUILayout.MaxWidth(32)))
 						{
-
-							RefreshDevices();
+							this.devices = AndroidUtil.RefreshDevices();
 							EditorGUILayout.Space(10);
 						}
 					}
@@ -313,14 +312,15 @@ namespace BuildMultiPlatform
 							{
 
 								string errrMesg = "";
+								/*	Construct the install command.	*/
 								string[] installCommand = new string[] { "-d", "-s", devices[selectedDevice], "install", Builder.GetTargetLocationAbsolutePath(target) };
 
 								UnityEditor.Android.ADB.GetInstance().Run(installCommand, errrMesg);
 
-								string appID = PlayerSettings.GetApplicationIdentifier(target.targetGroup); // Must be a valid.
-								Debug.Log(appID);
+								string appID = string.Format("{0}/{1}", PlayerSettings.GetApplicationIdentifier(target.targetGroup), "com.unity3d.player.UnityPlayerActivity"); // Must be a valid ID.
+
+								/*	Construct the run command.	*/
 								string[] runTargetCommand = new string[] { "-s", devices[selectedDevice], "shell", "am", "start", "-n", appID };
-								Debug.Log(runTargetCommand.ToArray());
 								UnityEditor.Android.ADB.GetInstance().Run(runTargetCommand, errrMesg);
 
 							}
@@ -345,39 +345,6 @@ namespace BuildMultiPlatform
 			}
 
 			EditorGUILayout.EndVertical();
-		}
-
-		private void RefreshDevices()
-		{
-			try
-			{
-				string errrMesg = "";
-				string extractedDeviceInfo = UnityEditor.Android.ADB.GetInstance().Run(new string[] { "devices" }, errrMesg);
-
-				string[] deviceLines = extractedDeviceInfo.Split(Environment.NewLine.ToCharArray());
-
-				this.devices.Clear();
-				for (int i = 1; i < deviceLines.Length; i++)    /*	Ignore the first verbose line.	*/
-				{
-
-					int length = deviceLines[i].IndexOfAny(new char[] { '\t', ' ' }, 0);
-					if (length > 0)
-					{
-						string resultDevice = deviceLines[i].Substring(0, length);
-
-						if (resultDevice.Length > 0)
-						{
-
-							devices.Add(resultDevice);
-						}
-					}
-
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.Log(ex.Message);
-			}
 		}
 
 		private void DisplayGUIHeader()
