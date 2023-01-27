@@ -9,7 +9,7 @@ namespace BuildMultiPlatform
 	{
 		[Tooltip("The name of the executable."), SerializeField]
 		public string title = "";
-		[Tooltip(""), SerializeField]
+		[Tooltip("The company name that will added to the executable."), SerializeField]
 		public string company = "";
 		[Tooltip("Relative output directory."), SerializeField]
 		public string outputDirectory = "";
