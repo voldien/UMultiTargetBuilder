@@ -28,6 +28,9 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("Build options.")]
 		public BuildOptions options = BuildOptions.None;
 
+		[Header("Compiler Defines")]
+		[SerializeField, Tooltip("Macro applied to the build target during compilation.")]
+		public string[] ScriptingDefines;
 
 		public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }
 		public object Clone()
@@ -42,6 +45,7 @@ namespace BuildMultiPlatform
 			copy.targetGroup = this.targetGroup;
 			copy.useDefaultScenes = this.useDefaultScenes;
 			copy.options = this.options;
+			copy.ScriptingDefines = this.ScriptingDefines;
 			copy.scenes = (SceneAsset[])this.scenes.Clone();
 			return (object)copy;
 		}

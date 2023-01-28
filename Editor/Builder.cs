@@ -63,6 +63,7 @@ namespace BuildMultiPlatform
 			/*	Remember the state of the current build target.	*/
 			UnityEditor.BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
 			BuildTargetGroup currentGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+
 			try
 			{
 				for (int i = 0; i < settings.targets.Length; i++)
@@ -72,7 +73,7 @@ namespace BuildMultiPlatform
 			}
 			finally
 			{
-				/*	Reset the state.	*/
+				/*	Reset the build setting to the original state.	*/
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(currentGroup, currentTarget);
 			}
 		}
@@ -91,7 +92,7 @@ namespace BuildMultiPlatform
 			}
 			finally
 			{
-				/*	Reset the state.	*/
+				/*	Reset the build setting to the original state.	*/
 				EditorUserBuildSettings.SwitchActiveBuildTargetAsync(currentGroup, currentTarget);
 			}
 
@@ -254,6 +255,8 @@ namespace BuildMultiPlatform
 				buildPlayerOptions.target = buildTarget.target;
 				buildPlayerOptions.targetGroup = buildTarget.targetGroup;
 				buildPlayerOptions.options = buildTarget.options;
+				buildPlayerOptions.extraScriptingDefines = buildTarget.ScriptingDefines;
+
 
 				/*	assign all scenes.	*/
 				int i = 0;
