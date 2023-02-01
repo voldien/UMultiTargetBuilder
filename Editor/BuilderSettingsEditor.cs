@@ -102,7 +102,6 @@ namespace BuildMultiPlatform
 						}
 						else
 						{
-
 							//						GUILayout.Label(EditorGUIUtility.IconContent("sv_icon_dot4_pix16_gizmo"), GUILayout.MinWidth(16), GUILayout.MaxWidth(32));
 							Color currentColor = EditorStyles.label.normal.textColor;
 							EditorStyles.label.normal.textColor = Color.red;

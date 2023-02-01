@@ -225,7 +225,7 @@ namespace BuildMultiPlatform
 				if (m_configurations.arraySize == 1)
 				{
 					selectedConfigIndex = 0;
-					m_list.index = selectedConfigIndex;	// Select(selectedConfigIndex);
+					m_list.index = selectedConfigIndex; // Select(selectedConfigIndex);
 				}
 
 			}
@@ -416,7 +416,7 @@ namespace BuildMultiPlatform
 					if (m_configurations.arraySize == 1)
 					{
 						selectedConfigIndex = 0;
-						m_list.Select(selectedConfigIndex);
+						m_list.index = selectedConfigIndex; // Select(selectedConfigIndex);
 					}
 
 				}

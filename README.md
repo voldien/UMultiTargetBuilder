@@ -15,18 +15,28 @@ A Unity Provider setting tool that supports adding multiple build targets with d
 Table of Contents
 =================
 
-* [Installation](#installation)
-* [Quick Start](#Quick-Start)
-  * [Open up the Configuration Window](#Open-up-the-Configuration-Window)
-  * [Fresh Configuration](#Fresh-Configuration)
-  * [Additional Targets](#Additional-Targets)  
-  * [Configuration Target](#Configuration-Target)  
-  * [Override Scenes](#Override-Scenes)  
-  * [Build](#Build)  
-  * [Run from Editor](#Run-from-Editor)  
-  * [Export/Import Settings](#Export/Import-Settings)
-  * [Server/ Command Line Build](#Server/-Command-Line-Build-Feature)
-* [License](#license)
+- [Multiable Buildable Target Configuration Tool](#multiable-buildable-target-configuration-tool)
+- [Features](#features)
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+    - [Simple Download](#simple-download)
+    - [Unity Package Manager (UPM)](#unity-package-manager-upm)
+    - [OpenUPM](#openupm)
+- [Quick Start](#quick-start)
+  - [Open up the Configuration Window](#open-up-the-configuration-window)
+  - [Fresh Configuration](#fresh-configuration)
+  - [Additional Targets](#additional-targets)
+  - [Configuration Target](#configuration-target)
+  - [Override Scenes](#override-scenes)
+  - [Run from Editor](#run-from-editor)
+  - [Export/Import Settings](#exportimport-settings)
+  - [Build](#build)
+  - [Server/ Command Line Build Feature](#server-command-line-build-feature)
+  - [Resources](#resources)
+  - [Note](#note)
+  - [Contributing](#contributing)
+  - [Donations](#donations)
+  - [License](#license)
 
 # Installation
 
@@ -41,7 +51,7 @@ Find `Packages/manifest.json` in your project and add the following:
 ```json
 {
   "dependencies": {
-    "com.linuxsenpai.multitargetbuilder": "https://github.com/voldien/UMultiTargetBuilder.git#0.1.5",
+    "com.codeintrinsic.multitargetbuilder": "https://github.com/voldien/UMultiTargetBuilder.git#0.1.6",
     "...": "..."
   }
 }
@@ -59,7 +69,7 @@ $ npm install -g openupm-cli
 $ cd YOUR_UNITY_PROJECT_FOLDER
 
 # Add package to your project
-$ openupm add com.linuxsenpai.multitargetbuilder
+$ openupm add com.codeintrinsic.multitargetbuilder
 ```
 
 # Quick Start

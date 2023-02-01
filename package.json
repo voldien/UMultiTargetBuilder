@@ -1,7 +1,7 @@
 {
 	"name": "com.codeintrinsic.multitargetbuilder",
 	"displayName": "MultiTarget Builder",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"unity": "2019.3",
 	"description": "A provider tool for creating multiple build targets with the option of different configurations such as platform and among other settings.",
 	"keywords": [

@@ -1,3 +1,9 @@
+## [0.1.6]
+### Minor Patch Release
+- Android Install/Run support.
+- More convient UI.
+- Minor fixes and changes.
+
 ## [0.1.3] - 2020-07-28
 ### Minor Patch Release
 - Update the license.
