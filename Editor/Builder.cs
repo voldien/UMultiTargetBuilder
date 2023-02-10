@@ -274,7 +274,7 @@ namespace BuildMultiPlatform
 				{
 
 				}
-				Debug.LogFormat("", summary.totalTime.Seconds, summary.buildStartedAt, summary.buildEndedAt);
+				Debug.LogFormat("{0} {1} {2}", summary.totalTime.Seconds, summary.buildStartedAt, summary.buildEndedAt);
 				switch (summary.result)
 				{
 					case BuildResult.Succeeded:
@@ -293,7 +293,7 @@ namespace BuildMultiPlatform
 				}
 
 				Debug.Log("Platform: " + summary.platform.ToString());
-				Debug.LogFormat("", summary.options.ToString(), summary.platformGroup.ToString());
+				Debug.LogFormat("Build Options: {0} | Platform: {1}", summary.options.ToString(), summary.platformGroup.ToString());
 			}
 		}
 

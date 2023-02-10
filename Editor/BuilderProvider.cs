@@ -12,7 +12,7 @@ namespace BuildMultiPlatform
 	class BuilderSettingsProvider : SettingsProvider
 	{
 		[NonSerialized]
-		private Vector2 scroll = Vector2.zero;
+		private Vector2 m_scroll = Vector2.zero;
 		private SerializedObject m_BuilderConfigSettings;
 		private SerializedProperty m_configurations;
 		private SerializedProperty m_outpdirectory;
@@ -20,13 +20,13 @@ namespace BuildMultiPlatform
 		[NonSerialized]
 		private ReorderableList m_list;
 		[NonSerialized]
-		private int selectedConfigIndex = -1;   /*	Select none.	*/
+		private int m_selectedConfigIndex = -1;   /*	Select none.	*/
 
-		private GUIStyle errorStyle;
-		private GUIStyle warningStyle;
+		private GUIStyle m_errorStyle;
+		private GUIStyle m_warningStyle;
 
-		private List<string> devices = new List<string>();
-		private int selectedDevice = 0;
+		private List<string> m_devices = new List<string>();
+		private int m_selectedDevice = 0;
 
 		public class Styles
 		{
@@ -37,13 +37,13 @@ namespace BuildMultiPlatform
 			public static GUIContent createPath = new GUIContent("Create Path", "Choose the output directory for where all the target will be save to.");
 			/*  */
 			public static GUIContent buildTargets = new GUIContent("Build Targets", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets.");
-			public static GUIContent buildTargetsScriptOnly = new GUIContent("Build Targets (Scripts", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets script only");
+			public static GUIContent buildTargetsScriptOnly = new GUIContent("Build Targets (Scripts", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build all targets script only.");
 			public static GUIContent build = new GUIContent("Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target.");
 			public static GUIContent buildScript = new GUIContent("Script Build", (Texture)EditorGUIUtility.IconContent("Settings").image, "Build target script only");
 			public static GUIContent openPath = new GUIContent("Open Path", null, "Open File Explorerer where the targets files are located, if they exists.");
 			/*	*/
-			public static GUIContent ClearScenes = new GUIContent("Clear Scenes", "");
-			public static GUIContent SetDefaultScenes = new GUIContent("Set Default Scenes", "");
+			public static GUIContent ClearScenes = new GUIContent("Clear Scenes", "Remove all scenes set in this target.");
+			public static GUIContent SetDefaultScenes = new GUIContent("Set Default Scenes", "Use the default scenes in the unity's default build settings.");
 			/*	*/
 			public static GUIContent run = new GUIContent("Run", (Texture)EditorGUIUtility.IconContent("PlayButton").image, "Run the target.");
 			public static GUIContent refresh = new GUIContent("", (Texture)EditorGUIUtility.IconContent("Refresh").image, "Refresh.");
@@ -53,7 +53,7 @@ namespace BuildMultiPlatform
 			/*	*/
 			public static GUIContent addFirstTarget = new GUIContent("Add Target", "Add first target.");
 			public static GUIContent add = new GUIContent("Add", "Add additional target.");
-			public static GUIContent addCopy = new GUIContent("Add Copy", "Add additional as a copy of the selected.");
+			public static GUIContent addCopy = new GUIContent("Add Copy", "Create duplicated from the current selected target.");
 			public static GUIContent remove = new GUIContent("Remove", "Remove selected target.");
 
 			public static GUIContent TargetTab = new GUIContent("Targets", "");
@@ -64,11 +64,11 @@ namespace BuildMultiPlatform
 		public BuilderSettingsProvider(string path, SettingsScope scope = SettingsScope.User)
 			: base(path, scope)
 		{
-			errorStyle = new GUIStyle();
-			errorStyle.normal.textColor = Color.red;
+			m_errorStyle = new GUIStyle();
+			m_errorStyle.normal.textColor = Color.red;
 
-			warningStyle = new GUIStyle();
-			warningStyle.normal.textColor = Color.yellow;
+			m_warningStyle = new GUIStyle();
+			m_warningStyle.normal.textColor = Color.yellow;
 		}
 
 		public static bool IsSettingsAvailable()
@@ -101,8 +101,8 @@ namespace BuildMultiPlatform
 			/*	Autoselect the first if any build target exists.	*/
 			if (BuilderSettings.GetOrCreateSettings().targets.Length > 0)
 			{
-				this.selectedConfigIndex = 0;
-				this.m_list.index = this.selectedConfigIndex;// Select(this.selectedConfigIndex);
+				this.m_selectedConfigIndex = 0;
+				this.m_list.index = this.m_selectedConfigIndex;// Select(this.selectedConfigIndex);
 			}
 		}
 
@@ -176,6 +176,7 @@ namespace BuildMultiPlatform
 			Rect enabledRect = new Rect(rect.x + iconWidth - 10, rect.y, toggleWidth * 2, EditorGUIUtility.singleLineHeight);
 			Rect displayNameRect = new Rect(rect.x + iconWidth + toggleWidth, rect.y, displayName.Length * characterWidth, EditorGUIUtility.singleLineHeight);
 			Rect nameRect = new Rect(rect.x + iconWidth + toggleWidth + displayName.Length * characterWidth, rect.y, textWidth, EditorGUIUtility.singleLineHeight);
+			//TODO add run button
 
 
 			/*	*/
@@ -186,7 +187,7 @@ namespace BuildMultiPlatform
 
 			/*	If item selected.	*/
 			if (isFocused && isActive)
-				this.selectedConfigIndex = index;
+				this.m_selectedConfigIndex = index;
 		}
 
 		private void DrawListHeader(Rect rect)
@@ -224,14 +225,14 @@ namespace BuildMultiPlatform
 
 				if (m_configurations.arraySize == 1)
 				{
-					selectedConfigIndex = 0;
-					m_list.index = selectedConfigIndex; // Select(selectedConfigIndex);
+					m_selectedConfigIndex = 0;
+					m_list.index = m_selectedConfigIndex; // Select(selectedConfigIndex);
 				}
 
 			}
 
 			/*	Determine if any valid item is currently selected.	*/
-			bool isItemSelected = selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize;
+			bool isItemSelected = m_selectedConfigIndex >= 0 && m_selectedConfigIndex < m_configurations.arraySize;
 
 			EditorGUI.BeginDisabledGroup(!isItemSelected);
 			if (GUILayout.Button(Styles.addCopy))
@@ -243,7 +244,7 @@ namespace BuildMultiPlatform
 				m_BuilderConfigSettings.ApplyModifiedProperties();
 
 				BuilderSettings settings = (BuilderSettings)m_BuilderConfigSettings.targetObject;
-				BuildTarget selected = settings.targets[selectedConfigIndex];
+				BuildTarget selected = settings.targets[m_selectedConfigIndex];
 				settings.targets[index] = (BuildTarget)selected.Clone();
 
 				m_BuilderConfigSettings.ApplyModifiedPropertiesWithoutUndo();
@@ -253,9 +254,9 @@ namespace BuildMultiPlatform
 			if (GUILayout.Button(Styles.remove))
 			{
 				/*	Add copy based on tehcurrent selected.	*/
-				m_configurations.DeleteArrayElementAtIndex(selectedConfigIndex);
-				selectedConfigIndex = selectedConfigIndex - 1;
-				m_list.index = selectedConfigIndex; // Select(selectedConfigIndex);
+				m_configurations.DeleteArrayElementAtIndex(m_selectedConfigIndex);
+				m_selectedConfigIndex = m_selectedConfigIndex - 1;
+				m_list.index = m_selectedConfigIndex; // Select(selectedConfigIndex);
 			}
 			EditorGUI.EndDisabledGroup();
 
@@ -287,23 +288,34 @@ namespace BuildMultiPlatform
 
 
 					EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(512));
+
+					/*	Android.	*/
 					if (target.targetGroup == BuildTargetGroup.Android)
 					{
 						if (target.targetGroup == BuildTargetGroup.Android)
 						{
-							EditorGUI.BeginDisabledGroup(devices.Count <= 0);
-							EditorGUILayout.LabelField("Device");
-							selectedDevice = EditorGUILayout.Popup("", selectedDevice, devices.ToArray(), GUILayout.MaxWidth(256));
+							EditorGUI.BeginDisabledGroup(m_devices.Count <= 0);
+
+							/*	Override label width to algin label a bit better.	*/
+							float originalValue = EditorGUIUtility.labelWidth;
+							EditorGUIUtility.labelWidth = 90;
+
+							m_selectedDevice = EditorGUILayout.Popup("Device", m_selectedDevice, m_devices.ToArray(), GUILayout.MaxWidth(256));
+
+							EditorGUIUtility.labelWidth = originalValue;
+
 							EditorGUI.EndDisabledGroup();
+
+							if (GUILayout.Button(Styles.refresh, GUILayout.MaxWidth(32)))
+							{
+								this.m_devices = AndroidUtil.RefreshDevices();
+
+							}
 						}
-						if (GUILayout.Button(Styles.refresh, GUILayout.MaxWidth(32)))
-						{
-							this.devices = AndroidUtil.RefreshDevices();
-							EditorGUILayout.Space(10);
-						}
+						EditorGUILayout.Space(1);
 					}
 					/*	*/
-					if (GUILayout.Button(Styles.run))
+					if (GUILayout.Button(Styles.run, GUILayout.MinWidth(128)))
 					{
 						try
 						{
@@ -313,14 +325,15 @@ namespace BuildMultiPlatform
 
 								string errrMesg = "";
 								/*	Construct the install command.	*/
-								string[] installCommand = new string[] { "-d", "-s", devices[selectedDevice], "install", Builder.GetTargetLocationAbsolutePath(target) };
+								string[] installCommand = new string[] { "-d", "-s", m_devices[m_selectedDevice], "install", Builder.GetTargetLocationAbsolutePath(target) };
 
 								UnityEditor.Android.ADB.GetInstance().Run(installCommand, errrMesg);
 
+								/*	Get Android App ID.	*/
 								string appID = string.Format("{0}/{1}", PlayerSettings.GetApplicationIdentifier(target.targetGroup), "com.unity3d.player.UnityPlayerActivity"); // Must be a valid ID.
 
 								/*	Construct the run command.	*/
-								string[] runTargetCommand = new string[] { "-s", devices[selectedDevice], "shell", "am", "start", "-n", appID };
+								string[] runTargetCommand = new string[] { "-s", m_devices[m_selectedDevice], "shell", "am", "start", "-n", appID };
 								UnityEditor.Android.ADB.GetInstance().Run(runTargetCommand, errrMesg);
 
 							}
@@ -331,7 +344,7 @@ namespace BuildMultiPlatform
 						}
 						catch (Exception ex)
 						{
-							string dialog_title = string.Format("Failed Running '{}'", target.name);
+							string dialog_title = string.Format("Failed Running '{0}'", target.name);
 							string dialog_message = string.Format("Failed running target {0} on the path {1} \n Error {2}", target.name, Builder.GetTargetLocationAbsolutePath(target), ex.Message);
 							EditorUtility.DisplayDialog(dialog_title, dialog_message, "OK");
 						}
@@ -415,8 +428,8 @@ namespace BuildMultiPlatform
 
 					if (m_configurations.arraySize == 1)
 					{
-						selectedConfigIndex = 0;
-						m_list.index = selectedConfigIndex; // Select(selectedConfigIndex);
+						m_selectedConfigIndex = 0;
+						m_list.index = m_selectedConfigIndex; // Select(selectedConfigIndex);
 					}
 
 				}
@@ -447,30 +460,30 @@ namespace BuildMultiPlatform
 					/*	Displace the build target if selected and is a valid index.	*/
 					if (m_configurations.arraySize > 0)
 					{
-						if (selectedConfigIndex >= 0 && selectedConfigIndex < m_configurations.arraySize)
+						if (m_selectedConfigIndex >= 0 && m_selectedConfigIndex < m_configurations.arraySize)
 						{
 							/*	Draw main build target property.	*/
-							EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(selectedConfigIndex), GUIContent.none, true);
+							EditorGUILayout.PropertyField(m_configurations.GetArrayElementAtIndex(m_selectedConfigIndex), GUIContent.none, true);
 
 							using (new EditorGUI.IndentLevelScope(3))
 							{
 								EditorGUILayout.BeginHorizontal();
 								EditorGUILayout.Space();
 
-								EditorGUI.BeginDisabledGroup(settings.targets[selectedConfigIndex].useDefaultScenes);
+								EditorGUI.BeginDisabledGroup(settings.targets[m_selectedConfigIndex].useDefaultScenes);
 								if (GUILayout.Button(Styles.SetDefaultScenes, GUILayout.MaxWidth(120)))
 								{
 									SerializedProperty scenes = m_BuilderConfigSettings.FindProperty("scenes");
 									EditorBuildSettingsScene[] defScenes = Builder.GetDefaultScenes();
-									settings.targets[selectedConfigIndex].scenes = new SceneAsset[defScenes.Length];
+									settings.targets[m_selectedConfigIndex].scenes = new SceneAsset[defScenes.Length];
 									for (int i = 0; i < defScenes.Length; i++)
 									{
-										settings.targets[selectedConfigIndex].scenes[i] = AssetDatabase.LoadAssetAtPath<SceneAsset>(defScenes[i].path);
+										settings.targets[m_selectedConfigIndex].scenes[i] = AssetDatabase.LoadAssetAtPath<SceneAsset>(defScenes[i].path);
 									}
 								}
 								if (GUILayout.Button(Styles.ClearScenes, GUILayout.MaxWidth(120)))
 								{
-									SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(selectedConfigIndex).FindPropertyRelative("scenes");
+									SerializedProperty scenes = m_configurations.GetArrayElementAtIndex(m_selectedConfigIndex).FindPropertyRelative("scenes");
 									scenes.ClearArray();
 									//
 								}
@@ -478,12 +491,12 @@ namespace BuildMultiPlatform
 								EditorGUILayout.EndHorizontal();
 
 								/*	Draw build buttons.	*/
-								BuildTarget optionItem = BuilderSettings.GetOrCreateSettings().targets[selectedConfigIndex];
+								BuildTarget optionItem = BuilderSettings.GetOrCreateSettings().targets[m_selectedConfigIndex];
 								bool isTargetSupported = Builder.IsBuildTargetSupported(optionItem);
 								bool isValidConfig = true;
 								if (!isTargetSupported)
 								{
-									EditorGUILayout.LabelField("Target Group and Target is not valid configuration", this.errorStyle);
+									EditorGUILayout.LabelField("Target Group and Target is not valid configuration", this.m_errorStyle);
 								}
 
 								EditorGUILayout.BeginHorizontal();
@@ -557,7 +570,7 @@ namespace BuildMultiPlatform
 			{
 
 				/*	*/
-				this.scroll = EditorGUILayout.BeginScrollView(scroll, false, true);
+				this.m_scroll = EditorGUILayout.BeginScrollView(m_scroll, false, true);
 
 				/*	*/
 				DisplayGUIHeader();
