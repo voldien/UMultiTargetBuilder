@@ -1,5 +1,5 @@
 {
-    "name": "com.codeintrinsic.multitargetbuilder.editor",
+    "name": "com.linuxsenpai.multitargetbuilder.editor",
     "references": [],
     "includePlatforms": [
         "Editor"

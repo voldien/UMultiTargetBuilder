@@ -51,7 +51,7 @@ Find `Packages/manifest.json` in your project and add the following:
 ```json
 {
   "dependencies": {
-    "com.codeintrinsic.multitargetbuilder": "https://github.com/voldien/UMultiTargetBuilder.git#0.1.6",
+    "com.linuxsenpai.multitargetbuilder": "https://github.com/voldien/UMultiTargetBuilder.git#0.1.6",
     "...": "..."
   }
 }
@@ -69,7 +69,7 @@ $ npm install -g openupm-cli
 $ cd YOUR_UNITY_PROJECT_FOLDER
 
 # Add package to your project
-$ openupm add com.codeintrinsic.multitargetbuilder
+$ openupm add com.linuxsenpai.multitargetbuilder
 ```
 
 # Quick Start

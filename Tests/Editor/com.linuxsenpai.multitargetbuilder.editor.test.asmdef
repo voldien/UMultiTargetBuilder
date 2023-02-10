@@ -1,7 +1,7 @@
 {
-    "name": "com.codeintrinsic.multitargetbuilder.editor.test",
+    "name": "com.linuxsenpai.multitargetbuilder.editor.test",
     "references": [
-        "com.codeintrinsic.multitargetbuilder.editor"
+        "com.linuxsenpai.multitargetbuilder.editor"
     ],
     "includePlatforms": [
         "Editor"
