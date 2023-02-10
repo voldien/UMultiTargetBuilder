@@ -255,7 +255,9 @@ namespace BuildMultiPlatform
 				buildPlayerOptions.target = buildTarget.target;
 				buildPlayerOptions.targetGroup = buildTarget.targetGroup;
 				buildPlayerOptions.options = buildTarget.options;
-				buildPlayerOptions.extraScriptingDefines = buildTarget.ScriptingDefines;
+#if UNITY_2021_1_OR_NEWER
+				buildPlayerOptions.extraScriptingDefines = buildTarget.ScriptingDefines;	
+#endif
 
 
 				/*	assign all scenes.	*/
