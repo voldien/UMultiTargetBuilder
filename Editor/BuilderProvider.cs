@@ -454,7 +454,7 @@ namespace BuildMultiPlatform
 				if (m_configurations.arraySize > 0)
 				{
 					EditorGUILayout.BeginVertical("GroupBox",
-						 GUILayout.MinHeight(600), GUILayout.MaxHeight(EditorGUI.GetPropertyHeight(m_configurations, true))); //TODO add height from property.	
+						 GUILayout.MinHeight(600), GUILayout.MaxHeight(EditorGUI.GetPropertyHeight(m_configurations, true))); //TODO add height from property.
 					EditorGUILayout.LabelField("");
 
 					/*	Displace the build target if selected and is a valid index.	*/
@@ -718,7 +718,7 @@ namespace BuildMultiPlatform
 			return provider;
 		}
 #endif
-		[MenuItem("Window/MultiTarget Build/Settings", false, 1)]
+		[MenuItem("Build/MultiTarget Settings", false, 1)]
 		public static void OpenSettings()
 		{
 			SettingsService.OpenProjectSettings("Project/MultiTarget Build Settings");
