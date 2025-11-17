@@ -21,6 +21,7 @@ namespace BuildMultiPlatform
 		public bool useDefaultScenes = true;
 		[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
 		public SceneAsset[] scenes = new SceneAsset[0];
+		public SceneAsset[] additionalScenes = new SceneAsset[0];
 		[SerializeField, Tooltip("The target group.")]
 		public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
 		[SerializeField, Tooltip("Specified target.")]
@@ -29,7 +30,7 @@ namespace BuildMultiPlatform
 		public BuildOptions options = BuildOptions.None;
 
 		[Header("Compiler Defines")]
-		[SerializeField, Tooltip("Macro applied to the build target during compilation.")]
+		[SerializeField, Tooltip("Predefined C# Macro applied to the build target during compilation.")]
 		public string[] ScriptingDefines;
 
 		public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }

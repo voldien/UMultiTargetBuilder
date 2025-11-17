@@ -40,12 +40,24 @@ namespace BuildMultiPlatform
 		const int listLineCount = 2;
 		const int toggleOptionlineCount = 6;    /*	Toggle grid number of lines.	*/
 		const int attribueLines = 11;   /*	Number of attribues lines.	*/
-		const int lineCount = attribueLines + toggleOptionlineCount + listLineCount;
+		int lineCount = attribueLines + toggleOptionlineCount + listLineCount;
 		private ReorderableList m_list;
+		SerializedProperty additionalScenes = null;
+		SerializedProperty scriptingDefines = null;
+
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
+			int currentActiveLines = lineCount;
+			if(scriptingDefines != null){
+				currentActiveLines += scriptingDefines.isExpanded ? scriptingDefines.arraySize + 4 : 2;
+			}
+			if(additionalScenes != null){
+				currentActiveLines += additionalScenes.isExpanded ? additionalScenes.arraySize + 4 : 2;
+			}
+
 			/*	Compute the height of all the fields.	*/
-			float height = EditorGUIUtility.singleLineHeight * lineCount + EditorGUIUtility.standardVerticalSpacing * (lineCount - 1) * 1.25f;
+			float height = EditorGUIUtility.singleLineHeight * currentActiveLines + EditorGUIUtility.standardVerticalSpacing * (currentActiveLines - 1) * 1.255f;
+
 
 			switch ((BuildTargetGroup)property.FindPropertyRelative("targetGroup").intValue)
 			{
@@ -60,6 +72,7 @@ namespace BuildMultiPlatform
 			height += scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
 			return height;
 		}
+
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			int nthRow = 0;
@@ -84,6 +97,8 @@ namespace BuildMultiPlatform
 			SerializedProperty flags = property.FindPropertyRelative("options");
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
 			SerializedProperty scenes = property.FindPropertyRelative("scenes");
+			additionalScenes = property.FindPropertyRelative("additionalScenes");
+			scriptingDefines = property.FindPropertyRelative("ScriptingDefines");
 
 			/*	*/
 			float propertyHeight = position.height / (float)lineCount;
@@ -139,6 +154,9 @@ namespace BuildMultiPlatform
 			nthCol = (nthCol + 1) % nrCol;
 			nthRow++;
 
+			Rect definedRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			nthRow += scriptingDefines.isExpanded ?  scriptingDefines.arraySize + 2: 2;
+
 			/*	TODO add additional options dependong on the target platform.	*/
 			switch ((BuildTargetGroup)flags.intValue)
 			{
@@ -148,9 +166,12 @@ namespace BuildMultiPlatform
 					break;
 			}
 
+
+
 			/*	Scene options.	*/
 			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+
 			float sceneheight = scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
 			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, sceneheight);
 
@@ -191,11 +212,16 @@ namespace BuildMultiPlatform
 			InternalToogle(flags, BuildOptions.EnableDeepProfilingSupport, EditorGUI.ToggleLeft(optionEnableDeepProfilingSupportRect, Styles.EnableDeepProfilingSupport, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableDeepProfilingSupport)));
 			InternalToogle(flags, BuildOptions.WaitForPlayerConnection, EditorGUI.ToggleLeft(optionWaitForPlayerConnectionRect, Styles.WaitForPlayerConnection, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.WaitForPlayerConnection)));
 
+			EditorGUI.PropertyField(definedRect, scriptingDefines, Styles.useScene);
+
 			EditorGUI.indentLevel--;
+
 
 			EditorGUI.LabelField(sceneLabelRect, Styles.SceneSettingsLabel, EditorStyles.boldLabel);
 			EditorGUI.indentLevel++;
 			EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.useScene);
+
+
 
 			EditorGUI.BeginDisabledGroup(useDefaultScenes.boolValue);
 
