@@ -10,18 +10,18 @@ namespace BuildMultiPlatform
 		public class Styles
 		{
 			/*	*/
-			public static GUIContent metaInformation = new GUIContent("Meta Information", "");
-			public static GUIContent name = new GUIContent("Target name", "Name of the target in the project setting.");
-			public static GUIContent title = new GUIContent("Title", "Title of the game, if empty the default title from the project player settings will be used.");
-			public static GUIContent output = new GUIContent("Relative Directory", "Relative path from the global path.");
+			public static GUIContent MetaInformation = new GUIContent("Meta Information", "");
+			public static GUIContent TargetName = new GUIContent("Target name", "Name of the target in the project setting.");
+			public static GUIContent TargetTitle = new GUIContent("Title", "Title of the game, if empty the default title from the project player settings will be used.");
+			public static GUIContent TargetOutput = new GUIContent("Relative Directory", "Relative path from the global path.");
 			public static GUIContent BuildSettingLabel = new GUIContent("Build Settings", "");
-			public static GUIContent target = new GUIContent("Target", "Specific group target.");
-			public static GUIContent targeGroup = new GUIContent("Target Group", "Target group.");
-			public static GUIContent optionFlagsLabel = new GUIContent("Option Flags", "");
+			public static GUIContent Target = new GUIContent("Target", "Specific group target.");
+			public static GUIContent TargeGroup = new GUIContent("Target Group", "Target group.");
+			public static GUIContent OptionFlagsLabel = new GUIContent("Option Flags", "");
 
 			/*	Options Flags.	*/
-			public static GUIContent development = new GUIContent("Development", "");
-			public static GUIContent strict = new GUIContent("Strict", "No error or warnings allowed.");
+			public static GUIContent Development = new GUIContent("Development", "");
+			public static GUIContent Strict = new GUIContent("Strict", "No error or warnings allowed.");
 			public static GUIContent CRC = new GUIContent("Compute CRC", "");
 			public static GUIContent AllowDebugging = new GUIContent("Allow Debugging", "");
 			public static GUIContent UncompressedAssetBundle = new GUIContent("Uncompressed AssetBundle", "");
@@ -35,9 +35,12 @@ namespace BuildMultiPlatform
 
 			/*	Scene options.	*/
 			public static GUIContent SceneSettingsLabel = new GUIContent("Scene Settings");
-			public static GUIContent useScene = new GUIContent("Use Default Scenes");
+			public static GUIContent UseScene = new GUIContent("Use Default Scenes");
+			public static GUIContent ScriptingSettingsLabel = new GUIContent("Scripting Settings");
+			public static GUIContent ScriptDefinitions = new GUIContent("Additional Script Definitions");
+			public static GUIContent AdditionalScriptDefinitions = new GUIContent("Use Additional Script Definitions");
 		}
-		const int listLineCount = 2;
+		const int listLineCount = 5;
 		const int toggleOptionlineCount = 6;    /*	Toggle grid number of lines.	*/
 		const int attribueLines = 11;   /*	Number of attribues lines.	*/
 		int lineCount = attribueLines + toggleOptionlineCount + listLineCount;
@@ -48,10 +51,12 @@ namespace BuildMultiPlatform
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			int currentActiveLines = lineCount;
-			if(scriptingDefines != null){
+			if (scriptingDefines != null)
+			{
 				currentActiveLines += scriptingDefines.isExpanded ? scriptingDefines.arraySize + 4 : 2;
 			}
-			if(additionalScenes != null){
+			if (additionalScenes != null)
+			{
 				currentActiveLines += additionalScenes.isExpanded ? additionalScenes.arraySize + 4 : 2;
 			}
 
@@ -97,6 +102,7 @@ namespace BuildMultiPlatform
 			SerializedProperty flags = property.FindPropertyRelative("options");
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
 			SerializedProperty scenes = property.FindPropertyRelative("scenes");
+			SerializedProperty UseAdditionalScriptingDefines = property.FindPropertyRelative("UseAdditionalScriptingDefines");
 			additionalScenes = property.FindPropertyRelative("additionalScenes");
 			scriptingDefines = property.FindPropertyRelative("ScriptingDefines");
 
@@ -154,8 +160,13 @@ namespace BuildMultiPlatform
 			nthCol = (nthCol + 1) % nrCol;
 			nthRow++;
 
+			/*	*/
+			nthRow++;
+			Rect scriptingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect defineEnabledRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+
 			Rect definedRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-			nthRow += scriptingDefines.isExpanded ?  scriptingDefines.arraySize + 2: 2;
+			nthRow += scriptingDefines.isExpanded ? scriptingDefines.arraySize + 2 : 2;
 
 			/*	TODO add additional options dependong on the target platform.	*/
 			switch ((BuildTargetGroup)flags.intValue)
@@ -166,8 +177,6 @@ namespace BuildMultiPlatform
 					break;
 			}
 
-
-
 			/*	Scene options.	*/
 			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
@@ -176,26 +185,26 @@ namespace BuildMultiPlatform
 			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, sceneheight);
 
 			/*	*/
-			EditorGUI.LabelField(metaRect, Styles.metaInformation, EditorStyles.boldLabel);
+			EditorGUI.LabelField(metaRect, Styles.MetaInformation, EditorStyles.boldLabel);
 			EditorGUI.indentLevel++;
 
 			//TODO add label
-			EditorGUI.PropertyField(targetNameRect, name, Styles.name);
-			EditorGUI.PropertyField(titleRect, title, Styles.title);
+			EditorGUI.PropertyField(targetNameRect, name, Styles.TargetName);
+			EditorGUI.PropertyField(titleRect, title, Styles.TargetTitle);
 			EditorGUILayout.Separator();
-			EditorGUI.PropertyField(outputRect, outputDirectory, Styles.output);
+			EditorGUI.PropertyField(outputRect, outputDirectory, Styles.TargetOutput);
 			EditorGUI.indentLevel--;
 
 			EditorGUI.LabelField(settingLabelRect, Styles.BuildSettingLabel, EditorStyles.boldLabel);
 
 			EditorGUI.indentLevel++;
-			EditorGUI.PropertyField(targetRect, _target, Styles.target);
-			EditorGUI.PropertyField(targetGroupRect, targetGroup, Styles.targeGroup);
-			EditorGUI.PropertyField(optionRect, flags, Styles.optionFlagsLabel);
+			EditorGUI.PropertyField(targetRect, _target, Styles.Target);
+			EditorGUI.PropertyField(targetGroupRect, targetGroup, Styles.TargeGroup);
+			EditorGUI.PropertyField(optionRect, flags, Styles.OptionFlagsLabel);
 
 			/*	*/
-			InternalToogle(flags, BuildOptions.Development, EditorGUI.ToggleLeft(optionDevelopmentRect, Styles.development, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.Development)));
-			InternalToogle(flags, BuildOptions.StrictMode, EditorGUI.ToggleLeft(optionSrictRect, Styles.strict, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.StrictMode)));
+			InternalToogle(flags, BuildOptions.Development, EditorGUI.ToggleLeft(optionDevelopmentRect, Styles.Development, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.Development)));
+			InternalToogle(flags, BuildOptions.StrictMode, EditorGUI.ToggleLeft(optionSrictRect, Styles.Strict, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.StrictMode)));
 			/*	*/
 			InternalToogle(flags, BuildOptions.ComputeCRC, EditorGUI.ToggleLeft(optionCRCRect, Styles.CRC, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.ComputeCRC)));
 			InternalToogle(flags, BuildOptions.AllowDebugging, EditorGUI.ToggleLeft(optionAllowDebuggingRect, Styles.AllowDebugging, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.AllowDebugging)));
@@ -212,16 +221,22 @@ namespace BuildMultiPlatform
 			InternalToogle(flags, BuildOptions.EnableDeepProfilingSupport, EditorGUI.ToggleLeft(optionEnableDeepProfilingSupportRect, Styles.EnableDeepProfilingSupport, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableDeepProfilingSupport)));
 			InternalToogle(flags, BuildOptions.WaitForPlayerConnection, EditorGUI.ToggleLeft(optionWaitForPlayerConnectionRect, Styles.WaitForPlayerConnection, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.WaitForPlayerConnection)));
 
-			EditorGUI.PropertyField(definedRect, scriptingDefines, Styles.useScene);
+			/*	*/
+			EditorGUI.indentLevel--;
+			EditorGUI.LabelField(scriptingLabelRect, Styles.ScriptingSettingsLabel, EditorStyles.boldLabel);
+			EditorGUI.indentLevel++;
+
+			EditorGUI.PropertyField(defineEnabledRect, UseAdditionalScriptingDefines, Styles.AdditionalScriptDefinitions);
+			EditorGUI.BeginDisabledGroup(!UseAdditionalScriptingDefines.boolValue);
+			EditorGUI.PropertyField(definedRect, scriptingDefines, Styles.ScriptDefinitions);
+			EditorGUI.EndDisabledGroup();
 
 			EditorGUI.indentLevel--;
 
-
+			/*	*/
 			EditorGUI.LabelField(sceneLabelRect, Styles.SceneSettingsLabel, EditorStyles.boldLabel);
 			EditorGUI.indentLevel++;
-			EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.useScene);
-
-
+			EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.UseScene);
 
 			EditorGUI.BeginDisabledGroup(useDefaultScenes.boolValue);
 
@@ -246,7 +261,7 @@ namespace BuildMultiPlatform
 			EditorGUI.EndProperty();
 		}
 
-		static internal void InternalToogle(SerializedProperty target, BuildOptions flag, bool enabled)
+		internal static void InternalToogle(SerializedProperty target, BuildOptions flag, bool enabled)
 		{
 			if (enabled)
 			{

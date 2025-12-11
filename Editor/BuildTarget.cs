@@ -29,11 +29,13 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("Build options.")]
 		public BuildOptions options = BuildOptions.None;
 
-		[Header("Compiler Defines")]
+		[Tooltip("Allow to enable or disable using additional scripting definitions")]
+		public bool UseAdditionalScriptingDefines = false;
+		[Header("Compiler Additional Definitions")]
 		[SerializeField, Tooltip("Predefined C# Macro applied to the build target during compilation.")]
 		public string[] ScriptingDefines;
 
-		public string Title { get { if (this.title.Length == 0) return PlayerSettings.productName; else return this.title; } }
+		public string Title { get { if (this.title.Length == 0) { return PlayerSettings.productName; } else { return this.title; } } }
 		public object Clone()
 		{
 			BuildTarget copy = new BuildTarget();
