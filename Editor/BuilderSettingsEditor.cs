@@ -72,7 +72,7 @@ namespace BuildMultiPlatform
 
 						if (GUILayout.Button(BuilderSettingsProvider.Styles.remove))
 						{
-							this.configurations.DeleteArrayElementAtIndex(i);
+							configurations.DeleteArrayElementAtIndex(i);
 							/*	Break out of the iteraton.	*/
 							break;
 						}

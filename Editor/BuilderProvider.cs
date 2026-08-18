@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -101,8 +100,8 @@ namespace BuildMultiPlatform
 			/*	Autoselect the first if any build target exists.	*/
 			if (BuilderSettings.GetOrCreateSettings().targets.Length > 0)
 			{
-				this.m_selectedConfigIndex = 0;
-				this.m_list.index = this.m_selectedConfigIndex;// Select(this.selectedConfigIndex);
+				m_selectedConfigIndex = 0;
+				m_list.index = m_selectedConfigIndex;// Select(this.selectedConfigIndex);
 			}
 		}
 
@@ -187,13 +186,13 @@ namespace BuildMultiPlatform
 
 			/*	If item selected.	*/
 			if (isFocused && isActive)
-				this.m_selectedConfigIndex = index;
+				m_selectedConfigIndex = index;
 		}
 
 		private void DrawListHeader(Rect rect)
 		{
 			//rect = EditorGUI.IndentedRect(rect);
-			GUI.Label(rect, string.Format("Build Targets: {0}", this.m_configurations.arraySize), EditorStyles.boldLabel);
+			GUI.Label(rect, string.Format("Build Targets: {0}", m_configurations.arraySize), EditorStyles.boldLabel);
 		}
 
 		public override void OnDeactivate()
@@ -308,7 +307,7 @@ namespace BuildMultiPlatform
 
 							if (GUILayout.Button(Styles.refresh, GUILayout.MaxWidth(32)))
 							{
-								this.m_devices = AndroidUtil.RefreshDevices();
+								m_devices = AndroidUtil.RefreshDevices();
 
 							}
 						}
@@ -496,7 +495,7 @@ namespace BuildMultiPlatform
 								bool isValidConfig = true;
 								if (!isTargetSupported)
 								{
-									EditorGUILayout.LabelField("Target Group and Target is not valid configuration", this.m_errorStyle);
+									EditorGUILayout.LabelField("Target Group and Target is not valid configuration", m_errorStyle);
 								}
 
 								EditorGUILayout.BeginHorizontal();
@@ -570,7 +569,7 @@ namespace BuildMultiPlatform
 			{
 
 				/*	*/
-				this.m_scroll = EditorGUILayout.BeginScrollView(m_scroll, false, true);
+				m_scroll = EditorGUILayout.BeginScrollView(m_scroll, false, true);
 
 				/*	*/
 				DisplayGUIHeader();

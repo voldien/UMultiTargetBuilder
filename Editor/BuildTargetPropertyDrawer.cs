@@ -36,6 +36,8 @@ namespace BuildMultiPlatform
 			/*	Scene options.	*/
 			public static GUIContent SceneSettingsLabel = new GUIContent("Scene Settings");
 			public static GUIContent UseScene = new GUIContent("Use Default Scenes");
+			public static GUIContent UseAdditionalScene = new GUIContent("Use Additional Scenes");
+
 			public static GUIContent ScriptingSettingsLabel = new GUIContent("Scripting Settings");
 			public static GUIContent ScriptDefinitions = new GUIContent("Additional Script Definitions");
 			public static GUIContent AdditionalScriptDefinitions = new GUIContent("Use Additional Script Definitions");
@@ -44,7 +46,8 @@ namespace BuildMultiPlatform
 		const int toggleOptionlineCount = 6;    /*	Toggle grid number of lines.	*/
 		const int attribueLines = 11;   /*	Number of attribues lines.	*/
 		int lineCount = attribueLines + toggleOptionlineCount + listLineCount;
-		private ReorderableList m_list;
+		private ReorderableList m_scene_list;
+		SerializedProperty overrideScenes = null;
 		SerializedProperty additionalScenes = null;
 		SerializedProperty scriptingDefines = null;
 
@@ -55,9 +58,14 @@ namespace BuildMultiPlatform
 			{
 				currentActiveLines += scriptingDefines.isExpanded ? scriptingDefines.arraySize + 4 : 2;
 			}
+			if (overrideScenes != null)
+			{
+				currentActiveLines += overrideScenes.arraySize + 1;
+			}
+
 			if (additionalScenes != null)
 			{
-				currentActiveLines += additionalScenes.isExpanded ? additionalScenes.arraySize + 4 : 2;
+				currentActiveLines += additionalScenes.arraySize + 2;
 			}
 
 			/*	Compute the height of all the fields.	*/
@@ -101,8 +109,11 @@ namespace BuildMultiPlatform
 			SerializedProperty targetGroup = property.FindPropertyRelative("targetGroup");
 			SerializedProperty flags = property.FindPropertyRelative("options");
 			SerializedProperty useDefaultScenes = property.FindPropertyRelative("useDefaultScenes");
-			SerializedProperty scenes = property.FindPropertyRelative("scenes");
+
+			overrideScenes = property.FindPropertyRelative("scenes");
 			SerializedProperty UseAdditionalScriptingDefines = property.FindPropertyRelative("UseAdditionalScriptingDefines");
+
+			SerializedProperty useAdditionalScenes = property.FindPropertyRelative("UseAdditionalScenes");
 			additionalScenes = property.FindPropertyRelative("additionalScenes");
 			scriptingDefines = property.FindPropertyRelative("ScriptingDefines");
 
@@ -163,7 +174,8 @@ namespace BuildMultiPlatform
 			/*	*/
 			nthRow++;
 			Rect scriptingLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
-			Rect defineEnabledRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect defineEnabledUseRectRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+
 
 			Rect definedRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			nthRow += scriptingDefines.isExpanded ? scriptingDefines.arraySize + 2 : 2;
@@ -180,9 +192,16 @@ namespace BuildMultiPlatform
 			/*	Scene options.	*/
 			Rect sceneLabelRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
 			Rect useDefaultScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			/*	*/
+			float UseOverrideSceneheight = (overrideScenes.arraySize + 1) * EditorGUIUtility.singleLineHeight * 1.00f;
+			Rect OverrideScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, UseOverrideSceneheight);
 
-			float sceneheight = scenes.arraySize * EditorGUIUtility.singleLineHeight * 1.00f;
-			Rect ScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, sceneheight);
+			/*	*/
+			nthRow += overrideScenes.arraySize + 2;
+			float UseAdditionalSceneheight = (additionalScenes.arraySize + 1) * EditorGUIUtility.singleLineHeight * 1.00f;
+			Rect useAdditionalScenesRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, defaultHeight);
+			Rect AdditionalScenePropertyRect = new Rect(position.x, position.y + defaultHeight * nthRow++, position.width, UseAdditionalSceneheight);
+
 
 			/*	*/
 			EditorGUI.LabelField(metaRect, Styles.MetaInformation, EditorStyles.boldLabel);
@@ -210,6 +229,7 @@ namespace BuildMultiPlatform
 			InternalToogle(flags, BuildOptions.AllowDebugging, EditorGUI.ToggleLeft(optionAllowDebuggingRect, Styles.AllowDebugging, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.AllowDebugging)));
 			/*	*/
 			InternalToogle(flags, BuildOptions.UncompressedAssetBundle, EditorGUI.ToggleLeft(optionUncompressedAssetBundleRect, Styles.UncompressedAssetBundle, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.UncompressedAssetBundle)));
+
 			InternalToogle(flags, BuildOptions.EnableHeadlessMode, EditorGUI.ToggleLeft(optionEnableHeadlessModeRect, Styles.EnabledHeadlessMode, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.EnableHeadlessMode)));
 			/*	*/
 			InternalToogle(flags, BuildOptions.CompressWithLz4, EditorGUI.ToggleLeft(optionCompressWithLz4Rect, Styles.CompressWithLz4, ((BuildOptions)flags.intValue).HasFlag(BuildOptions.CompressWithLz4)));
@@ -226,33 +246,46 @@ namespace BuildMultiPlatform
 			EditorGUI.LabelField(scriptingLabelRect, Styles.ScriptingSettingsLabel, EditorStyles.boldLabel);
 			EditorGUI.indentLevel++;
 
-			EditorGUI.PropertyField(defineEnabledRect, UseAdditionalScriptingDefines, Styles.AdditionalScriptDefinitions);
+			EditorGUI.PropertyField(defineEnabledUseRectRect, UseAdditionalScriptingDefines, Styles.AdditionalScriptDefinitions);
 			EditorGUI.BeginDisabledGroup(!UseAdditionalScriptingDefines.boolValue);
 			EditorGUI.PropertyField(definedRect, scriptingDefines, Styles.ScriptDefinitions);
 			EditorGUI.EndDisabledGroup();
 
 			EditorGUI.indentLevel--;
 
-			/*	*/
-			EditorGUI.LabelField(sceneLabelRect, Styles.SceneSettingsLabel, EditorStyles.boldLabel);
-			EditorGUI.indentLevel++;
-			EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.UseScene);
-
-			EditorGUI.BeginDisabledGroup(useDefaultScenes.boolValue);
-
-			/*	Draw scene property only.	*/
-			/*	Update the list only if null or changed property.	*/
-			if (m_list == null)
+			/*	Override Scene*/
 			{
-				m_list = BuildSceneAssetReorderableList(scenes);
+				EditorGUI.LabelField(sceneLabelRect, Styles.SceneSettingsLabel, EditorStyles.boldLabel);
+				EditorGUI.indentLevel++;
+				EditorGUI.PropertyField(useDefaultScenesRect, useDefaultScenes, Styles.UseScene);
+
+				EditorGUI.BeginDisabledGroup(useDefaultScenes.boolValue);
+
+				/*	Draw scene property only.	*/
+				/*	Update the list only if null or changed property.	*/
+				if (m_scene_list == null)
+				{
+					m_scene_list = BuildSceneAssetReorderableList(overrideScenes);
+				}
+				else if (m_scene_list.serializedProperty != overrideScenes)
+				{
+					m_scene_list = BuildSceneAssetReorderableList(overrideScenes);
+				}
+				OverrideScenesRect = EditorGUI.IndentedRect(OverrideScenesRect);
+				m_scene_list.DoList(OverrideScenesRect);
+				EditorGUI.EndDisabledGroup();
 			}
-			else if (m_list.serializedProperty != scenes)
+
+			/*	Additional Scene.	*/
 			{
-				m_list = BuildSceneAssetReorderableList(scenes);
+				EditorGUI.PropertyField(useAdditionalScenesRect, useAdditionalScenes, Styles.UseAdditionalScene);
+				EditorGUI.BeginDisabledGroup(!useAdditionalScenes.boolValue);
+
+				m_scene_list = BuildSceneAssetReorderableList(additionalScenes);
+				AdditionalScenePropertyRect = EditorGUI.IndentedRect(AdditionalScenePropertyRect);
+				m_scene_list.DoList(AdditionalScenePropertyRect);
+				EditorGUI.EndDisabledGroup();
 			}
-			ScenesRect = EditorGUI.IndentedRect(ScenesRect);
-			m_list.DoList(ScenesRect);
-			EditorGUI.EndDisabledGroup();
 
 			EditorGUI.indentLevel--;
 

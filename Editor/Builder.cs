@@ -2,33 +2,26 @@ using System;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
-using UnityEditor.Callbacks;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace BuildMultiPlatform
 {
 
 	public static class Builder
 	{
-
-		[PostProcessBuild(1)]
-		public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
-		{
-			//TODO add support for adding post processing action event.
-			Debug.Log(pathToBuiltProject);
-		}
-
-
 		[MenuItem("Build/Builder/Default Build", false, 1)]
 		public static void PerformDefaultBuildContext()
 		{
-			BuildTarget defaultTarget = new BuildTarget();
-			defaultTarget.name = "Default";
-			defaultTarget.target = EditorUserBuildSettings.activeBuildTarget;
-			defaultTarget.targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
-			defaultTarget.options = BuildOptions.None;
+			BuildTarget defaultTarget = new BuildTarget
+			{
+				name = "Default",
+				target = EditorUserBuildSettings.activeBuildTarget,
+				targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup,
+				options = BuildOptions.None
+			};
 			defaultTarget.outputDirectory = EditorUserBuildSettings.GetBuildLocation(defaultTarget.target);
-			Builder.BuildTarget(defaultTarget);
+			BuildTarget(defaultTarget);
 		}
 
 		[MenuItem("Build/Builder/Build Targets", true, 0)]
@@ -107,8 +100,6 @@ namespace BuildMultiPlatform
 		public static string GetTargetLocationAbsolutePath(BuildTarget target)
 		{
 			BuilderSettings settings = BuilderSettings.GetOrCreateSettings();
-
-			string path = null;
 			string root = settings.rootOutputDirectory;
 
 			if (root.Length == 0)
@@ -117,6 +108,8 @@ namespace BuildMultiPlatform
 				root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), PlayerSettings.productName);// string.Format("{0}/{1}", );
 			}
 
+
+			string path;
 			/*	Check if target path is rooted or relative.	*/
 
 			/*	Compute the output filepath.	*/
@@ -212,14 +205,14 @@ namespace BuildMultiPlatform
 			targetCopy.options |= BuildOptions.BuildScriptsOnly;
 			InternalBuildTarget(targetCopy);
 		}
-
 		internal static void InternalBuildTarget(BuildTarget buildTarget)
 		{
 			BuilderSettings settings = BuilderSettings.GetOrCreateSettings();
+
 			if (buildTarget.enabled)
 			{
 				/*	Determine if supported on the target unity modules.	*/
-				if (!Builder.IsBuildTargetSupported(buildTarget))
+				if (!IsBuildTargetSupported(buildTarget))
 				{
 					Debug.LogError(string.Format("Build target {0} is not supported to be built with this Unity Version (Check if Modules are installed).", buildTarget.name));
 					/*	Break from continue executing.	*/
@@ -233,28 +226,38 @@ namespace BuildMultiPlatform
 				}
 
 				/*	Populate the build struct with the build target configuration.	*/
-				EditorBuildSettingsScene[] targetScenes = GetDefaultScenes();
+				List<EditorBuildSettingsScene> targetScenes = new List<EditorBuildSettingsScene>(GetDefaultScenes());
+
 				if (!buildTarget.useDefaultScenes)
 				{
-
-					/*	Create scenes for building.	*/
-					targetScenes = new EditorBuildSettingsScene[buildTarget.scenes.Length];
-					for (int j = 0; j < targetScenes.Length; j++)
+					/*	Override List scenes for building.	*/
+					targetScenes = new List<EditorBuildSettingsScene>(buildTarget.scenes.Length);
+					for (int j = 0; j < targetScenes.Count; j++)
 					{
 						string path = AssetDatabase.GetAssetPath(buildTarget.scenes[j]);
-						Debug.Log(path);
 						targetScenes[j] = new EditorBuildSettingsScene(path, true);
 					}
 				}
 
+				/*	*/
+				if (buildTarget.UseAdditionalScenes)
+				{
+					for (int scene_index = 0; scene_index < buildTarget.additionalScenes.Length; scene_index++)
+					{
+						string path = AssetDatabase.GetAssetPath(buildTarget.additionalScenes[scene_index]);
+						targetScenes.Add(new EditorBuildSettingsScene(path, true));
+					}
+				}
 
 				/*	Pass argument to the building options.	*/
-				BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-				buildPlayerOptions.locationPathName = GetTargetLocationAbsolutePath(buildTarget);
-				buildPlayerOptions.scenes = new string[targetScenes.Length];
-				buildPlayerOptions.target = buildTarget.target;
-				buildPlayerOptions.targetGroup = buildTarget.targetGroup;
-				buildPlayerOptions.options = buildTarget.options;
+				BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
+				{
+					locationPathName = GetTargetLocationAbsolutePath(buildTarget),
+					scenes = new string[targetScenes.Count],
+					target = buildTarget.target,
+					targetGroup = buildTarget.targetGroup,
+					options = buildTarget.options
+				};
 
 				if (buildTarget.UseAdditionalScriptingDefines)
 				{
@@ -265,11 +268,13 @@ namespace BuildMultiPlatform
 
 
 				/*	assign all scenes.	*/
-				int i = 0;
-				foreach (EditorBuildSettingsScene scene in targetScenes)
+
+				for (int i1 = 0; i1 < targetScenes.Count; i1++)
 				{
-					buildPlayerOptions.scenes[i] = scene.path;
-					i++;
+					EditorBuildSettingsScene scene = targetScenes[i1];
+
+					buildPlayerOptions.scenes[i1] = scene.path;
+
 				}
 
 				BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
@@ -298,6 +303,7 @@ namespace BuildMultiPlatform
 						break;
 				}
 
+				Debug.Log("Scene Count: " + targetScenes.Count);
 				Debug.Log("Platform: " + summary.platform.ToString());
 				Debug.LogFormat("Build Options: {0} | Platform: {1}", summary.options.ToString(), summary.platformGroup.ToString());
 			}

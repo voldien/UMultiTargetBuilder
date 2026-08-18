@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using UnityEngine;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters;
 using UnityEditor;
 
 namespace BuildMultiPlatform

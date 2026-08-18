@@ -20,7 +20,10 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("Use the default scenes specified by the build setting.")]
 		public bool useDefaultScenes = true;
 		[SerializeField, Tooltip("List of all scenes when using non default scenes.")]
+		public bool UseAdditionalScenes = false;
+		[SerializeField, Tooltip("Overrided List of Scenes.")]
 		public SceneAsset[] scenes = new SceneAsset[0];
+		[SerializeField, Tooltip("List of Additional Scene to Add to Build.")]
 		public SceneAsset[] additionalScenes = new SceneAsset[0];
 		[SerializeField, Tooltip("The target group.")]
 		public BuildTargetGroup targetGroup = BuildTargetGroup.Standalone;
@@ -35,21 +38,22 @@ namespace BuildMultiPlatform
 		[SerializeField, Tooltip("Predefined C# Macro applied to the build target during compilation.")]
 		public string[] ScriptingDefines;
 
-		public string Title { get { if (this.title.Length == 0) { return PlayerSettings.productName; } else { return this.title; } } }
+		public string Title { get { if (title.Length == 0) { return PlayerSettings.productName; } else { return title; } } }
 		public object Clone()
 		{
 			BuildTarget copy = new BuildTarget();
-			copy.title = this.title;
-			copy.company = this.company;
-			copy.enabled = this.enabled;
-			copy.outputDirectory = this.outputDirectory;
-			copy.name = this.name;
-			copy.target = this.target;
-			copy.targetGroup = this.targetGroup;
-			copy.useDefaultScenes = this.useDefaultScenes;
-			copy.options = this.options;
-			copy.ScriptingDefines = this.ScriptingDefines;
-			copy.scenes = (SceneAsset[])this.scenes.Clone();
+			copy.title = title;
+			copy.company = company;
+			copy.enabled = enabled;
+			copy.outputDirectory = outputDirectory;
+			copy.name = name;
+			copy.target = target;
+			copy.targetGroup = targetGroup;
+			copy.useDefaultScenes = useDefaultScenes;
+			copy.options = options;
+			copy.ScriptingDefines = ScriptingDefines;
+			copy.scenes = (SceneAsset[])scenes.Clone();
+			copy.additionalScenes = (SceneAsset[])additionalScenes.Clone();
 			return (object)copy;
 		}
 	}
